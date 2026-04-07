@@ -57,6 +57,6 @@ jobs:
         if: env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != ''
         run: |
           mvn -B sonar:sonar \
-            -Dsonar.projectKey=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK \
+            -Dsonar.projectKey=linventif_m1-s2-web-projet_AZ1noB8aXwM5IsPrSN1- \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.token=$SONAR_TOKEN
