@@ -37,6 +37,7 @@ Backend :
       - JPA
       - Spring dev-tools
       - Spring boot security
+   
 Frontend :
   - Thymeleaf
   - Daisy UI
