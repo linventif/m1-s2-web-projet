@@ -4,15 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sport")
 public class Sport {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
   private Long id;
 
   @Column(name = "name", nullable = false)
@@ -21,9 +21,8 @@ public class Sport {
   @Column(name = "calPerMin", nullable = false)
   private Double calPerMin;
 
-  public Sport() {
+  public Sport() {}
 
-  }
   public Sport(String name, Double calPerMin) {
     this.name = name;
     this.calPerMin = calPerMin;

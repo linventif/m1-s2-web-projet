@@ -14,49 +14,47 @@ import utc.miage.tp.user.User;
 @Table(name = "followers")
 public class Follower {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
+  private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "follower", nullable = false)
-	private User userFollower;
+  @ManyToOne
+  @JoinColumn(name = "follower", nullable = false)
+  private User userFollower;
 
-	@ManyToOne
-	@JoinColumn(name = "followed", nullable = false)
-	private User userFollowed;
+  @ManyToOne
+  @JoinColumn(name = "followed", nullable = false)
+  private User userFollowed;
 
-	public User getUserFollower() {
-		return userFollower;
-	}
+  public User getUserFollower() {
+    return userFollower;
+  }
 
-	public void setUserFollower(User userFollower) {
-		this.userFollower = userFollower;
-	}
+  public void setUserFollower(User userFollower) {
+    this.userFollower = userFollower;
+  }
 
-	public User getUserFollowed() {
-		return userFollowed;
-	}
+  public User getUserFollowed() {
+    return userFollowed;
+  }
 
-	public void setUserFollowed(User userFollowed) {
-		this.userFollowed = userFollowed;
-	}
+  public void setUserFollowed(User userFollowed) {
+    this.userFollowed = userFollowed;
+  }
 
-	public Follower() {
-	}
+  public Follower() {}
 
-	public Follower(User userFollower, User userFollowed) {
-		this.userFollower = userFollower;
-		this.userFollowed = userFollowed;
-	}
+  public Follower(User userFollower, User userFollowed) {
+    this.userFollower = userFollower;
+    this.userFollowed = userFollowed;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+  public void setId(Long id) {
+    this.id = id;
+  }
 }

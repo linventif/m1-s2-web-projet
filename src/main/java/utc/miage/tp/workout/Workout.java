@@ -1,20 +1,17 @@
 package utc.miage.tp.workout;
 
-import java.time.LocalDate;
-import java.util.Date;
-
-import org.hibernate.annotations.ColumnDefault;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import utc.miage.tp.sport.Sport;
-import utc.miage.tp.user.User;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
+import org.hibernate.annotations.ColumnDefault;
+import utc.miage.tp.sport.Sport;
+import utc.miage.tp.user.User;
 
 @Entity
 @Table(name = "workout")
@@ -58,9 +55,7 @@ public class Workout {
     this.user = user;
   }
 
-  public Workout() {
-
-  }
+  public Workout() {}
 
   public Workout(LocalDate date, Double distance, Double duration, Sport sport, User user) {
     this.date = date;
@@ -105,5 +100,4 @@ public class Workout {
   public void setDuration(Double duration) {
     this.duration = duration;
   }
-
 }
