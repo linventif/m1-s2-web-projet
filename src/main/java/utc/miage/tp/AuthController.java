@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import utc.miage.tp.user.RegistrationDTO;
 import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserService;

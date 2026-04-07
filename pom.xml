@@ -32,6 +32,9 @@
 		<spotless.version>2.44.4</spotless.version>
 		<google-java-format.version>1.25.2</google-java-format.version>
 		<jacoco.version>0.8.12</jacoco.version>
+		<sonar.exclusions>
+			**/resources/templates/**
+		</sonar.exclusions>
 	</properties>
 	<dependencies>
 <dependency>

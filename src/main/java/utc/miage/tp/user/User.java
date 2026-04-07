@@ -12,7 +12,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,11 +42,17 @@ public class User implements UserDetails {
   private Sex sex;
 
   @ManyToMany
-  @JoinTable(name = "sports", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sport_id"))
+  @JoinTable(
+      name = "sports",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "sport_id"))
   private List<Sport> sports = new ArrayList<>();
 
   @ManyToOne
-  @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend_id"))
+  @JoinTable(
+      name = "friends",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "friend_id"))
   private ArrayList<User> friends;
 
   public Double getWeight() {
