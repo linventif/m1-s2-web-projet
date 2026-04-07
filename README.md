@@ -1,5 +1,24 @@
 # m1-s2-web-projet
 
+[![Quality Gate Status](https://sorar.linv.dev/api/project_badges/measure?project=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK&metric=alert_status&token=sqb_d87853229bc05d9b5304356dabb2d0890a21ff66)](https://sorar.linv.dev/dashboard?id=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK)
+
+[![Coverage](https://sorar.linv.dev/api/project_badges/measure?project=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK&metric=coverage&token=sqb_d87853229bc05d9b5304356dabb2d0890a21ff66)](https://sorar.linv.dev/dashboard?id=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK)
+
+## Links
+
+- [JavaDoc](https://linventif.github.io/m1-s2-indu)
+- [SonarQube](https://sorar.linv.dev) (user: `indu`, password: `le nom du prof`)
+- [GitHub Project](https://github.com/users/linventif/projects/6/views/1)
+- [GitHub Repository](https://github.com/linventif/m1-s2-indu)
+
+## Team Members
+
+- [Grégoire Launay--Bécue](https://github.com/linventif)
+- [Enzo Landrecy](https://github.com/Zolkn-Sama)
+- [Robbe Leushuis](https://github.com/Leushuis)
+- [Pham-hang269](https://github.com/Pham-hang269)
+
+
 # Site de suivi sportif
 
 Les features principales de l’application incluent (mais ne sont pas limitées à) :
