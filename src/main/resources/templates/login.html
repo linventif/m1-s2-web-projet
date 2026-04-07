@@ -31,22 +31,22 @@
 
             <form th:action="@{/login}" method="post" class="space-y-4">
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="username">
                         <span class="label-text">Email</span>
                     </label>
-                    <input type="email" name="username" placeholder="email@example.com" 
+                    <input id="username" type="email" name="username" placeholder="email@example.com" 
                            class="input input-bordered focus:input-primary" required />
                 </div>
 
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="password">
                         <span class="label-text">Password</span>
                     </label>
-                    <input type="password" name="password" placeholder="••••••••" 
+                    <input id="password" type="password" name="password" placeholder="••••••••" 
                            class="input input-bordered focus:input-primary" required />
-                    <label class="label">
+                    <div class="label">
                         <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
-                    </label>
+                    </div>
                 </div>
 
                 <div class="form-control mt-6">

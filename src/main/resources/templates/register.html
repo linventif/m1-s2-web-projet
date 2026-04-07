@@ -18,26 +18,26 @@
             <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
                 
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="name">
                         <span class="label-text">Nom complet</span>
                     </label>
-                    <input type="text" th:field="*{name}" placeholder="Jean Dupont" 
+                    <input id="name" type="text" th:field="*{name}" placeholder="Jean Dupont" 
                            class="input input-bordered focus:input-primary" required />
                 </div>
 
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="email">
                         <span class="label-text">Email</span>
                     </label>
-                    <input type="email" th:field="*{email}" placeholder="jean@example.com" 
+                    <input id="email" type="email" th:field="*{email}" placeholder="jean@example.com" 
                            class="input input-bordered focus:input-primary" required />
                 </div>
 
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="sex">
                         <span class="label-text">Sexe</span>
                     </label>
-                    <select th:field="*{sex}" class="select select-bordered focus:select-primary w-full">
+                    <select id="sex" th:field="*{sex}" class="select select-bordered focus:select-primary w-full">
                         <option value="" disabled selected>Sélectionnez votre sexe</option>
                         <option th:each="s : ${T(utc.miage.tp.user.Sex).values()}" 
                                 th:value="${s}" 
@@ -46,10 +46,10 @@
                 </div>
 
                 <div class="form-control">
-                    <label class="label">
+                    <label class="label" for="password">
                         <span class="label-text">Mot de passe</span>
                     </label>
-                    <input type="password" th:field="*{password}" placeholder="••••••••" 
+                    <input id="password" type="password" th:field="*{password}" placeholder="••••••••" 
                            class="input input-bordered focus:input-primary" required />
                 </div>
 
