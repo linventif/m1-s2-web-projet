@@ -1,6 +1,5 @@
 package utc.miage.tp.user;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
