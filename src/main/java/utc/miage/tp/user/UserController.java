@@ -23,7 +23,7 @@ public class UserController {
     this.workoutService = workoutService;
   }
 
-  @GetMapping({ "", "/" })
+  @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
   }
@@ -39,12 +39,15 @@ public class UserController {
       @ModelAttribute User user,
       @RequestParam String password,
       @RequestParam String codeStatut,
-      @RequestParam(name = "organizedConferenceIds", required = false) List<Long> organizedConferenceIds,
-      @RequestParam(name = "participatingConferenceIds", required = false) List<Long> participatingConferenceIds,
+      @RequestParam(name = "organizedConferenceIds", required = false)
+          List<Long> organizedConferenceIds,
+      @RequestParam(name = "participatingConferenceIds", required = false)
+          List<Long> participatingConferenceIds,
       Model model) {
     try {
-      User createdUser = userService.createUser(
-          user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
+      User createdUser =
+          userService.createUser(
+              user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
       model.addAttribute(
           "message", "Utilisateur ajoute avec succes : " + createdUser.getName() + ".");
       return "user-list";
