@@ -46,3 +46,10 @@ mvn -B clean verify
 - [Enzo Landrecy](https://github.com/Zolkn-Sama)
 - [Robbe Leushuis](https://github.com/Leushuis)
 - [Pham-hang269](https://github.com/Pham-hang269)
+
+## Installation
+
+1. Cloner le projet: `git clone git@github.com:linventif/m1-s2-web-projet.git`
+2. Se placer dans le dossier du projet: `cd m1-s2-web-projet`
+3. Lancer la base de données PostgreSQL avec Docker Compose: `docker-compose up -d`
+4. Lancer l'application Spring Boot: `mvn spring-boot:run`
