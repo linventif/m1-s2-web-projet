@@ -27,3 +27,16 @@ Premier 5km, 10km, 21km, 42km … de course …), qui seront affichés avec son
 profil.
   - Commentaires et réactions. Un utilisateur pourra réagir aux activités de ses amis au
 moyen d’un commentaire ou d’une réaction (kudos).
+
+# Les technos utilisées
+
+Backend :
+  - Spring boot (Java)
+      - Thymeleaf (Front)
+      - Spring web
+      - JPA
+      - Spring dev-tools
+      - Spring boot security
+Frontend :
+  - Thymeleaf
+  - Daisy UI
