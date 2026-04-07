@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-base-200 text-base-content">
+  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+      <section class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body gap-6 p-6 sm:p-8">
+          <h3 class="text-xl">
+            Informations
+          </h3>
+            <p>
+              Nom:
+              <i class="" th:text="${user.name}">cm</i>
+            </p>
+            <p>
+              Taille:
+              <i class="" th:text="${user.height}">cm</i>
+              cm
+            </p>
+            <p>
+              Masse:
+              <i class="" th:text="${user.weight}">kg</i>
+              kg
+            </p>
+            <p>
+              Sexe:
+              <i class="" th:text="${user.sex}">sexe</i>
+            </p>
+            <p>
+              Sport:
+              <i class="" th:text="${user.sex}">sexe</i>
+            </p>
+        <div class="flex gap-10 ">
+          <div class="flex gap-2">
+          <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
+          <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
+          <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
+          <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
+          </div>
+          <div class="flex gap-2">
+              <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
+              <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
+          </div>
+        </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
