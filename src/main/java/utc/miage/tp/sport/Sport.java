@@ -1,5 +1,7 @@
 package utc.miage.tp.sport;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sport")
-public class Sport {
+public class Sport implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
@@ -36,11 +38,11 @@ public class Sport {
     this.name = name;
   }
 
-  public Long getID() {
+  public Long getId() {
     return this.id;
   }
 
-  public void setID(Long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
