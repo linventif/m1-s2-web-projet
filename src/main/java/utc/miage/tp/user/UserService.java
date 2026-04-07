@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
@@ -75,5 +78,39 @@ public class UserService {
       return "";
     }
     return email.trim().toLowerCase();
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("No user found with email: " + email));
+  }
+
+  public List<User> findAllUsers() {
+    return userRepository.findAll();
+  }
+
+  public User findById(Long id) {
+    return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+  }
+
+  public User registerUser(User user) {
+    return registerUser(user, false);
+  }
+
+  /** Master registration method. */
+  public User registerUser(User user, boolean isAdmin) {
+    // 1. Encode the password
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+    // 2. Assign the Role
+    if (isAdmin) {
+      user.setRole(Role.ADMIN);
+    } else {
+      user.setRole(Role.USER);
+    }
+
+    return userRepository.save(user);
   }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportRepository;
+import utc.miage.tp.user.Role;
 import utc.miage.tp.user.Sex;
 import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserRepository;
@@ -80,6 +81,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private User createUser(String name, String email, Double weight, Double height, Sex sex) {
     User user = new User(name, email, weight, height, sex);
     user.setPassword(passwordEncoder.encode("demo123"));
+    user.setRole(Role.USER);
     return user;
   }
 }
