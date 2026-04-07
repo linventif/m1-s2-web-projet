@@ -95,13 +95,17 @@ public class UserService implements UserDetailsService {
     return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
   }
 
-  public User registerUser(User user) {
-    return registerUser(user, false);
+  public User registerUser(RegistrationDTO registrationDTO) {
+    return registerUser(registrationDTO, false);
   }
 
   /** Master registration method. */
-  public User registerUser(User user, boolean isAdmin) {
+  public User registerUser(RegistrationDTO registrationDTO, boolean isAdmin) {
     // 1. Encode the password
+    User user = new User();
+    user.setName(registrationDTO.name());
+    user.setEmail(registrationDTO.email());
+    user.setPassword(registrationDTO.password());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     // 2. Assign the Role

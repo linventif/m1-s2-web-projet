@@ -1,7 +1,6 @@
 package utc.miage.tp.user;
 
 import java.util.List;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -62,7 +61,7 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal UserDetails currentUser, Model model) {
-    model.addAttribute("user", currentUser);     
+    model.addAttribute("user", currentUser);
     return "user-profile";
   }
 

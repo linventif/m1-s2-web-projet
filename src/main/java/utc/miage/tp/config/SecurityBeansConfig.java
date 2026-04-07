@@ -12,6 +12,7 @@ import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 public class SecurityBeansConfig {
 
   @Bean
+  @SuppressWarnings("removal") // Ignore deprecation warning for WebSecurityConfigurerAdapter
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests(
             auth ->

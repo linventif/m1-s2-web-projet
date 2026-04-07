@@ -8,12 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,9 +40,9 @@ public class User implements UserDetails {
   @Column(name = "sex", nullable = false)
   private Sex sex;
 
-  @ManyToOne
+  @ManyToMany
   @JoinColumn(name = "sports")
-  private ArrayList<Sport> sports;
+  private List<Sport> sports = new ArrayList<>();
 
   @ManyToOne
   @JoinColumn(name = "friends")
@@ -52,11 +52,11 @@ public class User implements UserDetails {
     return weight;
   }
 
-  public ArrayList<Sport> getSports() {
+  public List<Sport> getSports() {
     return this.sports;
   }
 
-  public ArrayList<User> getFriends() {
+  public List<User> getFriends() {
     return this.friends;
   }
 
