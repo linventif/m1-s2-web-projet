@@ -10,9 +10,9 @@
 <!-- lookup parent from repository -->
 	</parent>
 	<groupId>utc.miage</groupId>
-<artifactId>web-project</artifactId>
+<artifactId>tp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-<name>web-project</name>
+<name>tp</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
