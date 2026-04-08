@@ -3,6 +3,7 @@ package utc.miage.tp.workout;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.PracticeLevel;
@@ -23,7 +24,7 @@ class WorkoutTest {
             Sex.FEMALE,
             LocalDate.of(2024, 3, 31),
             PracticeLevel.BEGINNER);
-    Workout workout = new Workout(LocalDate.of(2026, 1, 1), 5000.0, 120.0, 3, null, sport, user);
+    Workout workout = new Workout(LocalDateTime.of(2026, 1, 1, 10, 0), 5000.0, 120.0, 3, null, sport, user);
     assertEquals(16.0, workout.getCalorieBurn(), 0.0001);
   }
 }
