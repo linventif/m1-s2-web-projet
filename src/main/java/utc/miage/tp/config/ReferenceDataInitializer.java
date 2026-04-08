@@ -1,6 +1,6 @@
 package utc.miage.tp.config;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,15 +62,18 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     List<Workout> workouts =
         List.of(
-            createWorkout(LocalDate.of(2026, 3, 31), 1.0, 30.0, sports.get(3), users.get(1)),
-            createWorkout(LocalDate.of(2026, 3, 30), 1.0, 30.0, sports.get(3), users.get(1)),
-            createWorkout(LocalDate.of(2026, 3, 29), 1.0, 30.0, sports.get(3), users.get(1)));
+            createWorkout(
+                LocalDateTime.of(2026, 3, 31, 10, 0), 1.0, 30.0, sports.get(3), users.get(1)),
+            createWorkout(
+                LocalDateTime.of(2026, 3, 30, 10, 0), 1.0, 30.0, sports.get(3), users.get(1)),
+            createWorkout(
+                LocalDateTime.of(2026, 3, 29, 10, 0), 1.0, 30.0, sports.get(3), users.get(1)));
 
     workoutRepository.saveAll(workouts);
   }
 
   private Workout createWorkout(
-      LocalDate date, Double distance, Double duration, Sport sport, User user) {
+      LocalDateTime date, Double distance, Double duration, Sport sport, User user) {
     return new Workout(date, distance, duration, sport, user);
   }
 

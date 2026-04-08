@@ -1,6 +1,8 @@
 package utc.miage.tp.weather;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,26 +21,34 @@ public class WeatherController {
     this.weatherService = weatherService;
   }
 
+  /**
+   * Get weather statistics for a specific date and duration.
+   *
+   * @param date    The date and time to get the weather stats for (format: YYYY-MM-DDTHH).
+   * @param address The address to get the weather stats for.
+   * @param duration The duration (in minutes) to get the weather stats for.
+   * @return WeatherStatsDTO containing the weather statistics.
+   */
+  @GetMapping("/stats")
+  public WeatherStatsDTO getWeatherStatsAtDate(
+      @RequestParam String date, @RequestParam String address, @RequestParam Double duration) {
+    LocalDateTime startDateTime;
+    
+    if (date.length() == 10) {
+        startDateTime = LocalDate.parse(date).atStartOfDay();
+    } else {
+        startDateTime = LocalDateTime.parse(date);
+    }
+    return weatherService.getWeatherStats(address, startDateTime, duration);
+  }
+
   @GetMapping("/current")
-  public WeatherDTO getCurrentWeather(
-      @RequestParam(defaultValue = "48.8566") double latitude,
-      @RequestParam(defaultValue = "2.3522") double longitude) {
-    return weatherService.getWeather(latitude, longitude, LocalDate.now());
+  public WeatherDTO getCurrentWeather(@RequestParam String address) {
+    return weatherService.getWeather(address, LocalDate.now());
   }
 
   @GetMapping("/at/{date}")
-  public WeatherDTO getWeatherAtDate(
-      @PathVariable String date,
-      @RequestParam(defaultValue = "48.8566") double latitude,
-      @RequestParam(defaultValue = "2.3522") double longitude) {
-    return weatherService.getWeather(latitude, longitude, LocalDate.parse(date));
-  }
-
-  @GetMapping("/at/{date}")
-  public WeatherDTO getWeatherStats(
-      @PathVariable String date,
-      @RequestParam(defaultValue = "48.8566") double latitude,
-      @RequestParam(defaultValue = "2.3522") double longitude) {
-    return weatherService.getWeather(latitude, longitude, LocalDate.parse(date));
+  public WeatherDTO getWeatherAtDate(@PathVariable String date, @RequestParam String address) {
+    return weatherService.getWeather(address, LocalDate.parse(date));
   }
 }

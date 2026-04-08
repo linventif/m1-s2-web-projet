@@ -17,8 +17,14 @@ public class SecurityBeansConfig {
                 auth
                     // 1. Les pages d'accès (ouvertes à TOUS)
                     .requestMatchers(
-                        "/login", "/register", "/css/**", "/js/**", "/images/**", "/error", "/api/**"
-                    ).permitAll()
+                        "/login",
+                        "/register",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/error",
+                        "/api/**")
+                    .permitAll()
 
                     // 2. Les routes ADMIN (STRICTEMENT réservées à l'ADMIN)
                     .requestMatchers("/admin/**")

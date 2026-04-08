@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
@@ -23,13 +23,16 @@ public class Workout {
 
   @Column(name = "date", nullable = false)
   @ColumnDefault("current_date")
-  private LocalDate date;
+  private LocalDateTime date;
 
   @Column(name = "distance", nullable = false)
   private Double distance;
 
   @Column(name = "duration", nullable = false)
-  private Double duration;
+  private Double duration; // en minutes
+
+  @Column(name = "address", nullable = true)
+  private String address;
 
   @ManyToOne
   @JoinColumn(name = "sport", nullable = false)
@@ -57,7 +60,7 @@ public class Workout {
 
   public Workout() {}
 
-  public Workout(LocalDate date, Double distance, Double duration, Sport sport, User user) {
+  public Workout(LocalDateTime date, Double distance, Double duration, Sport sport, User user) {
     this.date = date;
     this.distance = distance;
     this.duration = duration;
@@ -73,7 +76,7 @@ public class Workout {
     return (this.duration / 60) * this.sport.getCaloryPerMinutes();
   }
 
-  public LocalDate getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
@@ -89,7 +92,7 @@ public class Workout {
     this.id = id;
   }
 
-  public void setDate(LocalDate date) {
+  public void setDate(LocalDateTime date) {
     this.date = date;
   }
 
