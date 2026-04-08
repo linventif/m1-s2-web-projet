@@ -6,10 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "sport")
-public class Sport {
+public class Sport implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
@@ -36,11 +37,11 @@ public class Sport {
     this.name = name;
   }
 
-  public Long getID() {
+  public Long getId() {
     return this.id;
   }
 
-  public void setID(Long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

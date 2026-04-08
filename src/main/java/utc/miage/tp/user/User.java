@@ -2,23 +2,35 @@ package utc.miage.tp.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import utc.miage.tp.sport.Sport;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   private Long id;
+
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
   @Column(name = "weight", nullable = false)
   private Double weight;
@@ -29,23 +41,29 @@ public class User {
   @Column(name = "sex", nullable = false)
   private Sex sex;
 
-  @ManyToOne
-  @JoinColumn(name = "sports")
-  private ArrayList<Sport> sports;
+  @ManyToMany
+  @JoinTable(
+      name = "sports",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "sport_id"))
+  private List<Sport> sports = new ArrayList<>();
 
   @ManyToOne
-  @JoinColumn(name = "friends")
+  @JoinTable(
+      name = "friends",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "friend_id"))
   private ArrayList<User> friends;
 
   public Double getWeight() {
     return weight;
   }
 
-  public ArrayList<Sport> getSports() {
+  public List<Sport> getSports() {
     return this.sports;
   }
 
-  public ArrayList<User> getFriends() {
+  public List<User> getFriends() {
     return this.friends;
   }
 
@@ -104,6 +122,14 @@ public class User {
     this.id = id;
   }
 
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
   public String getName() {
     return name;
   }
@@ -120,6 +146,7 @@ public class User {
     this.email = email;
   }
 
+  @Override
   public String getPassword() {
     return password;
   }
@@ -134,5 +161,35 @@ public class User {
 
   public void setSex(Sex sex) {
     this.sex = sex;
+  }
+
+  @Override
+  public String getUsername() {
+    return this.email;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(new SimpleGrantedAuthority(this.role.getAuthority()));
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 }

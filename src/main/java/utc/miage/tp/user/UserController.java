@@ -1,7 +1,8 @@
 package utc.miage.tp.user;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,23 +60,9 @@ public class UserController {
   }
 
   @GetMapping("/profile")
-  public String showProfile(HttpSession session, Model model) {
-    Object loggedUserId = session.getAttribute("loggedUserId");
-    if (!(loggedUserId instanceof Long userId)) {
-      return "redirect:/users/login";
-    }
-    return userService
-        .getUserById(userId)
-        .map(
-            user -> {
-              model.addAttribute("user", user);
-              return "user-profile";
-            })
-        .orElseGet(
-            () -> {
-              session.invalidate();
-              return "redirect:/users/login";
-            });
+  public String showProfile(@AuthenticationPrincipal UserDetails currentUser, Model model) {
+    model.addAttribute("user", currentUser);
+    return "user-profile";
   }
 
   @GetMapping("/users")
@@ -94,13 +81,6 @@ public class UserController {
   public String showWorkout(Model model) {
     model.addAttribute("workout", workoutService.getAllWorkout());
     return "user-workout";
-  }
-
-  @GetMapping("/login")
-  public String showLoginForm(
-      @RequestParam(name = "message", required = false) String message, Model model) {
-    model.addAttribute("message", message);
-    return "user-login";
   }
 
   // @GetMapping("/myfriends")
@@ -126,30 +106,6 @@ public class UserController {
 
   // return entity;
   // }
-
-  @PostMapping("/login")
-  public String login(
-      @RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
-    return userService
-        .authenticate(email, password)
-        .map(
-            user -> {
-              session.setAttribute("loggedUserId", user.getId());
-              return "redirect:/users/profile";
-            })
-        .orElseGet(
-            () -> {
-              model.addAttribute("errorMessage", "Email ou mot de passe incorrect.");
-              model.addAttribute("message", "Connectez-vous avec vos identifiants.");
-              return "user-login";
-            });
-  }
-
-  @PostMapping("/logout")
-  public String logout(HttpSession session) {
-    session.invalidate();
-    return "redirect:/users/login?message=Session fermee.";
-  }
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
