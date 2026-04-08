@@ -1,5 +1,14 @@
 package utc.miage.tp.user;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,17 +20,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import utc.miage.tp.badge.Badge;
 import utc.miage.tp.goal.Goal;
-import java.util.Collection;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.workout.Workout;
 
@@ -130,9 +133,6 @@ public class User implements UserDetails {
     this.sex = sex;
     this.birthDate = birthDate;
     this.level = level;
-  
-  public Double getWeight() {
-    return weight;
   }
 
   public List<Sport> getSports() {
@@ -179,10 +179,6 @@ public class User implements UserDetails {
     return level;
   }
 
-  public List<Sport> getSports() {
-    return sports;
-  }
-
   public List<Workout> getWorkouts() {
     return workouts;
   }
@@ -207,21 +203,12 @@ public class User implements UserDetails {
     this.role = role;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public void setName(String name) {
     this.name = name;
   }
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  @Override
-  public String getPassword() {
-    return password;
   }
 
   public void setPassword(String password) {
@@ -258,6 +245,8 @@ public class User implements UserDetails {
 
   public void removeSport(Sport sport) {
     this.sports.remove(sport);
+  }
+  
   @Override
   public String getUsername() {
     return this.email;

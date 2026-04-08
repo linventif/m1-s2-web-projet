@@ -38,7 +38,15 @@ class ChallengeServiceTest {
 
   @Test
   void createChallenge_createsAndPersistsCopiedChallenge() {
-    Challenge input = new Challenge("David Gogging's challenge", "It's basically a marahton", ChallengeType.REPETITION, 40.0, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), user);
+    Challenge input =
+        new Challenge(
+            "David Gogging's challenge",
+            "It's basically a marahton",
+            ChallengeType.REPETITION,
+            40.0,
+            LocalDate.of(2024, 3, 1),
+            LocalDate.of(2024, 3, 31),
+            user);
     when(challengeRepository.save(any(Challenge.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -59,8 +67,22 @@ class ChallengeServiceTest {
   void getAll_returnsRepositoryValues() {
     List<Challenge> expected =
         List.of(
-            new Challenge("David Gogging's challenge", "It's basically a marahton", ChallengeType.REPETITION, 40.0, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), user),
-            new Challenge("Impossible push up challenge", "It's basically a push up", ChallengeType.ENDURENCE, 1.0, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), user));
+            new Challenge(
+                "David Gogging's challenge",
+                "It's basically a marahton",
+                ChallengeType.REPETITION,
+                40.0,
+                LocalDate.of(2024, 3, 1),
+                LocalDate.of(2024, 3, 31),
+                user),
+            new Challenge(
+                "Impossible push up challenge",
+                "It's basically a push up",
+                ChallengeType.ENDURENCE,
+                1.0,
+                LocalDate.of(2024, 3, 1),
+                LocalDate.of(2024, 3, 31),
+                user));
     when(challengeRepository.findAll()).thenReturn(expected);
 
     List<Challenge> result = challengeService.getAll();
