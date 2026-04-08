@@ -78,7 +78,7 @@ public class UserController {
   @GetMapping("/users")
   public String showAllUsers(@AuthenticationPrincipal User currentUser, Model model) {
     List<User> users =
-        userService.getAllUser().stream()
+        userService.getAll().stream()
             .filter(user -> !user.getId().equals(currentUser.getId()))
             .toList();
     model.addAttribute("users", users);
@@ -99,6 +99,7 @@ public class UserController {
         friendshipService.getOutgoingPendingRequests(currentUser.getId());
     List<Friendship> acceptedFriendships =
         friendshipService.getAcceptedFriendships(currentUser.getId());
+
     Map<Long, Long> incomingRequestIdByUserId =
         incomingRequests.stream()
             .collect(
@@ -207,33 +208,23 @@ public class UserController {
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workout", workoutService.getAllWorkout());
+    model.addAttribute("workout", workoutService.getAll());
     return "user-workout";
   }
 
-  // @GetMapping("/myfriends")
-  // public String getMethodName(HttpSession session, Model model) {
-  // Object loggedUserId = session.getAttribute("loggedUserId");
-  // if (!(loggedUserId instanceof Long userId)) {
-  // return "redirect:/users/login";
-  // }
-  // return userService.getUserById(userId)
-  // .map(user -> {
-  // model.addAttribute("user", user);
-  // return "user-profile";
-  // })
-  // .orElseGet(() -> {
-  // session.invalidate();
-  // return "redirect:/users/login";
-  // });
-  // }
-
-  // @PostMapping("/friends/add")
-  // public String postMethodName(@RequestBody String entity) {
-  // // TODO: process POST request
-
-  // return entity;
-  // }
+  @GetMapping("/dashbord")
+  public String showDashbord(Model model) {
+    model.addAttribute("user", userService.getUserById(1L));
+    model.addAttribute("stats", "stats");
+    model.addAttribute("goals", "goals");
+    model.addAttribute("recentActivities", "recentActivities");
+    model.addAttribute("activeChallenges", "activeChallenges");
+    model.addAttribute("badges", "badges");
+    model.addAttribute("activeFriends", "activeFriends");
+    model.addAttribute("currentMonthLabel", "Avril 2026");
+    model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+    return "dashboard";
+  }
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);

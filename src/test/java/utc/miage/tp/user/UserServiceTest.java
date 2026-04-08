@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,15 @@ class UserServiceTest {
 
   @Test
   void createUser_normalizesEmailAndEncodesPassword() {
-    User input = new User("Alice", "  ALICE@Example.COM  ", 60.0, 165.0, Sex.FEMALE);
+    User input =
+        new User(
+            "Alice",
+            "  ALICE@Example.COM  ",
+            60.0,
+            165.0,
+            Sex.FEMALE,
+            LocalDate.of(2024, 3, 31),
+            PracticeLevel.BEGINNER);
     when(userRepository.existsByEmail("alice@example.com")).thenReturn(false);
     when(passwordEncoder.encode("secret")).thenReturn("encoded-secret");
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -41,7 +50,15 @@ class UserServiceTest {
 
   @Test
   void createUser_throwsWhenEmailAlreadyExists() {
-    User input = new User("Alice", " ALICE@example.com ", 60.0, 165.0, Sex.FEMALE);
+    User input =
+        new User(
+            "Alice",
+            " ALICE@example.com ",
+            60.0,
+            165.0,
+            Sex.FEMALE,
+            LocalDate.of(2024, 3, 31),
+            PracticeLevel.BEGINNER);
     when(userRepository.existsByEmail("alice@example.com")).thenReturn(true);
 
     IllegalArgumentException exception =
@@ -54,7 +71,15 @@ class UserServiceTest {
 
   @Test
   void authenticate_returnsUserWhenPasswordMatches() {
-    User stored = new User("Alice", "alice@example.com", 60.0, 165.0, Sex.FEMALE);
+    User stored =
+        new User(
+            "Alice",
+            "alice@example.com",
+            60.0,
+            165.0,
+            Sex.FEMALE,
+            LocalDate.of(2024, 3, 31),
+            PracticeLevel.BEGINNER);
     stored.setPassword("hashed-secret");
     when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(stored));
     when(passwordEncoder.matches("secret", "hashed-secret")).thenReturn(true);

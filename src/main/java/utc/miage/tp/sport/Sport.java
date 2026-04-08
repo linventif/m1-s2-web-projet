@@ -1,26 +1,33 @@
 package utc.miage.tp.sport;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import utc.miage.tp.workout.Workout;
 
 @Entity
 @Table(name = "sport")
 public class Sport implements Serializable {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
 
-  @Column(name = "calPerMin", nullable = false)
+  @Column(name = "cal_per_min", nullable = false)
   private Double calPerMin;
+
+  @OneToMany(mappedBy = "sport", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Workout> workouts = new ArrayList<>();
 
   public Sport() {}
 
@@ -29,27 +36,35 @@ public class Sport implements Serializable {
     this.calPerMin = calPerMin;
   }
 
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public Long getId() {
-    return this.id;
+    return id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Double getCaloryPerMinutes() {
+    return calPerMin;
   }
 
   public void setId(Long id) {
     this.id = id;
   }
 
-  public Double getCaloryPerMinutes() {
-    return this.calPerMin;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public void setCaloryPerMinutes(Double calPerMin) {
     this.calPerMin = calPerMin;
+  }
+
+  public List<Workout> getWorkouts() {
+    return workouts;
+  }
+
+  public void setWorkouts(List<Workout> workouts) {
+    this.workouts = workouts;
   }
 }
