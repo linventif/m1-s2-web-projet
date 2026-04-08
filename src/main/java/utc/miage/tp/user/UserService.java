@@ -3,6 +3,7 @@ package utc.miage.tp.user;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public List<User> getAllUser() {
+  public List<User> getAll() {
     List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
     return users;

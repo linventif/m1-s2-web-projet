@@ -4,5 +4,6 @@ public enum ChallengeType {
   DISTANCE,
   DUREE,
   CALORIE,
-  REPETITION
+  REPETITION,
+  ENDURENCE
 }

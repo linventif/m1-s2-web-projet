@@ -1,8 +1,10 @@
 package utc.miage.tp.workout;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import utc.miage.tp.user.User;
 
 @Service
@@ -32,7 +34,7 @@ public class WorkoutService {
   }
 
   @Transactional(readOnly = true)
-  public List<Workout> getAllWorkout() {
+  public List<Workout> getAll() {
     return workoutRepository.findAll();
   }
 

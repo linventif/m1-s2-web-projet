@@ -1,7 +1,7 @@
 package utc.miage.tp.user;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -80,19 +82,19 @@ public class UserController {
 
   @GetMapping("/users")
   public String showAllUsers(Model model) {
-    model.addAttribute("users", userService.getAllUser());
+    model.addAttribute("users", userService.getAll());
     return "user-users";
   }
 
   @GetMapping("/friends")
   public String showAllFriends(Model model) {
-    model.addAttribute("users", userService.getAllUser());
+    model.addAttribute("users", userService.getAll());
     return "user-friends";
   }
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workout", workoutService.getAllWorkout());
+    model.addAttribute("workout", workoutService.getAll());
     return "user-workout";
   }
 

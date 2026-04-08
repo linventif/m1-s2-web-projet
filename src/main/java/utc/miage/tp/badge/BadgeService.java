@@ -1,6 +1,7 @@
 package utc.miage.tp.badge;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,7 @@ public class BadgeService {
   }
 
   @Transactional(readOnly = true)
-  public List<Badge> getAllStatuts() {
+  public List<Badge> getAll() {
     return badgeRepository.findAll();
   }
 }
