@@ -1,14 +1,5 @@
 package utc.miage.tp.user;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +14,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import utc.miage.tp.badge.Badge;
 import utc.miage.tp.goal.Goal;
 import utc.miage.tp.sport.Sport;
@@ -37,7 +35,10 @@ public class User implements UserDetails {
   private Long id;
 
   @Column(nullable = false)
-  private String name;
+  private String firstname;
+
+  @Column(nullable = false)
+  private String lastname;
 
   @Column(nullable = false, unique = true)
   private String email;
@@ -89,7 +90,7 @@ public class User implements UserDetails {
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "badge_id"))
   private List<Badge> badges = new ArrayList<>();
-  
+
   @ManyToOne
   @JoinTable(
       name = "friends",
@@ -100,7 +101,8 @@ public class User implements UserDetails {
   public User() {}
 
   public User(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       String password,
       Double weight,
@@ -108,7 +110,8 @@ public class User implements UserDetails {
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.email = email;
     this.password = password;
     this.weight = weight;
@@ -119,14 +122,16 @@ public class User implements UserDetails {
   }
 
   public User(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       Double weight,
       Double height,
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.email = email;
     this.weight = weight;
     this.height = height;
@@ -147,8 +152,12 @@ public class User implements UserDetails {
     return id;
   }
 
-  public String getName() {
-    return name;
+  public String getFirstname() {
+    return firstname;
+  }
+
+  public String getLastname() {
+    return lastname;
   }
 
   public String getEmail() {
@@ -203,8 +212,12 @@ public class User implements UserDetails {
     this.role = role;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
+  }
+
+  public void setLastname(String lastname) {
+    this.lastname = lastname;
   }
 
   public void setEmail(String email) {
@@ -246,7 +259,7 @@ public class User implements UserDetails {
   public void removeSport(Sport sport) {
     this.sports.remove(sport);
   }
-  
+
   @Override
   public String getUsername() {
     return this.email;

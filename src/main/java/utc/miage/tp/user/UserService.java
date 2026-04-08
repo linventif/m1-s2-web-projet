@@ -53,7 +53,8 @@ public class UserService implements UserDetailsService {
 
     User newUser =
         new User(
-            user.getName(),
+            user.getFirstname(),
+            user.getLastname(),
             normalizedEmail,
             user.getWeight(),
             user.getHeight(),
@@ -109,7 +110,8 @@ public class UserService implements UserDetailsService {
   public User registerUser(RegistrationDTO registrationDTO, boolean isAdmin) {
     // 1. Encode the password
     User user = new User();
-    user.setName(registrationDTO.name());
+    user.setFirstname(registrationDTO.firstname());
+    user.setLastname(registrationDTO.lastname());
     user.setEmail(registrationDTO.email());
     user.setPassword(registrationDTO.password());
     user.setPassword(passwordEncoder.encode(user.getPassword()));

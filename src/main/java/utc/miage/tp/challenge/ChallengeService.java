@@ -1,7 +1,6 @@
 package utc.miage.tp.challenge;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,7 @@ public class ChallengeService {
     this.challengeRepository = challengeRepository;
   }
 
-   @Transactional
+  @Transactional
   public Challenge createChallenge(Challenge challenge) {
     Challenge newChallenge =
         new Challenge(

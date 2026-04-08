@@ -45,7 +45,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     List<User> users =
         List.of(
             createUser(
-                "Alice Martin",
+                "Alice",
+                "Martin",
                 "alice.martin@demo.local",
                 65.5,
                 165.0,
@@ -53,7 +54,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDate.of(2024, 3, 31),
                 PracticeLevel.BEGINNER),
             createUser(
-                "Benoit Leroy",
+                "Benoit",
+                "Leroy",
                 "benoit.leroy@demo.local",
                 75.5,
                 180.0,
@@ -61,7 +63,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDate.of(2018, 3, 31),
                 PracticeLevel.INTERMEDIATE),
             createUser(
-                "Owen Mercier",
+                "Owen",
+                "Mercier",
                 "owen.mercier@demo.local",
                 85.0,
                 185.0,
@@ -110,14 +113,15 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   }
 
   private User createUser(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       Double weight,
       Double height,
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    User user = new User(name, email, weight, height, sex, birthDate, level);
+    User user = new User(firstname, lastname, email, weight, height, sex, birthDate, level);
     user.setPassword(passwordEncoder.encode("demo123"));
     user.setRole(Role.USER);
     return user;

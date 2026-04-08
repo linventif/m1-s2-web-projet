@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
+
 <body class="min-h-screen bg-base-200 text-base-content">
   <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
@@ -20,7 +22,8 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Nom de famille</th>
                 <!-- <th>Email</th> -->
                 <th>Ami</th>
               </tr>
@@ -28,11 +31,12 @@
             <tbody>
               <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
-                <td class="font-semibold" th:text="${user.name}"></td>
+                <td class="font-semibold" th:text="${user.firstname}"></td>
+                <td class="font-semibold" th:text="${user.lastname}"></td>
                 <td>
 
                   <button class="btn btn-outside">
-                      Demander en Ami
+                    Demander en Ami
                   </button>
                 </td>
                 <!-- <td>
@@ -56,18 +60,19 @@
 
         <div class="flex gap-10 ">
           <div class="flex gap-2">
-          <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
           </div>
           <div class="flex gap-2">
-              <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
-              <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
+            <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
+            <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 </body>
+
 </html>

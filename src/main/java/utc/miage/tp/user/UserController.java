@@ -1,7 +1,6 @@
 package utc.miage.tp.user;
 
 import java.util.List;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -11,20 +10,36 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import jakarta.servlet.http.HttpSession;
+import utc.miage.tp.badge.BadgeService;
+import utc.miage.tp.challenge.ChallengeService;
+import utc.miage.tp.goal.GoalService;
+import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
-  private final WorkoutService workoutService;
   private final UserService userService;
+  private final WorkoutService workoutService;
+  private final SportService sportService;
+  private final GoalService goalService;
+  private final ChallengeService challengeService;
+  private final BadgeService badgeService;
 
-  public UserController(UserService userService, WorkoutService workoutService) {
+  public UserController(
+      UserService userService,
+      WorkoutService workoutService,
+      SportService sportService,
+      GoalService goalService,
+      ChallengeService challengeService,
+      BadgeService badgeService) {
     this.userService = userService;
     this.workoutService = workoutService;
+    this.sportService = sportService;
+    this.goalService = goalService;
+    this.challengeService = challengeService;
+    this.badgeService = badgeService;
   }
 
   @GetMapping({"", "/"})
@@ -53,7 +68,12 @@ public class UserController {
           userService.createUser(
               user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
       model.addAttribute(
-          "message", "Utilisateur ajoute avec succes : " + createdUser.getName() + ".");
+          "message",
+          "Utilisateur ajoute avec succes : "
+              + createdUser.getFirstname()
+              + " "
+              + createdUser.getLastname()
+              + ".");
       return "user-list";
     } catch (IllegalArgumentException exception) {
       populateUserCreationForm(model, user);
@@ -82,22 +102,20 @@ public class UserController {
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workout", workoutService.getAll());
+    model.addAttribute("workouts", workoutService.getAll());
     return "user-workout";
   }
 
   @GetMapping("/dashbord")
   public String showDashbord(Model model) {
-    model.addAttribute("user", userService.getUserById(1l));
-    model.addAttribute("stats", "stats");
-    model.addAttribute("goals", "goals");
-    model.addAttribute("recentActivities", "recentActivities");
-    model.addAttribute("activeChallenges", "activeChallenges");
-    model.addAttribute("badges", "badges");
-    model.addAttribute("activeFriends", "activeFriends");
+    model.addAttribute("goals", goalService.getAll());
+    model.addAttribute("workouts", workoutService.getAll());
+    model.addAttribute("activeChallenges", challengeService.getAll());
+    model.addAttribute("badges", badgeService.getAll());
+    model.addAttribute("activeFriends", null);
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
-    return "dashboard";
+    return "dashbord";
   }
 
   // @GetMapping("/myfriends")

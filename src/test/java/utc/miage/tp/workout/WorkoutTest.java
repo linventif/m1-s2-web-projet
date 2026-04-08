@@ -17,6 +17,7 @@ class WorkoutTest {
     User user =
         new User(
             "Alice",
+            "Marchand",
             "alice@example.com",
             60.0,
             165.0,

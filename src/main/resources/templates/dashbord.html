@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Suivi sportif</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+</head>
+
+<body class="min-h-screen bg-base-200 text-base-content">
+
+    <!-- Navbar -->
+    <div class="navbar border-b border-base-300 bg-base-100 px-4 lg:px-8 shadow-sm sticky top-0 z-50">
+        <div class="navbar-start">
+            <a class="btn btn-ghost text-xl font-bold" th:href="@{/dashboard}">
+                SuiviSport
+            </a>
+        </div>
+
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal gap-1 px-1">
+                <li><a th:href="@{/dashboard}" class="active">Dashboard</a></li>
+                <li><a th:href="@{/workouts}">Activités</a></li>
+                <li><a th:href="@{/challenges}">Challenges</a></li>
+                <li><a th:href="@{/friends}">Amis</a></li>
+                <li><a th:href="@{/profile}">Profil</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-end gap-2">
+            <div class="hidden md:flex items-center gap-2 rounded-full bg-base-200 px-4 py-2 text-sm"
+                sec:authorize="isAuthenticated()">
+                <div class="placeholder">
+                    <div class="bg-primary text-primary-content rounded-full w-8">
+                        <span class="text-xs" sec:authentication="name">U</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="leading-none text-xs text-base-content/70">Connecté</p>
+                    <p class="font-semibold leading-none" sec:authentication="name">Utilisateur</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 lg:px-8 space-y-6">
+
+        <!-- Hero -->
+        <section class="hero rounded-3xl bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg">
+            <div class="hero-content w-full justify-between flex-col lg:flex-row items-start lg:items-center">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold">Mon dashboard</h1>
+                    <p class="mt-2 text-primary-content/80 max-w-2xl">
+                        Visualise tes activités, tes objectifs, tes challenges et l’évolution de ta pratique.
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <div class="badge badge-lg badge-outline border-primary-content/30 text-primary-content"
+                            th:if="${currentMonthLabel != null}" th:text="${currentMonthLabel}">
+                            Avril 2026
+                        </div>
+
+                        <div class="badge badge-lg bg-base-100 text-base-content border-0"
+                            th:if="${mainGoalLabel != null}" th:text="${mainGoalLabel}">
+                            Objectif : 50 km
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 text-base-content mt-6 lg:mt-0">
+                    <div class="stat">
+                        <div class="stat-title">Activités</div>
+                        <div class="stat-value text-primary" th:text="${workouts != null ? workouts.size() : 0}">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Challenges</div>
+                        <div class="stat-value text-secondary"
+                            th:text="${activeChallenges != null ? activeChallenges.size() : 0}">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Badges</div>
+                        <div class="stat-value" th:text="${badges != null ? badges.size() : 0}">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <!-- Colonne principale -->
+            <div class="xl:col-span-2 space-y-6">
+
+                <!-- Objectifs -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex items-center justify-between">
+                            <h2 class="card-title text-xl">Objectifs</h2>
+                            <a th:href="@{/profile}" class="btn btn-sm btn-outline">Modifier</a>
+                        </div>
+
+                        <div class="space-y-5 mt-2" th:if="${goals != null and !#lists.isEmpty(goals)}">
+                            <div th:each="goal : ${goals}" class="rounded-2xl bg-base-200 p-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                                    <span class="font-semibold" th:text="${goal.label}">Courir 50 km / mois</span>
+                                    <span class="text-sm font-medium">
+                                        <span th:text="${goal.currentValue}">20</span> /
+                                        <span th:text="${goal.targetValue}">50</span>
+                                        <span th:text="${goal.unit}">km</span>
+                                    </span>
+                                </div>
+
+                                <progress class="progress progress-primary w-full" th:value="${goal.progressPercent}"
+                                    max="100"></progress>
+
+                                <div class="mt-2 text-right text-xs text-base-content/70">
+                                    <span th:text="${goal.progressPercent}">40</span>%
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert mt-3" th:if="${goals == null or #lists.isEmpty(goals)}">
+                            <span>Aucun objectif défini pour le moment.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dernières activités -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex items-center justify-between">
+                            <h2 class="card-title text-xl">Dernières activités</h2>
+                            <a th:href="@{/workouts}" class="btn btn-sm btn-outline">Voir tout</a>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-2xl border border-base-300 mt-2">
+                            <table class="table table-zebra">
+                                <thead class="bg-base-200">
+                                    <tr>
+                                        <th>Sport</th>
+                                        <th>Date</th>
+                                        <th>Durée</th>
+                                        <th>Distance</th>
+                                        <th>Calories</th>
+                                        <th>Météo</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="workout : ${workouts}">
+                                        <td>
+                                            <div class="flex items-center gap-2">
+                                                <div class="badge badge-primary badge-outline"
+                                                    th:text="${workout.sport != null ? workout.sport.name : 'Sport'}">
+                                                    Course
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td
+                                            th:text="${workout.date != null ? #temporals.format(workout.date, 'dd/MM/yyyy') : '-'}">
+                                            07/04/2026
+                                        </td>
+
+                                        <td>
+                                            <span th:text="${workout.duration}">45</span> min
+                                        </td>
+
+                                        <td>
+                                            <span th:text="${workout.distance}">8.4</span> km
+                                        </td>
+
+                                        <!-- Si ton getter Java est getCalorieBurn(), l'expression Thymeleaf correcte est calorieBurn -->
+                                        <td th:text="${workout.calorieBurn}">560</td>
+
+                                        <td>
+                                            <span class="badge badge-outline" th:if="${workout.weather != null}"
+                                                th:text="${workout.weather.nom}">
+                                                Ensoleillé
+                                            </span>
+                                            <span class="badge badge-ghost" th:if="${workout.weather == null}">
+                                                Non disponible
+                                            </span>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <a class="btn btn-xs btn-ghost"
+                                                th:href="@{/workout/{id}(id=${workout.id})}">
+                                                Détail
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr th:if="${workouts == null or #lists.isEmpty(workouts)}">
+                                        <td colspan="7" class="text-center text-base-content/60 py-8">
+                                            Aucune activité récente.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Challenges -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex items-center justify-between">
+                            <h2 class="card-title text-xl">Challenges en cours</h2>
+                            <a th:href="@{/challenges}" class="btn btn-sm btn-outline">Voir tout</a>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mt-2"
+                            th:if="${activeChallenges != null and !#lists.isEmpty(activeChallenges)}">
+                            <article class="card bg-base-200 border border-base-300 shadow-sm"
+                                th:each="challenge : ${activeChallenges}">
+                                <div class="card-body">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <h3 class="font-bold text-lg" th:text="${challenge.title}">
+                                            10 km cette semaine
+                                        </h3>
+                                        <span class="badge badge-primary" th:text="${challenge.rankLabel}">
+                                            Top 3
+                                        </span>
+                                    </div>
+
+                                    <p class="text-sm text-base-content/70" th:text="${challenge.description}">
+                                        Description du challenge
+                                    </p>
+
+                                    <div class="text-sm font-medium">
+                                        Progression :
+                                        <span class="font-semibold" th:text="${challenge.progressLabel}">8 / 10
+                                            km</span>
+                                    </div>
+
+                                    <progress class="progress progress-secondary w-full"
+                                        th:value="${challenge.progressPercent}" max="100"></progress>
+
+                                    <div class="card-actions justify-end">
+                                        <a class="btn btn-sm btn-primary"
+                                            th:href="@{/challenges/{id}(id=${challenge.id})}">
+                                            Classement
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+
+                        <div class="alert mt-3" th:if="${activeChallenges == null or #lists.isEmpty(activeChallenges)}">
+                            <span>Aucun challenge actif.</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Colonne droite -->
+            <aside class="space-y-6">
+
+                <!-- Profil -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex items-center justify-between">
+                            <h2 class="card-title text-xl">Mon profil</h2>
+                            <div class="badge badge-primary badge-outline" sec:authorize="isAuthenticated()">
+                                Connecté
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 text-sm" sec:authorize="isAuthenticated()">
+                            <div class="flex justify-between gap-3">
+                                <span class="font-semibold">Utilisateur</span>
+                                <span sec:authentication="name">utilisateur</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3">
+                                <span class="font-semibold">Prénom</span>
+                                <span sec:authentication="principal.firstname">Prénom</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3">
+                                <span class="font-semibold">Nom</span>
+                                <span sec:authentication="principal.lastname">Nom</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3">
+                                <span class="font-semibold">Niveau</span>
+                                <span sec:authentication="principal.level">Intermédiaire</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3" sec:authorize="principal.sport != null">
+                                <span class="font-semibold">Sport favori</span>
+                                <span sec:authentication="principal.sport.name">Course</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3" sec:authorize="principal.weight != null">
+                                <span class="font-semibold">Poids</span>
+                                <span sec:authentication="principal.weight">70</span>
+                                <span>kg</span>
+                            </div>
+
+                            <div class="flex justify-between gap-3" sec:authorize="principal.height != null">
+                                <span class="font-semibold">Taille</span>
+                                <span sec:authentication="principal.height">175</span>
+                                <span>cm</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning mt-3" sec:authorize="!isAuthenticated()">
+                            <span>Utilisateur non authentifié.</span>
+                        </div>
+
+                        <div class="card-actions justify-end mt-2">
+                            <a th:href="@{/profile}" class="btn btn-sm btn-outline">Voir le profil</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Badges -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex justify-between items-center">
+                            <h2 class="card-title text-xl">Badges</h2>
+                            <span class="badge badge-secondary" th:text="${badges != null ? badges.size() : 0}">0</span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 mt-2" th:if="${badges != null and !#lists.isEmpty(badges)}">
+                            <span class="badge badge-lg badge-outline" th:each="badge : ${badges}"
+                                th:text="${badge.name}">
+                                Premier 5 km
+                            </span>
+                        </div>
+
+                        <div class="alert mt-3" th:if="${badges == null or #lists.isEmpty(badges)}">
+                            <span>Aucun badge obtenu pour le moment.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Amis -->
+                <section class="card bg-base-100 shadow-md border border-base-300">
+                    <div class="card-body">
+                        <div class="flex justify-between items-center">
+                            <h2 class="card-title text-xl">Amis actifs</h2>
+                            <a th:href="@{/friends}" class="btn btn-sm btn-outline">Voir tous</a>
+                        </div>
+
+                        <div class="space-y-3 mt-2" th:if="${activeFriends != null and !#lists.isEmpty(activeFriends)}">
+                            <div class="flex items-center justify-between rounded-2xl bg-base-200 border border-base-300 p-4"
+                                th:each="friend : ${activeFriends}">
+                                <div>
+                                    <div class="font-semibold" th:text="${friend.fullName}">Sarah Dupont</div>
+                                    <div class="text-sm text-base-content/70" th:text="${friend.lastActivityLabel}">
+                                        Course - il y a 2 heures
+                                    </div>
+                                </div>
+                                <a class="btn btn-xs btn-ghost" th:href="@{/friends/{id}(id=${friend.id})}">
+                                    Profil
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="alert mt-3" th:if="${activeFriends == null or #lists.isEmpty(activeFriends)}">
+                            <span>Aucun ami actif actuellement.</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+</body>
+
+</html>

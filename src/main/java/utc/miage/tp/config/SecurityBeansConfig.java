@@ -27,6 +27,8 @@ public class SecurityBeansConfig {
 
                     // 3. Tout le reste est accessible aux USER (et ADMIN car l'admin a tous les
                     // droits)
+                    .requestMatchers("/.well-known/**")
+                    .permitAll()
                     .anyRequest()
                     .hasAnyRole("USER", "ADMIN"))
         .formLogin(
