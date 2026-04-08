@@ -38,8 +38,12 @@ jobs:
 
       - name: Add coverage summary
         run: |
-          COVERAGE=$(awk -F',' 'NR > 1 { missed += $4; covered += $5 } END { total = missed + covered; if (total == 0) { print 100 } else { printf "%d\n", int((covered * 100 + total / 2) / total) } }' target/site/jacoco/jacoco.csv)
-          echo "JaCoCo coverage: ${COVERAGE}%" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f target/site/jacoco/jacoco.csv ]; then
+            COVERAGE=$(awk -F',' 'NR > 1 { missed += $4; covered += $5 } END { total = missed + covered; if (total == 0) { print 100 } else { printf "%d\n", int((covered * 100 + total / 2) / total) } }' target/site/jacoco/jacoco.csv)
+            echo "JaCoCo coverage: ${COVERAGE}%" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "JaCoCo coverage: unavailable (report not generated)." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Upload coverage report
         if: always()
@@ -47,11 +51,12 @@ jobs:
         with:
           name: coverage-report
           path: target/site/jacoco
+          if-no-files-found: warn
 
       - name: Run Sonar analysis
         if: env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != ''
         run: |
           mvn -B sonar:sonar \
-            -Dsonar.projectKey=linventif_m1-s2-indu_AZzXDvGQXwM5IsPrSNyK \
+            -Dsonar.projectKey=linventif_m1-s2-web-projet_AZ1noB8aXwM5IsPrSN1- \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.token=$SONAR_TOKEN

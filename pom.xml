@@ -10,9 +10,9 @@
 <!-- lookup parent from repository -->
 	</parent>
 	<groupId>utc.miage</groupId>
-	<artifactId>tp</artifactId>
+<artifactId>tp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tp</name>
+<name>tp</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -31,6 +31,7 @@
 		<java.version>21</java.version>
 		<spotless.version>2.44.4</spotless.version>
 		<google-java-format.version>1.25.2</google-java-format.version>
+		<jacoco.version>0.8.12</jacoco.version>
 	</properties>
 	<dependencies>
 <dependency>
@@ -54,7 +55,7 @@
 <dependency>
 	<groupId>io.springfox</groupId>
 	<artifactId>springfox-swagger-ui</artifactId>
-	<version>2.9.2</version>
+	<version>2.10.0</version>
 </dependency>
 
 		<dependency>
@@ -79,6 +80,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -113,6 +119,33 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>jacoco-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<formats>
+								<format>CSV</format>
+								<format>XML</format>
+								<format>HTML</format>
+							</formats>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

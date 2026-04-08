@@ -1,9 +1,9 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: m1-s2-web
+    container_name: m1-s2-tp
     environment:
-      POSTGRES_DB: conferences
+      POSTGRES_DB: projet
       POSTGRES_USER: psql
       POSTGRES_PASSWORD: psql
     ports:
@@ -11,7 +11,7 @@ services:
     tmpfs:
       - /var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U psql -d conferences"]
+      test: ["CMD-SHELL", "pg_isready -U psql -d projet"]
       interval: 10s
       timeout: 5s
       retries: 5
