@@ -1,6 +1,7 @@
 package utc.miage.tp.user;
 
 import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -67,20 +70,34 @@ public class UserController {
 
   @GetMapping("/users")
   public String showAllUsers(Model model) {
-    model.addAttribute("users", userService.getAllUser());
+    model.addAttribute("users", userService.getAll());
     return "user-users";
   }
 
   @GetMapping("/friends")
   public String showAllFriends(Model model) {
-    model.addAttribute("users", userService.getAllUser());
+    model.addAttribute("users", userService.getAll());
     return "user-friends";
   }
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workout", workoutService.getAllWorkout());
+    model.addAttribute("workout", workoutService.getAll());
     return "user-workout";
+  }
+
+  @GetMapping("/dashbord")
+  public String showDashbord(Model model) {
+    model.addAttribute("user", userService.getUserById(1l));
+    model.addAttribute("stats", "stats");
+    model.addAttribute("goals", "goals");
+    model.addAttribute("recentActivities", "recentActivities");
+    model.addAttribute("activeChallenges", "activeChallenges");
+    model.addAttribute("badges", "badges");
+    model.addAttribute("activeFriends", "activeFriends");
+    model.addAttribute("currentMonthLabel", "Avril 2026");
+    model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+    return "dashboard";
   }
 
   // @GetMapping("/myfriends")

@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional(readOnly = true)
-  public List<User> getAllUser() {
+  public List<User> getAll() {
     List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
     return users;
@@ -53,7 +53,13 @@ public class UserService implements UserDetailsService {
 
     User newUser =
         new User(
-            user.getName(), normalizedEmail, user.getWeight(), user.getHeight(), user.getSex());
+            user.getName(),
+            normalizedEmail,
+            user.getWeight(),
+            user.getHeight(),
+            user.getSex(),
+            user.getBirthDate(),
+            user.getLevel());
     newUser.setPassword(passwordEncoder.encode(rawPassword));
 
     User savedUser = userRepository.save(newUser);

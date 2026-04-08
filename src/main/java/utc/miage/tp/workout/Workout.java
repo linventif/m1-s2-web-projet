@@ -1,6 +1,9 @@
 package utc.miage.tp.workout;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,68 +12,67 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
+import utc.miage.tp.weather.Weather;
 
 @Entity
 @Table(name = "workout")
 public class Workout {
+
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "date", nullable = false)
-  @ColumnDefault("current_date")
+  @Column(nullable = false)
   private LocalDate date;
 
-  @Column(name = "distance", nullable = false)
+  @Column(nullable = false)
   private Double distance;
 
-  @Column(name = "duration", nullable = false)
+  @Column(nullable = false)
   private Double duration;
 
-  @ManyToOne
-  @JoinColumn(name = "sport", nullable = false)
+  @Column(name = "rating")
+  private Integer rating; // note de 1 à 5 par exemple
+
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name = "date", column = @Column(name = "weather_date")),
+    @AttributeOverride(name = "nom", column = @Column(name = "weather_nom"))
+  })
+  @Column(name = "weather_")
+  private Weather weather;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "sport_id")
   private Sport sport;
 
-  @ManyToOne
-  @JoinColumn(name = "userX", nullable = false)
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "user_id")
   private User user;
-
-  public Sport getSport() {
-    return sport;
-  }
-
-  public void setSport(Sport sport) {
-    this.sport = sport;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
 
   public Workout() {}
 
-  public Workout(LocalDate date, Double distance, Double duration, Sport sport, User user) {
+  public Workout(
+      LocalDate date,
+      Double distance,
+      Double duration,
+      Integer rating,
+      Weather weather,
+      Sport sport,
+      User user) {
     this.date = date;
     this.distance = distance;
     this.duration = duration;
+    this.rating = rating;
+    this.weather = weather;
     this.sport = sport;
     this.user = user;
   }
 
   public Long getId() {
     return id;
-  }
-
-  public Double getCalorieBurn() {
-    return (this.duration / 60) * this.sport.getCaloryPerMinutes();
   }
 
   public LocalDate getDate() {
@@ -83,6 +85,29 @@ public class Workout {
 
   public Double getDuration() {
     return duration;
+  }
+
+  public Integer getRating() {
+    return rating;
+  }
+
+  public Weather getWeather() {
+    return weather;
+  }
+
+  public Sport getSport() {
+    return sport;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public Double getCalorieBurn() {
+    if (sport == null || sport.getCaloryPerMinutes() == null || duration == null) {
+      return 0.0;
+    }
+    return (duration / 60.0) * sport.getCaloryPerMinutes();
   }
 
   public void setId(Long id) {
@@ -99,5 +124,17 @@ public class Workout {
 
   public void setDuration(Double duration) {
     this.duration = duration;
+  }
+
+  public void setRating(Integer rating) {
+    this.rating = rating;
+  }
+
+  public void setWeather(Weather weather) {
+    this.weather = weather;
+  }
+
+  public void setSport(Sport sport) {
+    this.sport = sport;
   }
 }
