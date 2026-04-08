@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportRepository;
 import utc.miage.tp.user.PracticeLevel;
+import utc.miage.tp.user.Role;
 import utc.miage.tp.user.Sex;
 import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserRepository;
@@ -118,6 +119,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       PracticeLevel level) {
     User user = new User(name, email, weight, height, sex, birthDate, level);
     user.setPassword(passwordEncoder.encode("demo123"));
+    user.setRole(Role.USER);
     return user;
   }
 }

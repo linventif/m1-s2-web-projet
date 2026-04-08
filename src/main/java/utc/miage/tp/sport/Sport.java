@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import utc.miage.tp.workout.Workout;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "sport")
-public class Sport {
-
+public class Sport implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

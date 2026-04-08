@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr" 
+    xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - My App</title>
+    <link 
+        href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" 
+        rel="stylesheet" 
+        type="text/css" 
+        crossorigin="anonymous" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-base-200 min-h-screen flex items-center justify-center p-4">
+
+    <div class="card w-full max-w-md shadow-2xl bg-base-100">
+        <div class="card-body">
+            <h2 class="card-title text-2xl font-bold mb-2">Créer un compte</h2>
+            <p class="text-sm text-base-content/70 mb-6">Rejoignez-nous en quelques clics.</p>
+
+            <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
+                
+                <div class="form-control">
+                    <label class="label" for="name">
+                        <span class="label-text">Nom complet</span>
+                    </label>
+                    <input id="name" type="text" th:field="*{name}" placeholder="Jean Dupont" 
+                           class="input input-bordered focus:input-primary" required />
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="email">
+                        <span class="label-text">Email</span>
+                    </label>
+                    <input id="email" type="email" th:field="*{email}" placeholder="jean@example.com" 
+                           class="input input-bordered focus:input-primary" required />
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="sex">
+                        <span class="label-text">Sexe</span>
+                    </label>
+                    <select id="sex" th:field="*{sex}" class="select select-bordered focus:select-primary w-full">
+                        <option value="" disabled selected>Sélectionnez votre sexe</option>
+                        <option th:each="s : ${T(utc.miage.tp.user.Sex).values()}" 
+                                th:value="${s}" 
+                                th:text="${s}"></option>
+                    </select>
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="password">
+                        <span class="label-text">Mot de passe</span>
+                    </label>
+                    <input id="password" type="password" th:field="*{password}" placeholder="••••••••" 
+                           class="input input-bordered focus:input-primary" required />
+                </div>
+
+                <div class="form-control mt-6">
+                    <button type="submit" class="btn btn-primary w-full">S'inscrire</button>
+                </div>
+            </form>
+
+            <div class="divider">OU</div>
+
+            <p class="text-center text-sm">
+                Déjà un compte ? 
+                <a th:href="@{/login}" class="link link-primary font-semibold">Connectez-vous</a>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>
