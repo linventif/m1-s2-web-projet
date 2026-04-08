@@ -1,5 +1,6 @@
 package utc.miage.tp.config;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.boot.CommandLineRunner;
@@ -384,7 +385,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 4, 10, 0), 6.0, 45.0, 4, null, sportEnduranceMixte, userHiccup),
             createWorkout(
                 LocalDateTime.of(2026, 4, 11, 10, 0), 8.3, 52.0, 5, null, sportCoursePied, userHiccup),
-            createWorkout(LocalDateTime.of(2026, 4, 3), 5.5, 41.0, 4, null, sportFootball, userAstrid),
+            createWorkout(LocalDateTime.of(2026, 4, 3, 10, 0), 5.5, 41.0, 4, null, sportFootball, userAstrid),
             createWorkout(
                 LocalDateTime.of(2026, 4, 7, 10, 0), 4.6, 36.0, 4, null, sportEscaladeVitesse, userAstrid),
             createWorkout(

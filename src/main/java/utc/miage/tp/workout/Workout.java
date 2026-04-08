@@ -80,10 +80,6 @@ public class Workout {
     return id;
   }
 
-  public Double getCalorieBurn() {
-    return (this.duration / 60) * this.sport.getCaloryPerMinutes();
-  }
-
   public LocalDateTime getDate() {
     return date;
   }
