@@ -19,6 +19,7 @@ import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.workout.WorkoutService;
 
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -86,6 +87,17 @@ public class UserController {
     return "user-users";
   }
 
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
+        try {
+            userService.registerUser(registrationDTO);
+            model.addAttribute("message", "Compte créé avec succès !");
+            return "user-login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "user-create";
+        }
+      }
   @GetMapping("/friends")
   public String showAllFriends(@AuthenticationPrincipal User currentUser, Model model) {
     populateFriendshipContext(currentUser, model);
