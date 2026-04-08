@@ -41,32 +41,42 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   }
 
   private void seedDemoData() {
-    List<User> users =
-        List.of(
-            createUser("Alice Martin", "alice.martin@demo.local", 65.5, 165.0, Sex.FEMALE),
-            createUser("Benoit Leroy", "benoit.leroy@demo.local", 75.5, 180.0, Sex.MALE),
-            createUser("Owen Mercier", "owen.mercier@demo.local", 85.0, 185.0, Sex.MALE));
+    // Users
+    User userAlice = createUser("Alice Martin", "alice.martin@demo.local", 65.5, 165.0, Sex.FEMALE);
+    User userBenoit = createUser("Benoit Leroy", "benoit.leroy@demo.local", 75.5, 180.0, Sex.MALE);
+    User userOwen = createUser("Owen Mercier", "owen.mercier@demo.local", 85.0, 185.0, Sex.MALE);
+    userRepository.saveAll(List.of(
+        userAlice,
+        userBenoit,
+        userOwen));
 
-    userRepository.saveAll(users);
+    // Friends
+    userAlice.addFriends(userOwen);
+    userRepository.save(userAlice);
 
-    List<Sport> sports =
-        List.of(
-            createSport("Climbing - Speed", 3.0),
-            createSport("Climbing - Booldering", 2.0),
-            createSport("Running", 2.0),
-            createSport("Natation", 3.0),
-            createSport("Skydiving", 2.0),
-            createSport("Diving", 2.0));
+    // Sports
+    Sport sportClimbingSpeed = createSport("Climbing - Speed", 3.0);
+    Sport sportClimbingBooldering = createSport("Climbing - Booldering", 2.0);
+    Sport sportRunning = createSport("Running", 2.0);
+    Sport sportNatation = createSport("Natation", 3.0);
+    Sport sportSkydiving = createSport("Skydiving", 2.0);
+    Sport sportDiving = createSport("Diving", 2.0);
+    sportRepository.saveAll(List.of(
+        sportClimbingSpeed,
+        sportClimbingBooldering,
+        sportRunning,
+        sportNatation,
+        sportSkydiving,
+        sportDiving));
 
-    sportRepository.saveAll(sports);
-
-    List<Workout> workouts =
-        List.of(
-            createWorkout(LocalDate.of(2026, 3, 31), 1.0, 30.0, sports.get(3), users.get(1)),
-            createWorkout(LocalDate.of(2026, 3, 30), 1.0, 30.0, sports.get(3), users.get(1)),
-            createWorkout(LocalDate.of(2026, 3, 29), 1.0, 30.0, sports.get(3), users.get(1)));
-
-    workoutRepository.saveAll(workouts);
+    // Workouts
+    Workout workout1 = createWorkout(LocalDate.of(2026, 3, 31), 1.0, 30.0, sportNatation, userBenoit);
+    Workout workout2 = createWorkout(LocalDate.of(2026, 3, 30), 1.0, 30.0, sportNatation, userBenoit);
+    Workout workout3 = createWorkout(LocalDate.of(2026, 3, 29), 1.0, 30.0, sportNatation, userBenoit);
+    workoutRepository.saveAll(List.of(
+        workout1,
+        workout2,
+        workout3));
   }
 
   private Workout createWorkout(
@@ -78,6 +88,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return new Sport(name, calPerMin);
   }
 
+  @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.
   private User createUser(String name, String email, Double weight, Double height, Sex sex) {
     User user = new User(name, email, weight, height, sex);
     user.setPassword(passwordEncoder.encode("demo123"));
