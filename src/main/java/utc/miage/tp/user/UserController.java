@@ -23,7 +23,7 @@ public class UserController {
     this.workoutService = workoutService;
   }
 
-  @GetMapping({ "", "/" })
+  @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
   }
@@ -39,12 +39,15 @@ public class UserController {
       @ModelAttribute User user,
       @RequestParam String password,
       @RequestParam String codeStatut,
-      @RequestParam(name = "organizedConferenceIds", required = false) List<Long> organizedConferenceIds,
-      @RequestParam(name = "participatingConferenceIds", required = false) List<Long> participatingConferenceIds,
+      @RequestParam(name = "organizedConferenceIds", required = false)
+          List<Long> organizedConferenceIds,
+      @RequestParam(name = "participatingConferenceIds", required = false)
+          List<Long> participatingConferenceIds,
       Model model) {
     try {
-      User createdUser = userService.createUser(
-          user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
+      User createdUser =
+          userService.createUser(
+              user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
       model.addAttribute(
           "message", "Utilisateur ajoute avec succes : " + createdUser.getName() + ".");
       return "user-list";
@@ -98,6 +101,20 @@ public class UserController {
       @RequestParam(name = "message", required = false) String message, Model model) {
     model.addAttribute("message", message);
     return "user-login";
+  }
+
+  @GetMapping("/dashbord")
+  public String showDashbord(Model model) {
+    model.addAttribute("user", userService.getUserById(1l));
+    model.addAttribute("stats", "stats");
+    model.addAttribute("goals", "goals");
+    model.addAttribute("recentActivities", "recentActivities");
+    model.addAttribute("activeChallenges", "activeChallenges");
+    model.addAttribute("badges", "badges");
+    model.addAttribute("activeFriends", "activeFriends");
+    model.addAttribute("currentMonthLabel", "Avril 2026");
+    model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+    return "dashboard";
   }
 
   // @GetMapping("/myfriends")

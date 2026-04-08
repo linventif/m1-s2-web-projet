@@ -50,7 +50,13 @@ public class UserService {
 
     User newUser =
         new User(
-            user.getName(), normalizedEmail, user.getWeight(), user.getHeight(), user.getSex());
+            user.getName(),
+            normalizedEmail,
+            user.getWeight(),
+            user.getHeight(),
+            user.getSex(),
+            user.getBirthDate(),
+            user.getLevel());
     newUser.setPassword(passwordEncoder.encode(rawPassword));
 
     User savedUser = userRepository.save(newUser);
