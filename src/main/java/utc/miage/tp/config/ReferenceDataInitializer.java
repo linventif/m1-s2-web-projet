@@ -200,6 +200,44 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1984, 7, 9),
             PracticeLevel.ADVANCED);
 
+    // Users - Kung Fu Panda
+    User userShifu =
+        createUser(
+            "Maitre Shifu",
+            "shifu@demo.local",
+            56.0,
+            152.0,
+            Sex.MALE,
+            LocalDate.of(1982, 1, 12),
+            PracticeLevel.ADVANCED);
+    User userOogway =
+        createUser(
+            "Maitre Oogway",
+            "oogway@demo.local",
+            73.0,
+            168.0,
+            Sex.MALE,
+            LocalDate.of(1970, 5, 9),
+            PracticeLevel.ADVANCED);
+    User userPo =
+        createUser(
+            "Po Ping",
+            "po.ping@demo.local",
+            120.0,
+            182.0,
+            Sex.MALE,
+            LocalDate.of(1996, 11, 4),
+            PracticeLevel.INTERMEDIATE);
+    User userTaiLung =
+        createUser(
+            "Tai Lung",
+            "tai.lung@demo.local",
+            98.0,
+            188.0,
+            Sex.MALE,
+            LocalDate.of(1991, 2, 17),
+            PracticeLevel.ADVANCED);
+
     userRepository.saveAll(
         List.of(
             userAlice,
@@ -217,7 +255,11 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userRodney,
             userCappy,
             userFender,
-            userBigweld));
+            userBigweld,
+            userShifu,
+            userOogway,
+            userPo,
+            userTaiLung));
 
     // Friendships
     friendshipService.createAcceptedFriendship(userAlice.getId(), userOwen.getId());
@@ -236,6 +278,9 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.sendRequest(userHiccup.getId(), userRodney.getId());
     friendshipService.sendRequest(userFender.getId(), userNick.getId());
     friendshipService.sendRequest(userBigweld.getId(), userBogo.getId());
+    friendshipService.createAcceptedFriendship(userShifu.getId(), userPo.getId());
+    friendshipService.createAcceptedFriendship(userOogway.getId(), userShifu.getId());
+    friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
 
     // Sports
     Sport sportCourseCanal = createSport("Course du canal", 9.0);
