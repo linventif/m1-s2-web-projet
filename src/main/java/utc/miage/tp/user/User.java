@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,31 +47,12 @@ public class User implements UserDetails {
       inverseJoinColumns = @JoinColumn(name = "sport_id"))
   private List<Sport> sports = new ArrayList<>();
 
-  @ManyToOne
-  @JoinTable(
-      name = "friends",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "friend_id"))
-  private ArrayList<User> friends;
-
   public Double getWeight() {
     return weight;
   }
 
   public List<Sport> getSports() {
     return this.sports;
-  }
-
-  public List<User> getFriends() {
-    return this.friends;
-  }
-
-  public void addFriends(User user) {
-    this.friends.add(user);
-  }
-
-  public void removeFriends(User user) {
-    this.friends.remove(user);
   }
 
   public void addSports(Sport sport) {
@@ -195,15 +175,21 @@ public class User implements UserDetails {
 
   @Override
   public String toString() {
-    return "User{" +
-        "id=" + id +
-        ", role=" + role +
-        ", weight=" + weight +
-        ", height=" + height +
-        ", sex=" + sex +
-        ", name=" + name +
-        ", email=" + email +
-        ", friends=" + friends +
-        '}';
+    return "User{"
+        + "id="
+        + id
+        + ", role="
+        + role
+        + ", weight="
+        + weight
+        + ", height="
+        + height
+        + ", sex="
+        + sex
+        + ", name="
+        + name
+        + ", email="
+        + email
+        + '}';
   }
 }
