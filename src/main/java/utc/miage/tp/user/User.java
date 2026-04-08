@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
@@ -91,13 +90,6 @@ public class User implements UserDetails {
       inverseJoinColumns = @JoinColumn(name = "badge_id"))
   private List<Badge> badges = new ArrayList<>();
 
-  @ManyToOne
-  @JoinTable(
-      name = "friends",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "friend_id"))
-  private ArrayList<User> friends;
-
   public User() {}
 
   public User(
@@ -140,12 +132,8 @@ public class User implements UserDetails {
     this.level = level;
   }
 
-  public List<Sport> getSports() {
-    return this.sports;
-  }
-
-  public List<User> getFriends() {
-    return this.friends;
+  public User(String name, String email, Double weight, Double height, Sex sex) {
+    this(name, email, weight, height, sex, null, PracticeLevel.BEGINNER);
   }
 
   public Long getId() {
@@ -164,6 +152,7 @@ public class User implements UserDetails {
     return email;
   }
 
+  @Override
   public String getPassword() {
     return password;
   }
@@ -188,6 +177,10 @@ public class User implements UserDetails {
     return level;
   }
 
+  public List<Sport> getSports() {
+    return sports;
+  }
+
   public List<Workout> getWorkouts() {
     return workouts;
   }
@@ -200,16 +193,12 @@ public class User implements UserDetails {
     return badges;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
   public Role getRole() {
     return role;
   }
 
-  public void setRole(Role role) {
-    this.role = role;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public void setFirstname(String firstname) {
@@ -252,6 +241,10 @@ public class User implements UserDetails {
     this.sports = sports;
   }
 
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
   public void addSport(Sport sport) {
     this.sports.add(sport);
   }
@@ -288,5 +281,25 @@ public class User implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return "User{"
+        + "id="
+        + id
+        + ", role="
+        + role
+        + ", weight="
+        + weight
+        + ", height="
+        + height
+        + ", sex="
+        + sex
+        + ", name="
+        + name
+        + ", email="
+        + email
+        + '}';
   }
 }

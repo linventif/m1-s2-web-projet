@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Liste des Ami</title>
+  <title>Mes amis</title>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
@@ -13,52 +13,110 @@
   <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
-        <div class="alert alert-info" th:if="${#lists.isEmpty(users)}">
-          <span>Aucun utilisateur a afficher.</span>
+        <div class="alert alert-success" th:if="${message}">
+          <span th:text="${message}">Action completed.</span>
         </div>
 
-        <div class="overflow-x-auto rounded-box border border-base-300" th:if="${!#lists.isEmpty(users)}">
-          <table class="table table-zebra">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Prenom</th>
-                <th>Nom de Famille</th>
-                <!-- <th>Email</th> -->
-                <th>Ami</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td class="font-semibold" th:text="${user.firstname}"></td>
-                <td class="font-semibold" th:text="${user.lastname}"></td>
-                <td>
-
-                  <button class="btn btn-outside">
-                    Demander en Ami
-                  </button>
-                </td>
-                <!-- <td>
-                    <a class="link link-primary" th:href="|mailto:${user.email}|" th:text="${user.email}"></a>
-                </td> -->
-                <!-- <td>
-                    <span class="badge badge-secondary badge-outline" th:text="${user.statut.nomStatut}">Statut</span>
-                </td>
-                <td>
-                    <span class="text-base-content/70" th:if="${#sets.isEmpty(user.organizedConferences)}">Aucune conference organisee</span>
-                    <ul class="flex flex-wrap gap-2" th:if="${!#sets.isEmpty(user.organizedConferences)}">
-                        <li th:each="conference : ${user.organizedConferences}">
-                            <span class="badge badge-outline badge-primary" th:text="|${conference.titleconf} (ID ${conference.idconf})|"></span>
-                        </li>
-                    </ul>
-                </td> -->
-              </tr>
-            </tbody>
-          </table>
+        <div class="alert alert-error" th:if="${errorMessage}">
+          <span th:text="${errorMessage}">Action failed.</span>
         </div>
 
-        <div class="flex gap-10 ">
+        <div>
+          <h2 class="mb-3 text-lg font-semibold">Demandes recues</h2>
+          <div class="alert alert-info" th:if="${#lists.isEmpty(incomingRequests)}">
+            <span>Aucune demande en attente.</span>
+          </div>
+          <div class="overflow-x-auto rounded-box border border-base-300" th:if="${!#lists.isEmpty(incomingRequests)}">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>De</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="friendship : ${incomingRequests}">
+                  <td class="font-semibold" th:text="${friendship.requester.name}"></td>
+                  <td class="flex gap-2">
+                    <form method="post" th:action="@{/users/friends/accept}">
+                      <input type="hidden" name="friendshipId" th:value="${friendship.id}">
+                      <input type="hidden" name="returnTo" value="/users/friends">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                      <button class="btn btn-success btn-sm" type="submit">Accepter</button>
+                    </form>
+                    <form method="post" th:action="@{/users/friends/refuse}">
+                      <input type="hidden" name="friendshipId" th:value="${friendship.id}">
+                      <input type="hidden" name="returnTo" value="/users/friends">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                      <button class="btn btn-error btn-sm" type="submit">Refuser</button>
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="mb-3 text-lg font-semibold">Demandes en attente</h2>
+          <div class="alert alert-info" th:if="${#lists.isEmpty(outgoingRequests)}">
+            <span>Aucune demande envoyee en attente.</span>
+          </div>
+          <div class="overflow-x-auto rounded-box border border-base-300" th:if="${!#lists.isEmpty(outgoingRequests)}">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Vers</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="friendship : ${outgoingRequests}">
+                  <td class="font-semibold" th:text="${friendship.addressee.name}"></td>
+                  <td>
+                    <span class="badge badge-warning">En attente</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="mb-3 text-lg font-semibold">Mes amis</h2>
+          <div class="alert alert-info" th:if="${#lists.isEmpty(acceptedFriendships)}">
+            <span>Vous n'avez pas encore d'amis.</span>
+          </div>
+          <div class="overflow-x-auto rounded-box border border-base-300" th:if="${!#lists.isEmpty(acceptedFriendships)}">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="friendship : ${acceptedFriendships}">
+                  <td
+                    class="font-semibold"
+                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.name : friendship.requester.name}">
+                  </td>
+                  <td>
+                    <form method="post" th:action="@{/users/friends/unfriend}">
+                      <input type="hidden" name="friendId"
+                        th:value="${friendship.requester.id == currentUserId ? friendship.addressee.id : friendship.requester.id}">
+                      <input type="hidden" name="returnTo" value="/users/friends">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                      <button class="btn btn-warning btn-sm" type="submit">Retirer</button>
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="flex gap-10">
           <div class="flex gap-2">
             <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
             <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
@@ -66,10 +124,10 @@
             <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
           </div>
           <div class="flex gap-2">
-            <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
-            <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
+            <a class="btn btn-outline" th:href="@{/users/create}">Creer un compte</a>
           </div>
         </div>
+      </div>
     </section>
   </main>
 </body>

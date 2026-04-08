@@ -1,6 +1,9 @@
 package utc.miage.tp.user;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -14,7 +17,12 @@ import utc.miage.tp.badge.BadgeService;
 import utc.miage.tp.challenge.ChallengeService;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import utc.miage.tp.friendship.Friendship;
+import utc.miage.tp.friendship.FriendshipService;
+import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.workout.WorkoutService;
+
 
 @Controller
 @RequestMapping("/users")
@@ -26,6 +34,7 @@ public class UserController {
   private final GoalService goalService;
   private final ChallengeService challengeService;
   private final BadgeService badgeService;
+  private final FriendshipService friendshipService;
 
   public UserController(
       UserService userService,
@@ -33,13 +42,15 @@ public class UserController {
       SportService sportService,
       GoalService goalService,
       ChallengeService challengeService,
-      BadgeService badgeService) {
+      BadgeService badgeService, FriendshipService friendshipService) {
     this.userService = userService;
     this.workoutService = workoutService;
     this.sportService = sportService;
     this.goalService = goalService;
     this.challengeService = challengeService;
     this.badgeService = badgeService;
+    this.friendshipService = friendshipService;
+
   }
 
   @GetMapping({"", "/"})
@@ -89,15 +100,145 @@ public class UserController {
   }
 
   @GetMapping("/users")
-  public String showAllUsers(Model model) {
-    model.addAttribute("users", userService.getAll());
+  public String showAllUsers(@AuthenticationPrincipal User currentUser, Model model) {
+    List<User> users =
+        userService.getAll().stream()
+            .filter(user -> !user.getId().equals(currentUser.getId()))
+            .toList();
+    model.addAttribute("users", users);
+    populateFriendshipContext(currentUser, model);
     return "user-users";
   }
 
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
+        try {
+            userService.registerUser(registrationDTO);
+            model.addAttribute("message", "Compte créé avec succès !");
+            return "user-login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "user-create";
+        }
+      }
   @GetMapping("/friends")
-  public String showAllFriends(Model model) {
-    model.addAttribute("users", userService.getAll());
+  public String showAllFriends(@AuthenticationPrincipal User currentUser, Model model) {
+    populateFriendshipContext(currentUser, model);
     return "user-friends";
+  }
+
+  private void populateFriendshipContext(User currentUser, Model model) {
+    List<Friendship> incomingRequests =
+        friendshipService.getIncomingPendingRequests(currentUser.getId());
+    List<Friendship> outgoingRequests =
+        friendshipService.getOutgoingPendingRequests(currentUser.getId());
+    List<Friendship> acceptedFriendships =
+        friendshipService.getAcceptedFriendships(currentUser.getId());
+
+    Map<Long, Long> incomingRequestIdByUserId =
+        incomingRequests.stream()
+            .collect(
+                Collectors.toMap(
+                    friendship -> friendship.getRequester().getId(),
+                    Friendship::getId,
+                    (first, ignored) -> first));
+
+    Set<Long> incomingRequestSenderIds =
+        incomingRequests.stream()
+            .map(friendship -> friendship.getRequester().getId())
+            .collect(Collectors.toSet());
+    Set<Long> outgoingRequestTargetIds =
+        outgoingRequests.stream()
+            .map(friendship -> friendship.getAddressee().getId())
+            .collect(Collectors.toSet());
+    Set<Long> friendIds =
+        acceptedFriendships.stream()
+            .map(
+                friendship ->
+                    friendship.getRequester().getId().equals(currentUser.getId())
+                        ? friendship.getAddressee().getId()
+                        : friendship.getRequester().getId())
+            .collect(Collectors.toSet());
+
+    model.addAttribute("incomingRequests", incomingRequests);
+    model.addAttribute("outgoingRequests", outgoingRequests);
+    model.addAttribute("acceptedFriendships", acceptedFriendships);
+    model.addAttribute("incomingRequestIdByUserId", incomingRequestIdByUserId);
+    model.addAttribute("incomingRequestSenderIds", incomingRequestSenderIds);
+    model.addAttribute("outgoingRequestTargetIds", outgoingRequestTargetIds);
+    model.addAttribute("friendIds", friendIds);
+    model.addAttribute("currentUserId", currentUser.getId());
+  }
+
+  @PostMapping("/friends/request")
+  public String sendFriendRequest(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long targetUserId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
+      if (friendship.getStatus() == FriendshipStatus.ACCEPTED) {
+        redirectAttributes.addFlashAttribute("message", "Friend request auto-accepted.");
+      } else {
+        redirectAttributes.addFlashAttribute("message", "Friend request sent.");
+      }
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
+  @PostMapping("/friends/accept")
+  public String acceptFriendRequest(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendshipId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      friendshipService.acceptRequest(currentUser.getId(), friendshipId);
+      redirectAttributes.addFlashAttribute("message", "Friend request accepted.");
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
+  @PostMapping("/friends/refuse")
+  public String refuseFriendRequest(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendshipId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      friendshipService.refuseRequest(currentUser.getId(), friendshipId);
+      redirectAttributes.addFlashAttribute("message", "Friend request refused.");
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
+  @PostMapping("/friends/unfriend")
+  public String unfriend(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      friendshipService.unfriend(currentUser.getId(), friendId);
+      redirectAttributes.addFlashAttribute("message", "Friend removed.");
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
+  private String resolveReturnTo(String returnTo) {
+    if (returnTo != null && returnTo.startsWith("/users/")) {
+      return returnTo;
+    }
+    return "/users/friends";
   }
 
   @GetMapping("/workout")
@@ -117,30 +258,6 @@ public class UserController {
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
     return "dashbord";
   }
-
-  // @GetMapping("/myfriends")
-  // public String getMethodName(HttpSession session, Model model) {
-  // Object loggedUserId = session.getAttribute("loggedUserId");
-  // if (!(loggedUserId instanceof Long userId)) {
-  // return "redirect:/users/login";
-  // }
-  // return userService.getUserById(userId)
-  // .map(user -> {
-  // model.addAttribute("user", user);
-  // return "user-profile";
-  // })
-  // .orElseGet(() -> {
-  // session.invalidate();
-  // return "redirect:/users/login";
-  // });
-  // }
-
-  // @PostMapping("/friends/add")
-  // public String postMethodName(@RequestBody String entity) {
-  // // TODO: process POST request
-
-  // return entity;
-  // }
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
