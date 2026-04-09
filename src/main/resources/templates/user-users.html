@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
+
 <body class="min-h-screen bg-base-200 text-base-content">
   <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
@@ -29,6 +31,7 @@
               <tr>
                 <th>ID</th>
                 <th>Nom</th>
+                <th>Ami</th>
                 <th>Statut</th>
                 <th>Action</th>
               </tr>
@@ -36,22 +39,36 @@
             <tbody>
               <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
-                <td class="font-semibold" th:text="${user.name}"></td>
+                <td class="font-semibold" th:text="${user.firstname + ' ' + user.lastname}"></td>
                 <td>
-                  <span class="badge badge-success" th:if="${#sets.contains(friendIds, user.id)}">Ami</span>
-                  <span class="badge badge-warning" th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(outgoingRequestTargetIds, user.id)}">Demande envoyee</span>
-                  <span class="badge badge-info" th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(incomingRequestSenderIds, user.id)}">Demande recue</span>
-                  <span class="badge badge-ghost" th:if="${!#sets.contains(friendIds, user.id) and !#sets.contains(outgoingRequestTargetIds, user.id) and !#sets.contains(incomingRequestSenderIds, user.id)}">Aucun lien</span>
+
+                  <button class="btn btn-outside">
+                    Demander en Ami
+                  </button>
                 </td>
                 <td>
-                  <form method="post" th:action="@{/users/friends/unfriend}" th:if="${#sets.contains(friendIds, user.id)}">
+                  <span class="badge badge-success" th:if="${#sets.contains(friendIds, user.id)}">Ami</span>
+                  <span class="badge badge-warning"
+                    th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(outgoingRequestTargetIds, user.id)}">Demande
+                    envoyee</span>
+                  <span class="badge badge-info"
+                    th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(incomingRequestSenderIds, user.id)}">Demande
+                    recue</span>
+                  <span class="badge badge-ghost"
+                    th:if="${!#sets.contains(friendIds, user.id) and !#sets.contains(outgoingRequestTargetIds, user.id) and !#sets.contains(incomingRequestSenderIds, user.id)}">Aucun
+                    lien</span>
+                </td>
+                <td>
+                  <form method="post" th:action="@{/users/friends/unfriend}"
+                    th:if="${#sets.contains(friendIds, user.id)}">
                     <input type="hidden" name="friendId" th:value="${user.id}">
                     <input type="hidden" name="returnTo" value="/users/users">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <button class="btn btn-warning btn-sm" type="submit">Retirer</button>
                   </form>
 
-                  <div class="flex gap-2" th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(incomingRequestSenderIds, user.id)}">
+                  <div class="flex gap-2"
+                    th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(incomingRequestSenderIds, user.id)}">
                     <form method="post" th:action="@{/users/friends/accept}">
                       <input type="hidden" name="friendshipId" th:value="${incomingRequestIdByUserId[user.id]}">
                       <input type="hidden" name="returnTo" value="/users/users">
@@ -66,7 +83,9 @@
                     </form>
                   </div>
 
-                  <span class="text-base-content/70 text-sm" th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(outgoingRequestTargetIds, user.id)}">En attente</span>
+                  <span class="text-base-content/70 text-sm"
+                    th:if="${!#sets.contains(friendIds, user.id) and #sets.contains(outgoingRequestTargetIds, user.id)}">En
+                    attente</span>
 
                   <form method="post" th:action="@{/users/friends/request}"
                     th:if="${!#sets.contains(friendIds, user.id) and !#sets.contains(outgoingRequestTargetIds, user.id) and !#sets.contains(incomingRequestSenderIds, user.id)}">
@@ -83,17 +102,18 @@
 
         <div class="flex gap-10 ">
           <div class="flex gap-2">
-          <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activites</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
+            <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activites</a>
           </div>
           <div class="flex gap-2">
-              <a class="btn btn-outline" th:href="@{/users/create}">Creer un compte</a>
+            <a class="btn btn-outline" th:href="@{/users/create}">Creer un compte</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 </body>
+
 </html>

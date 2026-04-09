@@ -31,6 +31,7 @@ class UserServiceTest {
     User input =
         new User(
             "Alice",
+            "Marchand",
             "  ALICE@Example.COM  ",
             60.0,
             165.0,
@@ -53,6 +54,7 @@ class UserServiceTest {
     User input =
         new User(
             "Alice",
+            "Marchand",
             " ALICE@example.com ",
             60.0,
             165.0,
@@ -74,6 +76,7 @@ class UserServiceTest {
     User stored =
         new User(
             "Alice",
+            "Marchand",
             "alice@example.com",
             60.0,
             165.0,

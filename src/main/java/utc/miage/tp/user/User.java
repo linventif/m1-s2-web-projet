@@ -34,7 +34,10 @@ public class User implements UserDetails {
   private Long id;
 
   @Column(nullable = false)
-  private String name;
+  private String firstname;
+
+  @Column(nullable = false)
+  private String lastname;
 
   @Column(nullable = false, unique = true)
   private String email;
@@ -90,7 +93,8 @@ public class User implements UserDetails {
   public User() {}
 
   public User(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       String password,
       Double weight,
@@ -98,7 +102,8 @@ public class User implements UserDetails {
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.email = email;
     this.password = password;
     this.weight = weight;
@@ -109,14 +114,16 @@ public class User implements UserDetails {
   }
 
   public User(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       Double weight,
       Double height,
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.email = email;
     this.weight = weight;
     this.height = height;
@@ -125,16 +132,21 @@ public class User implements UserDetails {
     this.level = level;
   }
 
-  public User(String name, String email, Double weight, Double height, Sex sex) {
-    this(name, email, weight, height, sex, null, PracticeLevel.BEGINNER);
+  public User(
+      String firstname, String lastname, String email, Double weight, Double height, Sex sex) {
+    this(firstname, lastname, email, weight, height, sex, null, PracticeLevel.BEGINNER);
   }
 
   public Long getId() {
     return id;
   }
 
-  public String getName() {
-    return name;
+  public String getFirstname() {
+    return firstname;
+  }
+
+  public String getLastname() {
+    return lastname;
   }
 
   public String getEmail() {
@@ -190,8 +202,12 @@ public class User implements UserDetails {
     this.id = id;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
+  }
+
+  public void setLastname(String lastname) {
+    this.lastname = lastname;
   }
 
   public void setEmail(String email) {
@@ -238,14 +254,6 @@ public class User implements UserDetails {
     this.sports.remove(sport);
   }
 
-  public void addSports(Sport sport) {
-    addSport(sport);
-  }
-
-  public void removeSports(Sport sport) {
-    removeSport(sport);
-  }
-
   @Override
   public String getUsername() {
     return this.email;
@@ -289,8 +297,10 @@ public class User implements UserDetails {
         + height
         + ", sex="
         + sex
-        + ", name="
-        + name
+        + ", firstname="
+        + firstname
+        + ", lastname="
+        + lastname
         + ", email="
         + email
         + '}';

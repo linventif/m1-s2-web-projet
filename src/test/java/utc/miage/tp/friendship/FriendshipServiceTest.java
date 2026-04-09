@@ -124,7 +124,7 @@ class FriendshipServiceTest {
   }
 
   private User user(Long id, String email) {
-    User user = new User("User " + id, email, 70.0, 175.0, Sex.MALE);
+    User user = new User("User " + id, "Test" + id, email, 70.0, 175.0, Sex.MALE);
     user.setId(id);
     user.setPassword("secret");
     user.setRole(Role.USER);

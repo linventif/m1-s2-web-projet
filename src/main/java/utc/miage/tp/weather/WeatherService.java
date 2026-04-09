@@ -99,12 +99,13 @@ public class WeatherService {
   public WeatherStatsDTO getWeatherStats(String address, LocalDateTime startDate, Double duration) {
     Map<String, Double> coordinates = getCoordinates(address);
     if (coordinates == null) return null;
-    
+
     double latitude = coordinates.get("lat");
     double longitude = coordinates.get("lon");
-    
+
     LocalDateTime endDate = startDate.plusMinutes(duration.longValue());
-    WeatherDTO weather = getWeather(latitude, longitude, startDate.toLocalDate(), endDate.toLocalDate());
+    WeatherDTO weather =
+        getWeather(latitude, longitude, startDate.toLocalDate(), endDate.toLocalDate());
 
     double[] metrics = {0.0, 0.0, 0.0, 0.0, -999.0, 999.0}; // Better defaults than MIN/MAX
     int[] count = {0};
@@ -114,37 +115,40 @@ public class WeatherService {
     int durationHours = (int) Math.ceil(duration / 60.0);
 
     for (int i = 0; i < durationHours; i++) {
-        // 1. Move forward hour by hour
-        // 2. Truncate to HOURS to get "2026-04-04T15:00" format
-        LocalDateTime currentHour = startDate.plusHours(i).truncatedTo(java.time.temporal.ChronoUnit.HOURS);
-        String dateTimeStr = currentHour.toString();
+      // 1. Move forward hour by hour
+      // 2. Truncate to HOURS to get "2026-04-04T15:00" format
+      LocalDateTime currentHour =
+          startDate.plusHours(i).truncatedTo(java.time.temporal.ChronoUnit.HOURS);
+      String dateTimeStr = currentHour.toString();
 
-        weather.hourly().getDataAtTime(dateTimeStr).ifPresent(data -> {
-            metrics[0] += data.temperature();
-            metrics[1] += data.apparentTemperature();
-            metrics[2] += data.precipitation();
-            metrics[3] += data.windSpeed();
-            metrics[4] = Math.max(metrics[4], data.temperature());
-            metrics[5] = Math.min(metrics[5], data.temperature());
-            
-            if (firstWeatherCode[0] == null) {
-                firstWeatherCode[0] = data.weatherCode();
-            }
-            count[0]++;
-        });
+      weather
+          .hourly()
+          .getDataAtTime(dateTimeStr)
+          .ifPresent(
+              data -> {
+                metrics[0] += data.temperature();
+                metrics[1] += data.apparentTemperature();
+                metrics[2] += data.precipitation();
+                metrics[3] += data.windSpeed();
+                metrics[4] = Math.max(metrics[4], data.temperature());
+                metrics[5] = Math.min(metrics[5], data.temperature());
+
+                if (firstWeatherCode[0] == null) {
+                  firstWeatherCode[0] = data.weatherCode();
+                }
+                count[0]++;
+              });
     }
 
     if (count[0] == 0) return null;
 
     return new WeatherStatsDTO(
-        String.format("%.0f", metrics[0] / count[0]), 
-        String.format("%.0f", metrics[4]), 
-        String.format("%.0f", metrics[5]), 
-        String.format("%.0f", metrics[1] / count[0]), 
-        String.format("%.2f", metrics[2] / count[0]), 
-        String.format("%.0f", metrics[3] / count[0]), 
-        mapWeatherCode(firstWeatherCode[0])   
-    );
+        String.format("%.0f", metrics[0] / count[0]),
+        String.format("%.0f", metrics[4]),
+        String.format("%.0f", metrics[5]),
+        String.format("%.0f", metrics[1] / count[0]),
+        String.format("%.2f", metrics[2] / count[0]),
+        String.format("%.0f", metrics[3] / count[0]),
+        mapWeatherCode(firstWeatherCode[0]));
   }
 }
-

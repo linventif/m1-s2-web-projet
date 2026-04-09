@@ -28,7 +28,7 @@ class UserControllerTest {
 
   @Test
   void sendFriendRequest_setsAutoAcceptedMessage_whenCrossPendingRequestExists() {
-    User currentUser = new User("Alice", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
+    User currentUser = new User("Alice", "Rondo", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
     currentUser.setId(1L);
     Friendship accepted = new Friendship();
     accepted.setStatus(FriendshipStatus.ACCEPTED);
@@ -44,7 +44,7 @@ class UserControllerTest {
 
   @Test
   void sendFriendRequest_setsSentMessage_whenRequestIsPending() {
-    User currentUser = new User("Alice", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
+    User currentUser = new User("Alice", "Rondo", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
     currentUser.setId(1L);
     Friendship pending = new Friendship();
     pending.setStatus(FriendshipStatus.PENDING);
@@ -61,7 +61,7 @@ class UserControllerTest {
 
   @Test
   void sendFriendRequest_rejectsUnsafeReturnPath() {
-    User currentUser = new User("Alice", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
+    User currentUser = new User("Alice", "Ronde", "alice@demo.local", 60.0, 165.0, Sex.FEMALE);
     currentUser.setId(1L);
     Friendship pending = new Friendship();
     pending.setStatus(FriendshipStatus.PENDING);
