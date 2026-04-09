@@ -11,7 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
 import utc.miage.tp.weather.Weather;
@@ -24,14 +25,18 @@ public class Workout {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
-  private LocalDate date;
+  @Column(name = "date", nullable = false)
+  @ColumnDefault("current_date")
+  private LocalDateTime date;
 
   @Column(nullable = false)
   private Double distance;
 
-  @Column(nullable = false)
-  private Double duration;
+  @Column(name = "duration", nullable = false)
+  private Double duration; // en minutes
+
+  @Column(name = "address", nullable = true)
+  private String address;
 
   @Column(name = "rating")
   private Integer rating; // note de 1 à 5 par exemple
@@ -55,7 +60,7 @@ public class Workout {
   public Workout() {}
 
   public Workout(
-      LocalDate date,
+      LocalDateTime date,
       Double distance,
       Double duration,
       Integer rating,
@@ -75,7 +80,7 @@ public class Workout {
     return id;
   }
 
-  public LocalDate getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
@@ -114,7 +119,7 @@ public class Workout {
     this.id = id;
   }
 
-  public void setDate(LocalDate date) {
+  public void setDate(LocalDateTime date) {
     this.date = date;
   }
 

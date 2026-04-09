@@ -1,6 +1,7 @@
 package utc.miage.tp.config;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -335,7 +336,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutRepository.saveAll(
         List.of(
             createWorkout(
-                LocalDate.of(2026, 4, 1),
+                LocalDateTime.of(2026, 4, 1, 10, 0),
                 4.2,
                 32.0,
                 4,
@@ -343,21 +344,21 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCourseCanal,
                 userJudy),
             createWorkout(
-                LocalDate.of(2026, 4, 3),
+                LocalDateTime.of(2026, 4, 3, 10, 0),
                 3.8,
                 29.0,
                 4,
                 new Weather(LocalDate.of(2026, 4, 3), "nuageux"),
                 sportParcoursAgilite,
                 userJudy),
-            createWorkout(LocalDate.of(2026, 4, 6), 5.0, 37.0, 5, null, sportCoursePied, userJudy),
-            createWorkout(LocalDate.of(2026, 4, 2), 6.5, 43.0, 4, null, sportSprintCote, userNick),
-            createWorkout(LocalDate.of(2026, 4, 5), 2.4, 30.0, 3, null, sportNatation, userNick),
-            createWorkout(LocalDate.of(2026, 4, 8), 7.2, 48.0, 5, null, sportCoursePied, userNick),
+            createWorkout(LocalDateTime.of(2026, 4, 6, 10, 0), 5.0, 37.0, 5, null, sportCoursePied, userJudy),
+            createWorkout(LocalDateTime.of(2026, 4, 2, 10, 0), 6.5, 43.0, 4, null, sportSprintCote, userNick),
+            createWorkout(LocalDateTime.of(2026, 4, 5, 10, 0), 2.4, 30.0, 3, null, sportNatation, userNick),
+            createWorkout(LocalDateTime.of(2026, 4, 8, 10, 0), 7.2, 48.0, 5, null, sportCoursePied, userNick),
             createWorkout(
-                LocalDate.of(2026, 4, 1), 3.0, 36.0, 4, null, sportCircuitCardio, userBogo),
+                LocalDateTime.of(2026, 4, 1, 10, 0), 3.0, 36.0, 4, null, sportCircuitCardio, userBogo),
             createWorkout(
-                LocalDate.of(2026, 4, 4),
+                LocalDateTime.of(2026, 4, 4, 10, 0),
                 4.4,
                 38.0,
                 4,
@@ -365,15 +366,15 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportRenforcementFonctionnel,
                 userBogo),
             createWorkout(
-                LocalDate.of(2026, 4, 9), 2.2, 28.0, 3, null, sportEscaladeVitesse, userBogo),
+                LocalDateTime.of(2026, 4, 9, 10, 0), 2.2, 28.0, 3, null, sportEscaladeVitesse, userBogo),
             createWorkout(
-                LocalDate.of(2026, 4, 2), 3.7, 31.0, 3, null, sportMobiliteActive, userBellwether),
+                LocalDateTime.of(2026, 4, 2, 10, 0), 3.7, 31.0, 3, null, sportMobiliteActive, userBellwether),
             createWorkout(
-                LocalDate.of(2026, 4, 7), 2.9, 27.0, 4, null, sportNatation, userBellwether),
+                LocalDateTime.of(2026, 4, 7, 10, 0), 2.9, 27.0, 4, null, sportNatation, userBellwether),
             createWorkout(
-                LocalDate.of(2026, 4, 10), 4.1, 33.0, 4, null, sportCircuitCardio, userBellwether),
+                LocalDateTime.of(2026, 4, 10, 10, 0), 4.1, 33.0, 4, null, sportCircuitCardio, userBellwether),
             createWorkout(
-                LocalDate.of(2026, 4, 1),
+                LocalDateTime.of(2026, 4, 1, 10, 0),
                 12.0,
                 58.0,
                 5,
@@ -381,41 +382,41 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportFractionneIntense,
                 userHiccup),
             createWorkout(
-                LocalDate.of(2026, 4, 4), 6.0, 45.0, 4, null, sportEnduranceMixte, userHiccup),
+                LocalDateTime.of(2026, 4, 4, 10, 0), 6.0, 45.0, 4, null, sportEnduranceMixte, userHiccup),
             createWorkout(
-                LocalDate.of(2026, 4, 11), 8.3, 52.0, 5, null, sportCoursePied, userHiccup),
-            createWorkout(LocalDate.of(2026, 4, 3), 5.5, 41.0, 4, null, sportFootball, userAstrid),
+                LocalDateTime.of(2026, 4, 11, 10, 0), 8.3, 52.0, 5, null, sportCoursePied, userHiccup),
+            createWorkout(LocalDateTime.of(2026, 4, 3, 10, 0), 5.5, 41.0, 4, null, sportFootball, userAstrid),
             createWorkout(
-                LocalDate.of(2026, 4, 7), 4.6, 36.0, 4, null, sportEscaladeVitesse, userAstrid),
+                LocalDateTime.of(2026, 4, 7, 10, 0), 4.6, 36.0, 4, null, sportEscaladeVitesse, userAstrid),
             createWorkout(
-                LocalDate.of(2026, 4, 12), 7.0, 49.0, 3, null, sportSautParachute, userAstrid),
+                LocalDateTime.of(2026, 4, 12, 10, 0), 7.0, 49.0, 3, null, sportSautParachute, userAstrid),
             createWorkout(
-                LocalDate.of(2026, 4, 2), 4.8, 44.0, 4, null, sportMusculation, userStoick),
-            createWorkout(LocalDate.of(2026, 4, 6), 3.1, 35.0, 3, null, sportPlongee, userStoick),
-            createWorkout(LocalDate.of(2026, 4, 13), 6.2, 50.0, 5, null, sportCyclisme, userStoick),
+                LocalDateTime.of(2026, 4, 2, 10, 0), 4.8, 44.0, 4, null, sportMusculation, userStoick),
+            createWorkout(LocalDateTime.of(2026, 4, 6, 10, 0), 3.1, 35.0, 3, null, sportPlongee, userStoick),
+            createWorkout(LocalDateTime.of(2026, 4, 13, 10, 0), 6.2, 50.0, 5, null, sportCyclisme, userStoick),
             createWorkout(
-                LocalDate.of(2026, 4, 2), 4.0, 39.0, 4, null, sportBasketball, userFishlegs),
+                LocalDateTime.of(2026, 4, 2, 10, 0), 4.0, 39.0, 4, null, sportBasketball, userFishlegs),
             createWorkout(
-                LocalDate.of(2026, 4, 8), 3.3, 33.0, 4, null, sportEscaladeBloc, userFishlegs),
+                LocalDateTime.of(2026, 4, 8, 10, 0), 3.3, 33.0, 4, null, sportEscaladeBloc, userFishlegs),
             createWorkout(
-                LocalDate.of(2026, 4, 14), 5.9, 47.0, 4, null, sportCoursePied, userFishlegs),
+                LocalDateTime.of(2026, 4, 14, 10, 0), 5.9, 47.0, 4, null, sportCoursePied, userFishlegs),
             createWorkout(
-                LocalDate.of(2026, 4, 3), 6.1, 42.0, 4, null, sportParkourUrbain, userRodney),
+                LocalDateTime.of(2026, 4, 3, 10, 0), 6.1, 42.0, 4, null, sportParkourUrbain, userRodney),
             createWorkout(
-                LocalDate.of(2026, 4, 9), 4.9, 37.0, 4, null, sportCircuitCardio, userRodney),
-            createWorkout(LocalDate.of(2026, 4, 15), 7.4, 51.0, 5, null, sportCyclisme, userRodney),
+                LocalDateTime.of(2026, 4, 9, 10, 0), 4.9, 37.0, 4, null, sportCircuitCardio, userRodney),
+            createWorkout(LocalDateTime.of(2026, 4, 15, 10, 0), 7.4, 51.0, 5, null, sportCyclisme, userRodney),
             createWorkout(
-                LocalDate.of(2026, 4, 4), 3.6, 30.0, 3, null, sportMobiliteActive, userCappy),
-            createWorkout(LocalDate.of(2026, 4, 10), 4.2, 34.0, 4, null, sportNatation, userCappy),
+                LocalDateTime.of(2026, 4, 4, 10, 0), 3.6, 30.0, 3, null, sportMobiliteActive, userCappy),
+            createWorkout(LocalDateTime.of(2026, 4, 10, 10, 0), 4.2, 34.0, 4, null, sportNatation, userCappy),
             createWorkout(
-                LocalDate.of(2026, 4, 16), 5.0, 39.0, 3, null, sportYogaDynamique, userCappy),
+                LocalDateTime.of(2026, 4, 16, 10, 0), 5.0, 39.0, 3, null, sportYogaDynamique, userCappy),
             createWorkout(
-                LocalDate.of(2026, 4, 5), 5.2, 40.0, 4, null, sportCircuitCardio, userFender),
+                LocalDateTime.of(2026, 4, 5, 10, 0), 5.2, 40.0, 4, null, sportCircuitCardio, userFender),
             createWorkout(
-                LocalDate.of(2026, 4, 11), 4.5, 35.0, 4, null, sportParkourUrbain, userFender),
-            createWorkout(LocalDate.of(2026, 4, 17), 6.6, 46.0, 4, null, sportPlongee, userFender),
+                LocalDateTime.of(2026, 4, 11, 10, 0), 4.5, 35.0, 4, null, sportParkourUrbain, userFender),
+            createWorkout(LocalDateTime.of(2026, 4, 17, 10, 0), 6.6, 46.0, 4, null, sportPlongee, userFender),
             createWorkout(
-                LocalDate.of(2026, 4, 6),
+                LocalDateTime.of(2026, 4, 6, 10, 0),
                 4.7,
                 43.0,
                 4,
@@ -423,13 +424,13 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportRenforcementFonctionnel,
                 userBigweld),
             createWorkout(
-                LocalDate.of(2026, 4, 12), 5.3, 44.0, 4, null, sportEscaladeBloc, userBigweld),
+                LocalDateTime.of(2026, 4, 12, 10, 0), 5.3, 44.0, 4, null, sportEscaladeBloc, userBigweld),
             createWorkout(
-                LocalDate.of(2026, 4, 18), 7.1, 53.0, 5, null, sportRandonnee, userBigweld)));
+                LocalDateTime.of(2026, 4, 18, 10, 0), 7.1, 53.0, 5, null, sportRandonnee, userBigweld)));
   }
 
   private Workout createWorkout(
-      LocalDate date,
+      LocalDateTime date,
       Double distance,
       Double duration,
       Integer rating,

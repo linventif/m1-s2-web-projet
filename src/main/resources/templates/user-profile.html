@@ -42,6 +42,22 @@
           Sport level:
           <i class="" th:text="${user.level}">level</i>
         </p>
+        <p>
+          Âge:
+          <i th:text="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : ''}"></i> ans
+        </p>
+        <p>
+          BMI:
+          <i th:text="${bmi}"></i>
+        </p>
+        <p>
+          BMR:
+          <i th:text="${bmr}"></i>
+        </p>
+        <p>
+          Recommandation:
+          <i th:text="${recommendation}"></i>
+        </p>
         <div class="flex gap-10 ">
           <div class="flex gap-2">
             <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>

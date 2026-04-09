@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +18,7 @@ import utc.miage.tp.challenge.ChallengeService;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
@@ -52,6 +53,7 @@ public class UserController {
     this.friendshipService = friendshipService;
 
   }
+
 
   @GetMapping({"", "/"})
   public String showMenu() {
@@ -93,10 +95,46 @@ public class UserController {
     }
   }
 
+
   @GetMapping("/profile")
-  public String showProfile(@AuthenticationPrincipal UserDetails currentUser, Model model) {
+  public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("user", currentUser);
+    model.addAttribute("bmi", userService.calculateBMI(currentUser));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
+    model.addAttribute("bmr", userService.calculateBMR(currentUser));
     return "user-profile";
+  }
+
+  @GetMapping("/profile/edit")
+  public String showEditProfile(@AuthenticationPrincipal User currentUser, Model model) {
+    model.addAttribute("user", currentUser);
+    return "user-profile-edit";
+  }
+
+  @PostMapping("/profile/edit")
+  public String updateProfile(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Double weight,
+      @RequestParam Double height,
+      @RequestParam Sex sex,
+      @RequestParam Integer age,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+    try {
+      currentUser.setWeight(weight);
+      currentUser.setHeight(height);
+      currentUser.setSex(sex);
+      // Calculer birthDate à partir de l'âge
+      java.time.LocalDate birthDate = java.time.LocalDate.now().minusYears(age);
+      currentUser.setBirthDate(birthDate);
+      userService.save(currentUser);
+      redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
+      return "redirect:/users/profile";
+    } catch (Exception e) {
+      model.addAttribute("user", currentUser);
+      model.addAttribute("errorMessage", e.getMessage());
+      return "user-profile-edit";
+    }
   }
 
   @GetMapping("/users")
