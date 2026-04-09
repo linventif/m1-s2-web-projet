@@ -259,10 +259,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
-    userAlice.setProfileImagePath("/images/avatars/alice_martin.png");
-    userBenoit.setProfileImagePath("/images/avatars/benoit_leroy.png");
-    userOwen.setProfileImagePath("/images/avatars/owen_mercier.png");
-    userAdmin.setProfileImagePath("/images/avatars/admin_bg.png");
     userJudy.setProfileImagePath("/images/avatars/judy_hopps.png");
     userNick.setProfileImagePath("/images/avatars/nick_wilde.png");
     userBogo.setProfileImagePath("/images/avatars/chief_bogo.png");
