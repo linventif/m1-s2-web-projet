@@ -92,4 +92,69 @@ class UserServiceTest {
     assertTrue(result.isPresent());
     assertEquals(stored, result.get());
   }
+
+  @Test
+  void updateCurrentUserProfile_updatesConnectedUserData() {
+    User currentUser =
+        new User(
+            "Alice",
+            "Marchand",
+            "alice@example.com",
+            60.0,
+            165.0,
+            Sex.FEMALE,
+            LocalDate.of(2000, 1, 1),
+            PracticeLevel.BEGINNER);
+    currentUser.setId(10L);
+
+    when(userRepository.findByEmail("newalice@example.com")).thenReturn(Optional.empty());
+    when(userRepository.save(currentUser)).thenReturn(currentUser);
+
+    User updated =
+        userService.updateCurrentUserProfile(
+            currentUser,
+            "Alicia",
+            "Martin",
+            "  NEWALICE@EXAMPLE.COM ",
+            58.5,
+            166.0,
+            Sex.FEMALE,
+            LocalDate.of(1999, 5, 20),
+            PracticeLevel.INTERMEDIATE);
+
+    assertEquals("Alicia", updated.getFirstname());
+    assertEquals("Martin", updated.getLastname());
+    assertEquals("newalice@example.com", updated.getEmail());
+    assertEquals(58.5, updated.getWeight());
+    assertEquals(166.0, updated.getHeight());
+    assertEquals(LocalDate.of(1999, 5, 20), updated.getBirthDate());
+    assertEquals(PracticeLevel.INTERMEDIATE, updated.getLevel());
+  }
+
+  @Test
+  void updateCurrentUserProfile_throwsWhenEmailBelongsToAnotherUser() {
+    User currentUser = new User("Alice", "Marchand", "alice@example.com", 60.0, 165.0, Sex.FEMALE);
+    currentUser.setId(10L);
+
+    User existingUser = new User("Bob", "Durand", "bob@example.com", 75.0, 180.0, Sex.MALE);
+    existingUser.setId(99L);
+    when(userRepository.findByEmail("bob@example.com")).thenReturn(Optional.of(existingUser));
+
+    IllegalArgumentException exception =
+        assertThrows(
+            IllegalArgumentException.class,
+            () ->
+                userService.updateCurrentUserProfile(
+                    currentUser,
+                    "Alice",
+                    "Marchand",
+                    "bob@example.com",
+                    60.0,
+                    165.0,
+                    Sex.FEMALE,
+                    LocalDate.of(2000, 1, 1),
+                    PracticeLevel.BEGINNER));
+
+    assertEquals("Un utilisateur avec cet email existe deja.", exception.getMessage());
+  }
 }

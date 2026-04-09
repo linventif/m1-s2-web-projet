@@ -259,6 +259,23 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
+    userJudy.setProfileImagePath("/images/avatars/judy_hopps.png");
+    userNick.setProfileImagePath("/images/avatars/nick_wilde.png");
+    userBogo.setProfileImagePath("/images/avatars/chief_bogo.png");
+    userBellwether.setProfileImagePath("/images/avatars/dawn_bellwether.png");
+    userHiccup.setProfileImagePath("/images/avatars/hiccup_haddock.png");
+    userAstrid.setProfileImagePath("/images/avatars/astrid_hofferson.png");
+    userStoick.setProfileImagePath("/images/avatars/stoick_the_vast.png");
+    userFishlegs.setProfileImagePath("/images/avatars/fishlegs_ingerman.png");
+    userRodney.setProfileImagePath("/images/avatars/rodney_copperbottom.png");
+    userCappy.setProfileImagePath("/images/avatars/cappy_barra.png");
+    userFender.setProfileImagePath("/images/avatars/fender_def.png");
+    userBigweld.setProfileImagePath("/images/avatars/bigweld_bold.png");
+    userShifu.setProfileImagePath("/images/avatars/maitre_shifu_me.png");
+    userOogway.setProfileImagePath("/images/avatars/maitre_oogway_away.png");
+    userPo.setProfileImagePath("/images/avatars/po_ping_pong.png");
+    userTaiLung.setProfileImagePath("/images/avatars/tai_lung_shi.png");
+
     userRepository.saveAll(
         List.of(
             userAlice,
@@ -623,6 +640,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       LocalDate birthDate,
       PracticeLevel level) {
     User user = new User(firstname, lastname, email, weight, height, sex, birthDate, level);
+    user.setProfileImagePath(null);
     user.setPassword(passwordEncoder.encode("demo123"));
     user.setRole(Role.USER);
     return user;
