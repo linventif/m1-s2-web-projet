@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import utc.miage.tp.badge.BadgeService;
+import utc.miage.tp.challenge.ChallengeService;
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
-import utc.miage.tp.challenge.ChallengeService;
-import utc.miage.tp.badge.BadgeService;
 
 @Controller
 @RequestMapping("/users")
@@ -282,7 +282,7 @@ public class UserController {
   }
 
   @GetMapping("/dashboard")
-  public String showDashboard( @AuthenticationPrincipal User currentUser, Model model) {
+  public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
