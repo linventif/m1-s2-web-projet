@@ -62,6 +62,7 @@ public class UserService implements UserDetailsService {
             user.getSex(),
             user.getBirthDate(),
             user.getLevel());
+    newUser.setProfileImagePath(null);
     newUser.setPassword(passwordEncoder.encode(rawPassword));
 
     User savedUser = userRepository.save(newUser);
@@ -121,6 +122,7 @@ public class UserService implements UserDetailsService {
     user.setFirstname(registrationDTO.firstname());
     user.setLastname(registrationDTO.lastname());
     user.setEmail(registrationDTO.email());
+    user.setProfileImagePath(null);
     user.setPassword(registrationDTO.password());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 

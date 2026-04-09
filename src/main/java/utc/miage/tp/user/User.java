@@ -202,11 +202,9 @@ public class User implements UserDetails {
   }
 
   public String getProfileImagePath() {
-    if (profileImagePath != null && !profileImagePath.isBlank()) {
-      return profileImagePath;
-    }
-    long imageIndex = id == null || id <= 0 ? 1 : ((id - 1) % 20) + 1;
-    return "/images/profile/user_" + imageIndex + ".png";
+    return profileImagePath == null || profileImagePath.isBlank()
+        ? "/images/avatars/user_0.png"
+        : profileImagePath;
   }
 
   public void setId(Long id) {

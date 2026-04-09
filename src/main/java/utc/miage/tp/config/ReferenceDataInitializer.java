@@ -259,7 +259,28 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
-    List<User> demoUsers =
+    userAlice.setProfileImagePath("/images/avatars/alice_martin.png");
+    userBenoit.setProfileImagePath("/images/avatars/benoit_leroy.png");
+    userOwen.setProfileImagePath("/images/avatars/owen_mercier.png");
+    userAdmin.setProfileImagePath("/images/avatars/admin_bg.png");
+    userJudy.setProfileImagePath("/images/avatars/judy_hopps.png");
+    userNick.setProfileImagePath("/images/avatars/nick_wilde.png");
+    userBogo.setProfileImagePath("/images/avatars/chief_bogo.png");
+    userBellwether.setProfileImagePath("/images/avatars/dawn_bellwether.png");
+    userHiccup.setProfileImagePath("/images/avatars/hiccup_haddock.png");
+    userAstrid.setProfileImagePath("/images/avatars/astrid_hofferson.png");
+    userStoick.setProfileImagePath("/images/avatars/stoick_the_vast.png");
+    userFishlegs.setProfileImagePath("/images/avatars/fishlegs_ingerman.png");
+    userRodney.setProfileImagePath("/images/avatars/rodney_copperbottom.png");
+    userCappy.setProfileImagePath("/images/avatars/cappy_barra.png");
+    userFender.setProfileImagePath("/images/avatars/fender_def.png");
+    userBigweld.setProfileImagePath("/images/avatars/bigweld_bold.png");
+    userShifu.setProfileImagePath("/images/avatars/maitre_shifu_me.png");
+    userOogway.setProfileImagePath("/images/avatars/maitre_oogway_away.png");
+    userPo.setProfileImagePath("/images/avatars/po_ping_pong.png");
+    userTaiLung.setProfileImagePath("/images/avatars/tai_lung_shi.png");
+
+    userRepository.saveAll(
         List.of(
             userAlice,
             userBenoit,
@@ -280,9 +301,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userShifu,
             userOogway,
             userPo,
-            userTaiLung);
-    assignProfileImages(demoUsers);
-    userRepository.saveAll(demoUsers);
+            userTaiLung));
 
     // Friendships
     friendshipService.createAcceptedFriendship(userAlice.getId(), userOwen.getId());
@@ -614,12 +633,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return new Sport(name, calPerMin);
   }
 
-  private void assignProfileImages(List<User> users) {
-    for (int index = 0; index < users.size(); index++) {
-      users.get(index).setProfileImagePath("/images/profile/user_" + (index + 1) + ".png");
-    }
-  }
-
   @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.
   private User createUser(
       String firstname,
@@ -631,6 +644,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       LocalDate birthDate,
       PracticeLevel level) {
     User user = new User(firstname, lastname, email, weight, height, sex, birthDate, level);
+    user.setProfileImagePath(null);
     user.setPassword(passwordEncoder.encode("demo123"));
     user.setRole(Role.USER);
     return user;
