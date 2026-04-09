@@ -16,20 +16,36 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
+import utc.miage.tp.goal.GoalService;
+import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
-  private final WorkoutService workoutService;
   private final UserService userService;
+  private final WorkoutService workoutService;
+  private final SportService sportService;
+  private final GoalService goalService;
+  private final ChallengeService challengeService;
+  private final BadgeService badgeService;
   private final FriendshipService friendshipService;
 
   public UserController(
-      UserService userService, WorkoutService workoutService, FriendshipService friendshipService) {
+      UserService userService,
+      WorkoutService workoutService,
+      SportService sportService,
+      GoalService goalService,
+      ChallengeService challengeService,
+      BadgeService badgeService,
+      FriendshipService friendshipService) {
     this.userService = userService;
     this.workoutService = workoutService;
+    this.sportService = sportService;
+    this.goalService = goalService;
+    this.challengeService = challengeService;
+    this.badgeService = badgeService;
     this.friendshipService = friendshipService;
   }
 
@@ -59,7 +75,12 @@ public class UserController {
           userService.createUser(
               user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
       model.addAttribute(
-          "message", "Utilisateur ajoute avec succes : " + createdUser.getName() + ".");
+          "message",
+          "Utilisateur ajoute avec succes : "
+              + createdUser.getFirstname()
+              + " "
+              + createdUser.getLastname()
+              + ".");
       return "user-list";
     } catch (IllegalArgumentException exception) {
       populateUserCreationForm(model, user);
@@ -254,19 +275,17 @@ public class UserController {
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workout", workoutService.getAll());
+    model.addAttribute("workouts", workoutService.getAll());
     return "user-workout";
   }
 
-  @GetMapping("/dashbord")
-  public String showDashbord(Model model) {
-    model.addAttribute("user", userService.getUserById(1L));
-    model.addAttribute("stats", "stats");
-    model.addAttribute("goals", "goals");
-    model.addAttribute("recentActivities", "recentActivities");
-    model.addAttribute("activeChallenges", "activeChallenges");
-    model.addAttribute("badges", "badges");
-    model.addAttribute("activeFriends", "activeFriends");
+  @GetMapping("/dashboard")
+  public String showDashboard( @AuthenticationPrincipal User currentUser, Model model) {
+    model.addAttribute("goals", goalService.getAll());
+    model.addAttribute("workouts", workoutService.getAll());
+    model.addAttribute("activeChallenges", challengeService.getAll());
+    model.addAttribute("badges", badgeService.getAll());
+    model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
     return "dashboard";

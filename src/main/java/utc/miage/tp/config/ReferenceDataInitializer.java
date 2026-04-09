@@ -51,7 +51,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     // Users - Classiques
     User userAlice =
         createUser(
-            "Alice Martin",
+            "Alice",
+            "Martin",
             "alice.martin@demo.local",
             65.5,
             165.0,
@@ -60,7 +61,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.BEGINNER);
     User userBenoit =
         createUser(
-            "Benoit Leroy",
+            "Benoit",
+            "Leroy",
             "benoit.leroy@demo.local",
             75.5,
             180.0,
@@ -69,7 +71,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.INTERMEDIATE);
     User userOwen =
         createUser(
-            "Owen Mercier",
+            "Owen",
+            "Mercier",
             "owen.mercier@demo.local",
             85.0,
             185.0,
@@ -79,6 +82,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userAdmin =
         createUser(
             "Admin",
+            "BG",
             "admin@demo.local",
             70.0,
             175.0,
@@ -90,7 +94,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     // Users - Zootopia
     User userJudy =
         createUser(
-            "Judy Hopps",
+            "Judy",
+            "Hopps",
             "judy.hopps@demo.local",
             38.0,
             102.0,
@@ -99,7 +104,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.INTERMEDIATE);
     User userNick =
         createUser(
-            "Nick Wilde",
+            "Nick",
+            "Wilde",
             "nick.wilde@demo.local",
             72.0,
             168.0,
@@ -108,7 +114,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.INTERMEDIATE);
     User userBogo =
         createUser(
-            "Chief Bogo",
+            "Chief",
+            "Bogo",
             "chief.bogo@demo.local",
             110.0,
             190.0,
@@ -117,7 +124,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.ADVANCED);
     User userBellwether =
         createUser(
-            "Dawn Bellwether",
+            "Dawn",
+            "Bellwether",
             "dawn.bellwether@demo.local",
             55.0,
             150.0,
@@ -128,7 +136,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     // Users - How to Train Your Dragon
     User userHiccup =
         createUser(
-            "Hiccup Haddock",
+            "Hiccup",
+            "Haddock",
             "hiccup.haddock@demo.local",
             68.0,
             178.0,
@@ -137,7 +146,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.INTERMEDIATE);
     User userAstrid =
         createUser(
-            "Astrid Hofferson",
+            "Astrid",
+            "Hofferson",
             "astrid.hofferson@demo.local",
             61.0,
             170.0,
@@ -146,7 +156,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.ADVANCED);
     User userStoick =
         createUser(
-            "Stoick the Vast",
+            "Stoick",
+            "the Vast",
             "stoick.vast@demo.local",
             120.0,
             198.0,
@@ -155,7 +166,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             PracticeLevel.ADVANCED);
     User userFishlegs =
         createUser(
-            "Fishlegs Ingerman",
+            "Fishlegs",
+            "Ingerman",
             "fishlegs.ingerman@demo.local",
             95.0,
             182.0,
@@ -166,7 +178,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     // Users - Robots
     User userRodney =
         createUser(
-            "Rodney Copperbottom",
+            "Rodney",
+            "Copperbottom",
             "rodney.copperbottom@demo.local",
             78.0,
             176.0,
@@ -176,6 +189,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userCappy =
         createUser(
             "Cappy",
+            "Barra",
             "cappy@demo.local",
             58.0,
             168.0,
@@ -185,6 +199,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userFender =
         createUser(
             "Fender",
+            "Def",
             "fender@demo.local",
             72.0,
             174.0,
@@ -194,6 +209,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userBigweld =
         createUser(
             "Bigweld",
+            "Bold",
             "bigweld@demo.local",
             105.0,
             192.0,
@@ -205,6 +221,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userShifu =
         createUser(
             "Maitre Shifu",
+            "Me",
             "shifu@demo.local",
             56.0,
             152.0,
@@ -214,6 +231,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userOogway =
         createUser(
             "Maitre Oogway",
+            "Away",
             "oogway@demo.local",
             73.0,
             168.0,
@@ -223,6 +241,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userPo =
         createUser(
             "Po Ping",
+            "Pong",
             "po.ping@demo.local",
             120.0,
             182.0,
@@ -232,6 +251,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     User userTaiLung =
         createUser(
             "Tai Lung",
+            "Shi",
             "tai.lung@demo.local",
             98.0,
             188.0,
@@ -594,14 +614,15 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
   @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.
   private User createUser(
-      String name,
+      String firstname,
+      String lastname,
       String email,
       Double weight,
       Double height,
       Sex sex,
       LocalDate birthDate,
       PracticeLevel level) {
-    User user = new User(name, email, weight, height, sex, birthDate, level);
+    User user = new User(firstname, lastname, email, weight, height, sex, birthDate, level);
     user.setPassword(passwordEncoder.encode("demo123"));
     user.setRole(Role.USER);
     return user;
