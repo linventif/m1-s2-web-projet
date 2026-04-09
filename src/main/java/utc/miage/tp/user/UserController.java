@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.workout.WorkoutService;
-
 
 @Controller
 @RequestMapping("/users")
@@ -35,7 +32,6 @@ public class UserController {
     this.workoutService = workoutService;
     this.friendshipService = friendshipService;
   }
-
 
   @GetMapping({"", "/"})
   public String showMenu() {
@@ -71,7 +67,6 @@ public class UserController {
       return "user-create";
     }
   }
-
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
@@ -125,17 +120,18 @@ public class UserController {
     return "user-users";
   }
 
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
-        try {
-            userService.registerUser(registrationDTO);
-            model.addAttribute("message", "Compte créé avec succès !");
-            return "user-login";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "user-create";
-        }
-      }
+  @PostMapping("/register")
+  public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
+    try {
+      userService.registerUser(registrationDTO);
+      model.addAttribute("message", "Compte créé avec succès !");
+      return "user-login";
+    } catch (Exception e) {
+      model.addAttribute("errorMessage", e.getMessage());
+      return "user-create";
+    }
+  }
+
   @GetMapping("/friends")
   public String showAllFriends(@AuthenticationPrincipal User currentUser, Model model) {
     populateFriendshipContext(currentUser, model);

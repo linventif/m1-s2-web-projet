@@ -3,7 +3,6 @@ package utc.miage.tp.user;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -125,33 +124,37 @@ public class UserService implements UserDetailsService {
     return userRepository.save(user);
   }
 
-    public void save(User user) {
-      userRepository.save(user);
-    }
+  public void save(User user) {
+    userRepository.save(user);
+  }
 
-    public double calculateBMI(User user) {
-      if (user.getHeight() == null || user.getWeight() == null) return 0;
-      double heightMeters = user.getHeight() / 100.0;
-      double bmi = user.getWeight() / (heightMeters * heightMeters);
-      return Math.round(bmi * 10.0) / 10.0;
-    }
+  public double calculateBMI(User user) {
+    if (user.getHeight() == null || user.getWeight() == null) return 0;
+    double heightMeters = user.getHeight() / 100.0;
+    double bmi = user.getWeight() / (heightMeters * heightMeters);
+    return Math.round(bmi * 10.0) / 10.0;
+  }
 
-    public double calculateBMR(User user) {
-      if (user.getHeight() == null || user.getWeight() == null || user.getBirthDate() == null || user.getSex() == null) return 0;
-      int age = java.time.Period.between(user.getBirthDate(), java.time.LocalDate.now()).getYears();
-      double bmr;
-      if (user.getSex() == Sex.MALE) {
-        bmr = 10 * user.getWeight() + 6.25 * user.getHeight() - 5 * age + 5;
-      } else {
-        bmr = 10 * user.getWeight() + 6.25 * user.getHeight() - 5 * age - 161;
-      }
-      return Math.round(bmr);
+  public double calculateBMR(User user) {
+    if (user.getHeight() == null
+        || user.getWeight() == null
+        || user.getBirthDate() == null
+        || user.getSex() == null) return 0;
+    int age = java.time.Period.between(user.getBirthDate(), java.time.LocalDate.now()).getYears();
+    double bmr;
+    if (user.getSex() == Sex.MALE) {
+      bmr = 10 * user.getWeight() + 6.25 * user.getHeight() - 5 * age + 5;
+    } else {
+      bmr = 10 * user.getWeight() + 6.25 * user.getHeight() - 5 * age - 161;
     }
+    return Math.round(bmr);
+  }
 
-    public String getWorkoutRecommendation(User user) {
-      double bmi = calculateBMI(user);
-      if (bmi < 18.5) return "Entraînement de renforcement musculaire et prise de masse.";
-      else if (bmi < 25) return "Entraînement équilibré avec cardio et musculation.";
-      else return "Entraînement axé sur la perte de poids avec cardio et exercices de haute intensité.";
-    }
+  public String getWorkoutRecommendation(User user) {
+    double bmi = calculateBMI(user);
+    if (bmi < 18.5) return "Entraînement de renforcement musculaire et prise de masse.";
+    else if (bmi < 25) return "Entraînement équilibré avec cardio et musculation.";
+    else
+      return "Entraînement axé sur la perte de poids avec cardio et exercices de haute intensité.";
+  }
 }
