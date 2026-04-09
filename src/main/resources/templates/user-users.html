@@ -28,7 +28,6 @@
                 <th>ID</th>
                 <th>Photo</th>
                 <th>Nom</th>
-                <th>Ami</th>
                 <th>Statut</th>
                 <th>Action</th>
               </tr>
@@ -44,12 +43,6 @@
                   </div>
                 </td>
                 <td class="font-semibold" th:text="${user.firstname + ' ' + user.lastname}"></td>
-                <td>
-
-                  <button class="btn btn-outside">
-                    Demander en Ami
-                  </button>
-                </td>
                 <td>
                   <span class="badge badge-success" th:if="${#sets.contains(friendIds, user.id)}">Ami</span>
                   <span class="badge badge-warning"
