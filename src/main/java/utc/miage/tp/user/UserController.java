@@ -1,9 +1,11 @@
 package utc.miage.tp.user;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,31 +104,39 @@ public class UserController {
 
   @GetMapping("/profile/edit")
   public String showEditProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("user", currentUser);
+    populateProfileEditForm(model, currentUser);
     return "user-profile-edit";
   }
 
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
+      @RequestParam String firstname,
+      @RequestParam String lastname,
+      @RequestParam String email,
       @RequestParam Double weight,
       @RequestParam Double height,
       @RequestParam Sex sex,
-      @RequestParam Integer age,
+      @RequestParam PracticeLevel level,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate birthDate,
       Model model,
       RedirectAttributes redirectAttributes) {
     try {
-      currentUser.setWeight(weight);
-      currentUser.setHeight(height);
-      currentUser.setSex(sex);
-      // Calculer birthDate à partir de l'âge
-      java.time.LocalDate birthDate = java.time.LocalDate.now().minusYears(age);
-      currentUser.setBirthDate(birthDate);
-      userService.save(currentUser);
+      userService.updateCurrentUserProfile(
+          currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
       redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
       return "redirect:/users/profile";
     } catch (Exception e) {
-      model.addAttribute("user", currentUser);
+      currentUser.setFirstname(firstname);
+      currentUser.setLastname(lastname);
+      currentUser.setEmail(email);
+      currentUser.setWeight(weight);
+      currentUser.setHeight(height);
+      currentUser.setSex(sex);
+      currentUser.setBirthDate(birthDate);
+      currentUser.setLevel(level);
+      populateProfileEditForm(model, currentUser);
       model.addAttribute("errorMessage", e.getMessage());
       return "user-profile-edit";
     }
@@ -282,7 +292,7 @@ public class UserController {
   }
 
   @GetMapping("/dashboard")
-  public String showDashboard( @AuthenticationPrincipal User currentUser, Model model) {
+  public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
@@ -295,5 +305,11 @@ public class UserController {
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
+  }
+
+  private void populateProfileEditForm(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("sexes", Sex.values());
+    model.addAttribute("practiceLevels", PracticeLevel.values());
   }
 }

@@ -13,9 +13,13 @@
   <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
-        <h3 class="text-xl">
-          Informations
-        </h3>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="text-xl">Informations</h3>
+          <a class="btn btn-primary" th:href="@{/users/profile/edit}">Modifier mon profil</a>
+        </div>
+        <div class="alert alert-success" th:if="${message}">
+          <span th:text="${message}">Profil mis à jour avec succès.</span>
+        </div>
         <p>
           Prenom:
           <i class="" th:text="${user.firstname}">cm</i>
@@ -23,6 +27,10 @@
         <p>
           Nom de famille:
           <i class="" th:text="${user.lastname}">cm</i>
+        </p>
+        <p>
+          Email:
+          <i class="" th:text="${user.email}">email@example.com</i>
         </p>
         <p>
           Taille:
