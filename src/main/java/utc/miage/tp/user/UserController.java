@@ -282,12 +282,12 @@ public class UserController {
   }
 
   @GetMapping("/dashboard")
-  public String showDashboard(Model model) {
+  public String showDashboard( @AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
     model.addAttribute("badges", badgeService.getAll());
-    model.addAttribute("activeFriends", null);
+    model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
     return "dashboard";
