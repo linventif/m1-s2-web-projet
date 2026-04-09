@@ -16,26 +16,37 @@
           </h3>
             <p>
               Nom:
-              <i class="" th:text="${user.name}">cm</i>
+              <i th:text="${user.name}"></i>
             </p>
             <p>
               Taille:
-              <i class="" th:text="${user.height}">cm</i>
-              cm
+              <i th:text="${user.height}"></i> cm
             </p>
             <p>
               Masse:
-              <i class="" th:text="${user.weight}">kg</i>
-              kg
+              <i th:text="${user.weight}"></i> kg
             </p>
             <p>
               Sexe:
-              <i class="" th:text="${user.sex}">sexe</i>
+              <i th:text="${user.sex}"></i>
             </p>
             <p>
-              Sport:
-              <i class="" th:text="${user.sex}">sexe</i>
+              Âge:
+              <i th:text="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : ''}"></i> ans
             </p>
+            <p>
+              BMI:
+              <i th:text="${bmi}"></i>
+            </p>
+            <p>
+              BMR:
+              <i th:text="${bmr}"></i>
+            </p>
+            <p>
+              Recommandation:
+              <i th:text="${recommendation}"></i>
+            </p>
+            <a class="btn btn-outline btn-sm mt-2" th:href="@{/users/profile/edit}">Modifier mes informations</a>
         <div class="flex gap-10 ">
           <div class="flex gap-2">
           <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
