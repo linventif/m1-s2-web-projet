@@ -41,8 +41,9 @@
                       </div>
                     </div>
                   </td>
-                  <td class="font-semibold"
-                    th:text="${friendship.requester.firstname + ' ' + friendship.requester.lastname}"></td>
+                  <td>
+                    <span th:replace="~{components/user::nameLink(user=${friendship.requester})}"></span>
+                  </td>
                   <td class="flex gap-2">
                     <form method="post" th:action="@{/users/friends/accept}">
                       <input type="hidden" name="friendshipId" th:value="${friendship.id}">
@@ -86,8 +87,9 @@
                       </div>
                     </div>
                   </td>
-                  <td class="font-semibold"
-                    th:text="${friendship.addressee.firstname + ' ' + friendship.addressee.lastname}"></td>
+                  <td>
+                    <span th:replace="~{components/user::nameLink(user=${friendship.addressee})}"></span>
+                  </td>
                   <td>
                     <span class="badge badge-warning">En attente</span>
                   </td>
@@ -121,8 +123,9 @@
                       </div>
                     </div>
                   </td>
-                  <td class="font-semibold"
-                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.firstname + ' ' +  friendship.addressee.lastname : friendship.requester.firstname + ' ' + friendship.requester.lastname}">
+                  <td
+                    th:with="friend=${friendship.requester.id == currentUserId ? friendship.addressee : friendship.requester}">
+                    <span th:replace="~{components/user::nameLink(user=${friend})}"></span>
                   </td>
                   <td>
                     <form method="post" th:action="@{/users/friends/unfriend}">
