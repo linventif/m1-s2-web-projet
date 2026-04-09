@@ -282,7 +282,7 @@ public class UserController {
   }
 
   @GetMapping("/dashboard")
-  public String showDashboard( @AuthenticationPrincipal User currentUser, Model model) {
+  public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
