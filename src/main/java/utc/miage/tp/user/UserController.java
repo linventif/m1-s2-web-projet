@@ -1,10 +1,19 @@
 package utc.miage.tp.user;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import utc.miage.tp.badge.BadgeService;
 import utc.miage.tp.challenge.ChallengeService;
@@ -27,6 +37,12 @@ import utc.miage.tp.workout.WorkoutService;
 @Controller
 @RequestMapping("/users")
 public class UserController {
+
+  private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
+      Set.of("png", "jpg", "jpeg", "webp", "gif");
+
+  @Value("${app.avatar-upload-dir:avatar_upload}")
+  private String avatarUploadDir;
 
   private final UserService userService;
   private final WorkoutService workoutService;
@@ -120,11 +136,18 @@ public class UserController {
       @RequestParam PracticeLevel level,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           LocalDate birthDate,
+      @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
       Model model,
       RedirectAttributes redirectAttributes) {
     try {
-      userService.updateCurrentUserProfile(
-          currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
+      User updatedUser =
+          userService.updateCurrentUserProfile(
+              currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
+      if (avatarFile != null && !avatarFile.isEmpty()) {
+        String avatarPath = storeAvatarForUser(updatedUser.getId(), avatarFile);
+        updatedUser.setProfileImagePath(avatarPath);
+        userService.save(updatedUser);
+      }
       redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
       return "redirect:/users/profile";
     } catch (Exception e) {
@@ -139,6 +162,55 @@ public class UserController {
       populateProfileEditForm(model, currentUser);
       model.addAttribute("errorMessage", e.getMessage());
       return "user-profile-edit";
+    }
+  }
+
+  private String storeAvatarForUser(Long userId, MultipartFile avatarFile) throws IOException {
+    if (userId == null) {
+      throw new IllegalArgumentException("Impossible de sauvegarder l'avatar.");
+    }
+    if (avatarFile.getContentType() == null || !avatarFile.getContentType().startsWith("image/")) {
+      throw new IllegalArgumentException("Le fichier doit etre une image.");
+    }
+
+    String extension = extractExtension(avatarFile.getOriginalFilename());
+    if (!ALLOWED_AVATAR_EXTENSIONS.contains(extension)) {
+      throw new IllegalArgumentException("Format d'image non supporte.");
+    }
+
+    Path uploadDir = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+    Files.createDirectories(uploadDir);
+    cleanupExistingUserAvatars(uploadDir, userId);
+
+    String fileName = "user_" + userId + "." + extension;
+    Path targetPath = uploadDir.resolve(fileName).normalize();
+    if (!targetPath.startsWith(uploadDir)) {
+      throw new IllegalArgumentException("Nom de fichier invalide.");
+    }
+
+    try (InputStream inputStream = avatarFile.getInputStream()) {
+      Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+    }
+    return "/avatar_upload/" + fileName;
+  }
+
+  private String extractExtension(String originalFilename) {
+    if (originalFilename == null || !originalFilename.contains(".")) {
+      return "";
+    }
+    int lastDotIndex = originalFilename.lastIndexOf('.');
+    if (lastDotIndex == originalFilename.length() - 1) {
+      return "";
+    }
+    return originalFilename.substring(lastDotIndex + 1).toLowerCase(Locale.ROOT);
+  }
+
+  private void cleanupExistingUserAvatars(Path uploadDir, Long userId) throws IOException {
+    String pattern = "user_" + userId + ".*";
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadDir, pattern)) {
+      for (Path path : stream) {
+        Files.deleteIfExists(path);
+      }
     }
   }
 

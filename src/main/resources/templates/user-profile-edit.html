@@ -15,7 +15,7 @@
           </div>
         </div>
 
-        <form method="post" th:action="@{/users/profile/edit}" class="grid gap-4">
+        <form method="post" th:action="@{/users/profile/edit}" enctype="multipart/form-data" class="grid gap-4">
           <div class="alert alert-error" th:if="${errorMessage}">
             <span th:text="${errorMessage}">Erreur</span>
           </div>
@@ -35,6 +35,11 @@
           <label class="form-control w-full">
             <span class="label-text">Email</span>
             <input class="input input-bordered" type="email" name="email" required th:value="${user.email}">
+          </label>
+
+          <label class="form-control w-full">
+            <span class="label-text">Avatar</span>
+            <input class="file-input file-input-bordered w-full" type="file" name="avatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
           </label>
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">

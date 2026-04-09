@@ -32,3 +32,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Runtime uploaded avatars
+/avatar_upload/*
+!/avatar_upload/.gitkeep
