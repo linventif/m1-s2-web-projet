@@ -259,7 +259,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
-    userRepository.saveAll(
+    List<User> demoUsers =
         List.of(
             userAlice,
             userBenoit,
@@ -280,7 +280,9 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userShifu,
             userOogway,
             userPo,
-            userTaiLung));
+            userTaiLung);
+    assignProfileImages(demoUsers);
+    userRepository.saveAll(demoUsers);
 
     // Friendships
     friendshipService.createAcceptedFriendship(userAlice.getId(), userOwen.getId());
@@ -610,6 +612,12 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
   private Sport createSport(String name, Double calPerMin) {
     return new Sport(name, calPerMin);
+  }
+
+  private void assignProfileImages(List<User> users) {
+    for (int index = 0; index < users.size(); index++) {
+      users.get(index).setProfileImagePath("/images/profile/user_" + (index + 1) + ".png");
+    }
   }
 
   @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.
