@@ -19,6 +19,8 @@ import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
+import utc.miage.tp.challenge.ChallengeService;
+import utc.miage.tp.badge.BadgeService;
 
 @Controller
 @RequestMapping("/users")
