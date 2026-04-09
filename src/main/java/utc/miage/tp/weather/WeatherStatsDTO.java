@@ -1,80 +1,84 @@
 package utc.miage.tp.weather;
 
-public class WeatherStatsDTO{
-    String averageTemperature;
-    String maxTemperature;
-    String minTemperature;
-    String averageApparentTemperature;
-    String averagePrecipitation;
-    String averageWindSpeed;
-    String weatherIndicator;
-    
-    public String getAverageTemperature() {
-        return averageTemperature;
-    }
+public class WeatherStatsDTO {
+  String averageTemperature;
+  String maxTemperature;
+  String minTemperature;
+  String averageApparentTemperature;
+  String averagePrecipitation;
+  String averageWindSpeed;
+  String weatherIndicator;
 
-    public void setAverageTemperature(String averageTemperature) {
-        this.averageTemperature = averageTemperature;
-    }
+  public String getAverageTemperature() {
+    return averageTemperature;
+  }
 
-    public String getMaxTemperature() {
-        return maxTemperature;
-    }
+  public void setAverageTemperature(String averageTemperature) {
+    this.averageTemperature = averageTemperature;
+  }
 
-    public void setMaxTemperature(String maxTemperature) {
-        this.maxTemperature = maxTemperature;
-    }
+  public String getMaxTemperature() {
+    return maxTemperature;
+  }
 
-    public String getMinTemperature() {
-        return minTemperature;
-    }
+  public void setMaxTemperature(String maxTemperature) {
+    this.maxTemperature = maxTemperature;
+  }
 
-    public void setMinTemperature(String minTemperature) {
-        this.minTemperature = minTemperature;
-    }
+  public String getMinTemperature() {
+    return minTemperature;
+  }
 
-    public String getAverageApparentTemperature() {
-        return averageApparentTemperature;
-    }
+  public void setMinTemperature(String minTemperature) {
+    this.minTemperature = minTemperature;
+  }
 
-    public void setAverageApparentTemperature(String averageApparentTemperature) {
-        this.averageApparentTemperature = averageApparentTemperature;
-    }
+  public String getAverageApparentTemperature() {
+    return averageApparentTemperature;
+  }
 
-    public String getAveragePrecipitation() {
-        return averagePrecipitation;
-    }
+  public void setAverageApparentTemperature(String averageApparentTemperature) {
+    this.averageApparentTemperature = averageApparentTemperature;
+  }
 
-    public void setAveragePrecipitation(String averagePrecipitation) {
-        this.averagePrecipitation = averagePrecipitation;
-    }
+  public String getAveragePrecipitation() {
+    return averagePrecipitation;
+  }
 
-    public String getAverageWindSpeed() {
-        return averageWindSpeed;
-    }
+  public void setAveragePrecipitation(String averagePrecipitation) {
+    this.averagePrecipitation = averagePrecipitation;
+  }
 
-    public void setAverageWindSpeed(String averageWindSpeed) {
-        this.averageWindSpeed = averageWindSpeed;
-    }
+  public String getAverageWindSpeed() {
+    return averageWindSpeed;
+  }
 
-    public String getWeatherIndicator() {
-        return weatherIndicator;
-    }
+  public void setAverageWindSpeed(String averageWindSpeed) {
+    this.averageWindSpeed = averageWindSpeed;
+  }
 
-    public void setWeatherIndicator(String weatherIndicator) {
-        this.weatherIndicator = weatherIndicator;
-    }
+  public String getWeatherIndicator() {
+    return weatherIndicator;
+  }
 
-    public WeatherStatsDTO(String averageTemperature, String maxTemperature, String minTemperature,
-            String averageApparentTemperature, String averagePrecipitation, String averageWindSpeed,
-            String weatherIndicator) {
-        this.averageTemperature = averageTemperature;
-        this.maxTemperature = maxTemperature;
-        this.minTemperature = minTemperature;
-        this.averageApparentTemperature = averageApparentTemperature;
-        this.averagePrecipitation = averagePrecipitation;
-        this.averageWindSpeed = averageWindSpeed;
-        this.weatherIndicator = weatherIndicator;
-    }
+  public void setWeatherIndicator(String weatherIndicator) {
+    this.weatherIndicator = weatherIndicator;
+  }
 
+  public WeatherStatsDTO(
+      String averageTemperature,
+      String maxTemperature,
+      String minTemperature,
+      String averageApparentTemperature,
+      String averagePrecipitation,
+      String averageWindSpeed,
+      String weatherIndicator) {
+    this.averageTemperature = averageTemperature;
+    this.maxTemperature = maxTemperature;
+    this.minTemperature = minTemperature;
+    this.averageApparentTemperature = averageApparentTemperature;
+    this.averagePrecipitation = averagePrecipitation;
+    this.averageWindSpeed = averageWindSpeed;
+    this.weatherIndicator = weatherIndicator;
+  }
 }

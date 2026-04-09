@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,19 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import utc.miage.tp.badge.BadgeService;
-import utc.miage.tp.challenge.Challenge;
 import utc.miage.tp.challenge.ChallengeService;
-import utc.miage.tp.goal.GoalService;
-import utc.miage.tp.sport.SportService;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
-
 
 @Controller
 @RequestMapping("/users")
@@ -47,7 +40,8 @@ public class UserController {
       SportService sportService,
       GoalService goalService,
       ChallengeService challengeService,
-      BadgeService badgeService, FriendshipService friendshipService) {
+      BadgeService badgeService,
+      FriendshipService friendshipService) {
     this.userService = userService;
     this.workoutService = workoutService;
     this.sportService = sportService;
@@ -55,9 +49,7 @@ public class UserController {
     this.challengeService = challengeService;
     this.badgeService = badgeService;
     this.friendshipService = friendshipService;
-
   }
-
 
   @GetMapping({"", "/"})
   public String showMenu() {
@@ -98,7 +90,6 @@ public class UserController {
       return "user-create";
     }
   }
-
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
@@ -290,8 +281,8 @@ public class UserController {
     return "user-workout";
   }
 
-  @GetMapping("/dashbord")
-  public String showDashbord(Model model) {
+  @GetMapping("/dashboard")
+  public String showDashboard(Model model) {
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
@@ -299,7 +290,7 @@ public class UserController {
     model.addAttribute("activeFriends", null);
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
-    return "dashbord";
+    return "dashboard";
   }
 
   private void populateUserCreationForm(Model model, User user) {

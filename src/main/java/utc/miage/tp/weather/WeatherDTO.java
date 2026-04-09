@@ -31,8 +31,8 @@ record Hourly(
     @JsonProperty("wind_speed_10m") List<Double> windSpeed10m,
     @JsonProperty("weather_code") List<String> weatherCode) {
 
-  /** * Finds the data for a specific ISO-8601 date-hour string. 
-   * Example input: "2023-10-27T14:00" 
+  /**
+   * * Finds the data for a specific ISO-8601 date-hour string. Example input: "2023-10-27T14:00"
    */
   public Optional<HourlyDataPoint> getDataAtTime(String dateTime) {
     int index = time.indexOf(dateTime);
@@ -52,8 +52,7 @@ record Hourly(
   }
 }
 
-/** * A simple DTO to wrap a single hour's worth of data. 
- */
+/** * A simple DTO to wrap a single hour's worth of data. */
 record HourlyDataPoint(
     String time,
     double temperature,
