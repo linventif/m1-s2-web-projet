@@ -132,8 +132,9 @@ public class User implements UserDetails {
     this.level = level;
   }
 
-  public User(String name, String email, Double weight, Double height, Sex sex) {
-    this(name, email, weight, height, sex, null, PracticeLevel.BEGINNER);
+  public User(
+      String firstname, String lastname, String email, Double weight, Double height, Sex sex) {
+    this(firstname, lastname, email, weight, height, sex, null, PracticeLevel.BEGINNER);
   }
 
   public Long getId() {
@@ -296,8 +297,10 @@ public class User implements UserDetails {
         + height
         + ", sex="
         + sex
-        + ", name="
-        + name
+        + ", firstname="
+        + firstname
+        + ", lastname="
+        + lastname
         + ", email="
         + email
         + '}';

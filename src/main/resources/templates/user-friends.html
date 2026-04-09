@@ -36,7 +36,8 @@
               </thead>
               <tbody>
                 <tr th:each="friendship : ${incomingRequests}">
-                  <td class="font-semibold" th:text="${friendship.requester.name}"></td>
+                  <td class="font-semibold"
+                    th:text="${friendship.requester.firstname + ' ' + friendship.requester.lastname}"></td>
                   <td class="flex gap-2">
                     <form method="post" th:action="@{/users/friends/accept}">
                       <input type="hidden" name="friendshipId" th:value="${friendship.id}">
@@ -72,7 +73,8 @@
               </thead>
               <tbody>
                 <tr th:each="friendship : ${outgoingRequests}">
-                  <td class="font-semibold" th:text="${friendship.addressee.name}"></td>
+                  <td class="font-semibold"
+                    th:text="${friendship.addressee.firstname + ' ' + friendship.addressee.lastname}"></td>
                   <td>
                     <span class="badge badge-warning">En attente</span>
                   </td>
@@ -87,7 +89,8 @@
           <div class="alert alert-info" th:if="${#lists.isEmpty(acceptedFriendships)}">
             <span>Vous n'avez pas encore d'amis.</span>
           </div>
-          <div class="overflow-x-auto rounded-box border border-base-300" th:if="${!#lists.isEmpty(acceptedFriendships)}">
+          <div class="overflow-x-auto rounded-box border border-base-300"
+            th:if="${!#lists.isEmpty(acceptedFriendships)}">
             <table class="table table-zebra">
               <thead>
                 <tr>
@@ -97,9 +100,8 @@
               </thead>
               <tbody>
                 <tr th:each="friendship : ${acceptedFriendships}">
-                  <td
-                    class="font-semibold"
-                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.name : friendship.requester.name}">
+                  <td class="font-semibold"
+                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.firstname + ' ' +  friendship.addressee.lastname : friendship.addressee.firstname + ' ' + friendship.addressee.lastname}">
                   </td>
                   <td>
                     <form method="post" th:action="@{/users/friends/unfriend}">
