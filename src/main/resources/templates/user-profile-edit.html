@@ -9,6 +9,11 @@
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
         <h1 class="text-2xl font-semibold">Modifier mon profil</h1>
+        <div class="avatar">
+          <div class="w-24 rounded-full overflow-hidden border border-base-300 bg-base-200">
+            <img th:src="${user.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+          </div>
+        </div>
 
         <form method="post" th:action="@{/users/profile/edit}" class="grid gap-4">
           <div class="alert alert-error" th:if="${errorMessage}">

@@ -198,6 +198,11 @@ public class User implements UserDetails {
     return role;
   }
 
+  public String getProfileImagePath() {
+    long imageIndex = id == null || id <= 0 ? 1 : ((id - 1) % 20) + 1;
+    return "/images/profile/user_" + imageIndex + ".png";
+  }
+
   public void setId(Long id) {
     this.id = id;
   }

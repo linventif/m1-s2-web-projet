@@ -13,6 +13,11 @@
           <h3 class="text-xl">Informations</h3>
           <a class="btn btn-primary" th:href="@{/users/profile/edit}">Modifier mon profil</a>
         </div>
+        <div class="avatar">
+          <div class="w-24 rounded-full overflow-hidden border border-base-300 bg-base-200">
+            <img th:src="${user.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+          </div>
+        </div>
         <div class="alert alert-success" th:if="${message}">
           <span th:text="${message}">Profil mis à jour avec succès.</span>
         </div>

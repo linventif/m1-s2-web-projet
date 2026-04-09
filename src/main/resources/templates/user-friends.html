@@ -26,12 +26,20 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>De</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${incomingRequests}">
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.requester.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
                   <td class="font-semibold"
                     th:text="${friendship.requester.firstname + ' ' + friendship.requester.lastname}"></td>
                   <td class="flex gap-2">
@@ -63,12 +71,20 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Vers</th>
                   <th>Statut</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${outgoingRequests}">
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.addressee.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
                   <td class="font-semibold"
                     th:text="${friendship.addressee.firstname + ' ' + friendship.addressee.lastname}"></td>
                   <td>
@@ -90,14 +106,22 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Nom</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${acceptedFriendships}">
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.requester.id == currentUserId ? friendship.addressee.profileImagePath : friendship.requester.profileImagePath}" alt="Photo de profil ami" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
                   <td class="font-semibold"
-                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.firstname + ' ' +  friendship.addressee.lastname : friendship.addressee.firstname + ' ' + friendship.addressee.lastname}">
+                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.firstname + ' ' +  friendship.addressee.lastname : friendship.requester.firstname + ' ' + friendship.requester.lastname}">
                   </td>
                   <td>
                     <form method="post" th:action="@{/users/friends/unfriend}">

@@ -26,6 +26,7 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Photo</th>
                 <th>Nom</th>
                 <th>Ami</th>
                 <th>Statut</th>
@@ -35,6 +36,13 @@
             <tbody>
               <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
+                <td>
+                  <div class="avatar">
+                    <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                      <img th:src="${user.profileImagePath}" alt="Photo de profil utilisateur" class="h-full w-full object-cover" />
+                    </div>
+                  </div>
+                </td>
                 <td class="font-semibold" th:text="${user.firstname + ' ' + user.lastname}"></td>
                 <td>
 
