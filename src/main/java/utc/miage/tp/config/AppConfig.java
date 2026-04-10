@@ -24,9 +24,7 @@ public class AppConfig implements WebMvcConfigurer {
 
   @Bean
   public RestClient restClient(@Value("${geo.base-url}") String baseUrl) {
-    return RestClient.builder()
-      .baseUrl(baseUrl)
-      .build();
+    return RestClient.builder().baseUrl(baseUrl).build();
   }
 
   @Bean
