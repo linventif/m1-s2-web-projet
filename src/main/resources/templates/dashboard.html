@@ -122,6 +122,16 @@
                                                 <span class="font-semibold" sec:authentication="principal.firstname">Utilisateur</span>
                                                 <span class="font-semibold" sec:authentication="principal.lastname">Connecté</span>
                                             </p>
+                                            <div th:if="${workout.address != null}" class="mt-1 flex items-center gap-1.5 text-xs text-base-content/50">
+                                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 text-orange-500">
+                                                   <path fill-rule="evenodd" d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 7.23 7.23 0 0 0 .758.433 8.15 8.15 0 0 0 .281.14l.018.008.006.003ZM10 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" clip-rule="evenodd" />
+                                               </svg>
+                                               <a th:href="@{https://www.google.com/maps/search/(api=1,query=${workout.address})}"
+                                               target="_blank"
+                                               class="hover:text-orange-600 hover:underline transition-colors"
+                                               th:text="${workout.address}">
+                                               </a>
+                                           </div>
                                         </div>
                                     </div>
 
