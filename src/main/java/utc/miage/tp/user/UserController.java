@@ -389,15 +389,6 @@ public class UserController {
 
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
-    double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
-    double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
-    double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
-
-    int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int totalMinutes = (int) Math.round(totalDurationThisWeek);
-    int hoursPart = totalMinutes / 60;
-    int minutesPart = totalMinutes % 60;
-
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
@@ -405,16 +396,23 @@ public class UserController {
     model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
-    model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
-    model.addAttribute("todayIndex", todayIndex);
-    model.addAttribute("hoursPart", hoursPart);
-    model.addAttribute("minutesPart", minutesPart);
-    model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
-
     return "dashboard";
   }
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
+  }
+
+  private void populateProfileView(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("bmi", userService.calculateBMI(user));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
+    model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private void populateProfileEditForm(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("sexes", Sex.values());
+    model.addAttribute("practiceLevels", PracticeLevel.values());
   }
 }

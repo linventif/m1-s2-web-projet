@@ -33,7 +33,7 @@ public class Workout {
   private Double distance;
 
   @Column(name = "duration", nullable = false)
-  private Double duration; // en secondes
+  private Double duration; // en minutes
 
   @Column(name = "address", nullable = true)
   private String address;
