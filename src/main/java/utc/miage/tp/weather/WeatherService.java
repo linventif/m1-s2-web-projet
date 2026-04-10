@@ -81,18 +81,21 @@ public class WeatherService {
   }
 
   public List<CityResultDTO> searchAddress(String query) {
-    return restClient.get()
-      .uri(uriBuilder -> uriBuilder
-        .path("/search") 
-        .queryParam("q", query)
-        .queryParam("format", "json")
-        .queryParam("limit", 1)
-        .queryParam("addressdetails", 1)
-        .build())
-      .header("User-Agent", "SchoolSpringProject/1.0 (leushuis.robbe@gmail.com)")
-      .retrieve()
-      .body(new ParameterizedTypeReference<List<CityResultDTO>>() {});
-    }
+    return restClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path("/search")
+                    .queryParam("q", query)
+                    .queryParam("format", "json")
+                    .queryParam("limit", 1)
+                    .queryParam("addressdetails", 1)
+                    .build())
+        .header("User-Agent", "SchoolSpringProject/1.0 (leushuis.robbe@gmail.com)")
+        .retrieve()
+        .body(new ParameterizedTypeReference<List<CityResultDTO>>() {});
+  }
 
   public Map<String, Double> getCoordinates(String address) {
     List<CityResultDTO> results = searchAddress(address);

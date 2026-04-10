@@ -115,8 +115,7 @@
                                             <div class="flex flex-wrap items-center gap-2">
                                                 <h3 class="text-xl font-black" th:text="${workout.sport.name}">Course</h3>
                                                 <span class="badge rounded-full border-none bg-orange-100 text-orange-700" th:text="${workout.date}">2026-04-08</span>
-                                                <span class="badge rounded-full badge-outline" th:if="${workout.weather != null}"
-                                                      th:text="${'Météo : ' + workout.weather.nom}">Météo : Ensoleillé</span>
+                                                
                                             </div>
                                             <p class="mt-2 text-sm text-base-content/65">
                                                 Séance publiée par
@@ -126,13 +125,18 @@
                                         </div>
                                     </div>
 
-                                    <div class="rating rating-sm sm:rating-md">
-                                        <input type="radio" class="rating-hidden" disabled />
-                                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 1}" />
-                                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 2}" />
-                                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 3}" />
-                                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 4}" />
-                                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 5}" />
+                                    <div class="flex flex-col items-end gap-3">
+                                        <div class="rating rating-sm sm:rating-md">
+                                            <input type="radio" class="rating-hidden" disabled />
+                                            <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 1}" />
+                                            <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 2}" />
+                                            <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 3}" />
+                                            <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 4}" />
+                                            <input type="radio" class="mask mask-star-2 bg-orange-400" disabled th:checked="${workout.rating != null and workout.rating >= 5}" />
+                                        </div>
+                                        <div th:if="${workout.weather != null}" 
+                                            th:insert="~{components/weather :: weather(data=${workout.weather})}">
+                                        </div>
                                     </div>
                                 </div>
 
