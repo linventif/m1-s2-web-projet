@@ -1,9 +1,19 @@
 package utc.miage.tp.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +38,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final SportRepository sportRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
+  @Value("${app.avatar-upload-dir:avatar_upload}")
+  private String avatarUploadDir;
 
   public ReferenceDataInitializer(
       UserRepository userRepository,
@@ -260,23 +272,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
-    userJudy.setProfileImagePath("/images/avatars/judy_hopps.png");
-    userNick.setProfileImagePath("/images/avatars/nick_wilde.png");
-    userBogo.setProfileImagePath("/images/avatars/chief_bogo.png");
-    userBellwether.setProfileImagePath("/images/avatars/dawn_bellwether.png");
-    userHiccup.setProfileImagePath("/images/avatars/hiccup_haddock.png");
-    userAstrid.setProfileImagePath("/images/avatars/astrid_hofferson.png");
-    userStoick.setProfileImagePath("/images/avatars/stoick_the_vast.png");
-    userFishlegs.setProfileImagePath("/images/avatars/fishlegs_ingerman.png");
-    userRodney.setProfileImagePath("/images/avatars/rodney_copperbottom.png");
-    userCappy.setProfileImagePath("/images/avatars/cappy_barra.png");
-    userFender.setProfileImagePath("/images/avatars/fender_def.png");
-    userBigweld.setProfileImagePath("/images/avatars/bigweld_bold.png");
-    userShifu.setProfileImagePath("/images/avatars/maitre_shifu_me.png");
-    userOogway.setProfileImagePath("/images/avatars/maitre_oogway_away.png");
-    userPo.setProfileImagePath("/images/avatars/po_ping_pong.png");
-    userTaiLung.setProfileImagePath("/images/avatars/tai_lung_shi.png");
-
     userRepository.saveAll(
         List.of(
             userAlice,
@@ -299,6 +294,24 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userOogway,
             userPo,
             userTaiLung));
+    assignDemoAvatars(
+        Map.ofEntries(
+            Map.entry(userJudy, "judy_hopps.png"),
+            Map.entry(userNick, "nick_wilde.png"),
+            Map.entry(userBogo, "chief_bogo.png"),
+            Map.entry(userBellwether, "dawn_bellwether.png"),
+            Map.entry(userHiccup, "hiccup_haddock.png"),
+            Map.entry(userAstrid, "astrid_hofferson.png"),
+            Map.entry(userStoick, "stoick_the_vast.png"),
+            Map.entry(userFishlegs, "fishlegs_ingerman.png"),
+            Map.entry(userRodney, "rodney_copperbottom.png"),
+            Map.entry(userCappy, "cappy_barra.png"),
+            Map.entry(userFender, "fender_def.png"),
+            Map.entry(userBigweld, "bigweld_bold.png"),
+            Map.entry(userShifu, "maitre_shifu_me.png"),
+            Map.entry(userOogway, "maitre_oogway_away.png"),
+            Map.entry(userPo, "po_ping_pong.png"),
+            Map.entry(userTaiLung, "tai_lung_shi.png")));
 
     // Friendships
     friendshipService.createAcceptedFriendship(userAlice.getId(), userOwen.getId());
@@ -661,6 +674,66 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
   private Sport createSport(String name, Double calPerMin) {
     return new Sport(name, calPerMin);
+  }
+
+  private void assignDemoAvatars(Map<User, String> avatarByUser) {
+    try {
+      Path uploadDir = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+      Files.createDirectories(uploadDir);
+      for (Map.Entry<User, String> entry : avatarByUser.entrySet()) {
+        User user = entry.getKey();
+        String sourceFileName = entry.getValue();
+        if (user == null || user.getId() == null || sourceFileName == null || sourceFileName.isBlank()) {
+          continue;
+        }
+
+        cleanupExistingUserAvatars(uploadDir, user.getId());
+
+        String extension = extractExtension(sourceFileName);
+        if (extension.isBlank()) {
+          continue;
+        }
+
+        String targetFileName = "user_" + user.getId() + "." + extension;
+        Path targetPath = uploadDir.resolve(targetFileName).normalize();
+        if (!targetPath.startsWith(uploadDir)) {
+          continue;
+        }
+
+        ClassPathResource resource = new ClassPathResource("static/images/avatars/" + sourceFileName);
+        if (!resource.exists()) {
+          continue;
+        }
+
+        try (InputStream inputStream = resource.getInputStream()) {
+          Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+          user.setProfileImagePath("/avatar_upload/" + targetFileName);
+          userRepository.save(user);
+        }
+      }
+    } catch (IOException exception) {
+      throw new IllegalStateException("Impossible de copier les avatars de demo.", exception);
+    }
+  }
+
+  private String extractExtension(String filename) {
+    if (filename == null || !filename.contains(".")) {
+      return "";
+    }
+    int lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex == filename.length() - 1) {
+      return "";
+    }
+    return filename.substring(lastDotIndex + 1);
+  }
+
+  private void cleanupExistingUserAvatars(Path uploadDir, Long userId) throws IOException {
+    String pattern = "user_" + userId + ".*";
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadDir, pattern)) {
+      for (Path path : stream) {
+        Files.deleteIfExists(path);
+      }
+    }
   }
 
   @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.

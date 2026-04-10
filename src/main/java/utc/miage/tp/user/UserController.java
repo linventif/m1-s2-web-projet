@@ -145,7 +145,9 @@ public class UserController {
               currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
       if (avatarFile != null && !avatarFile.isEmpty()) {
         String avatarPath = storeAvatarForUser(updatedUser.getId(), avatarFile);
-        updatedUser.setProfileImagePath(avatarPath);
+        String avatarPathWithVersion = avatarPath + "?v=" + System.currentTimeMillis();
+        updatedUser.setProfileImagePath(avatarPathWithVersion);
+        currentUser.setProfileImagePath(avatarPathWithVersion);
         userService.save(updatedUser);
       }
       redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
