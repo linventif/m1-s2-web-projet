@@ -43,7 +43,9 @@
                     </div>
                   </div>
                 </td>
-                <td class="font-semibold" th:text="${user.firstname + ' ' + user.lastname}"></td>
+                <td>
+                  <span th:replace="~{components/user::nameLink(user=${user})}"></span>
+                </td>
                 <td>
                   <span class="badge badge-success" th:if="${#sets.contains(friendIds, user.id)}">Ami</span>
                   <span class="badge badge-warning"
