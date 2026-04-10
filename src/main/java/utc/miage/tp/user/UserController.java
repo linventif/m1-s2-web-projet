@@ -379,6 +379,13 @@ public class UserController {
     model.addAttribute("user", user);
   }
 
+  private void populateProfileView(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("bmi", userService.calculateBMI(user));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
+    model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
   private void populateProfileEditForm(Model model, User user) {
     model.addAttribute("user", user);
     model.addAttribute("sexes", Sex.values());
