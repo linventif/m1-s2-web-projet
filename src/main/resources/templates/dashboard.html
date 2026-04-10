@@ -51,70 +51,6 @@
 
                     </div>
 
-                   <!-- This Week -->
-                    <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="flex items-center justify-between">
-                                <h2 class="card-title text-lg uppercase">This Week</h2>
-                                <button class="btn btn-sm btn-outline btn-warning rounded-full">
-                                    Statistique
-                                </button>
-                            </div>
-
-                            <!-- Distance -->
-                            <div class="mt-2 text-center">
-                                <span class="text-5xl font-light" th:text="${totalDistanceThisWeek}">0</span>
-                                <span class="text-2xl font-light text-base-content/70">km</span>
-                            </div>
-
-                            <!-- Mini bars semaine -->
-
-                            <div class="mt-5 flex items-end justify-center gap-2 h-14">
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 0} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 1} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 2} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 3} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 4} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 5} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                                <div class="w-4 h-1 rounded-sm"
-                                    th:classappend="${todayIndex == 6} ? ' bg-orange-500' : ' bg-base-300'"></div>
-                            </div>
-
-                            <div class="mt-2 flex items-center justify-center gap-2 text-sm font-semibold">
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 0} ? ' text-orange-500' : ''">M</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 1} ? ' text-orange-500' : ''">T</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 2} ? ' text-orange-500' : ''">W</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 3} ? ' text-orange-500' : ''">T</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 4} ? ' text-orange-500' : ''">F</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 5} ? ' text-orange-500' : ''">S</span>
-                                <span class="w-4 text-center" th:classappend="${todayIndex == 6} ? ' text-orange-500' : ''">S</span>
-                            </div>
-
-                            <!-- Résumé bas -->
-                            <div class="mt-5 grid grid-cols-2 items-center border-t border-base-300 pt-4 text-center">
-                                <div class="border-r border-base-300">
-                                    <div class="text-2xl font-light">
-                                        <span th:text="${hoursPart}">0</span>h
-                                        <span th:text="${minutesPart}">0</span>m
-                                    </div>
-                                    <p class="text-xs text-base-content/60">Temps</p>
-                                </div>
-                                <div>
-                                    <div class="text-2xl font-light">
-                                        <span th:text="${totalCaloriesThisWeek}">0</span> kcal
-                                    </div>
-                                    <p class="text-xs text-base-content/60">Calories</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
                         <div class="card-body">
                             <div class="flex items-center justify-between">
@@ -137,9 +73,8 @@
                                         </div>
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <p class="truncate">
-                                            <span th:replace="~{components/user::nameLink(user=${friend})}"></span>
-                                        </p>
+                                        <p class="truncate font-semibold"
+                                           th:text="${friend.firstname + ' ' + friend.lastname}">Nom ami</p>
                                         <p class="truncate text-xs text-base-content/60" th:text="${friend.email}">ami@email.com</p>
                                         <p class="mt-1 text-xs text-base-content/50">
                                             Niveau : <span th:text="${friend.level}">BEGINNER</span>
@@ -184,7 +119,8 @@
                                             </div>
                                             <p class="mt-2 text-sm text-base-content/65">
                                                 Séance publiée par
-                                                <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
+                                                <span class="font-semibold" sec:authentication="principal.firstname">Utilisateur</span>
+                                                <span class="font-semibold" sec:authentication="principal.lastname">Connecté</span>
                                             </p>
                                         </div>
                                     </div>

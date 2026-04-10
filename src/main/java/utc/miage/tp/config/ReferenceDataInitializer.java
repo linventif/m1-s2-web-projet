@@ -656,9 +656,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       WeatherStatsDTO weather,
       Sport sport,
       User user) {
-    // Seed values are defined in minutes; store duration in seconds.
-    double durationInSeconds = duration == null ? 0.0 : duration * 60.0;
-    return new Workout(date, distance, durationInSeconds, address, rating, weather, sport, user);
+    return new Workout(date, distance, duration, address, rating, weather, sport, user);
   }
 
   private Sport createSport(String name, Double calPerMin) {
