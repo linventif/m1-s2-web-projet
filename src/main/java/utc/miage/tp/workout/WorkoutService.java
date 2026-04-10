@@ -40,45 +40,4 @@ public class WorkoutService {
   public List<Workout> getAllStatutsForUser(User user) {
     return workoutRepository.findAll();
   }
-
-  @Transactional(readOnly = true)
-  public double getTotalDistanceThisWeek(User user) {
-    java.time.LocalDate today = java.time.LocalDate.now();
-    java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
-
-    java.time.LocalDateTime start = startOfWeek.atStartOfDay();
-    java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
-
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDistance() != null)
-        .mapToDouble(Workout::getDistance)
-        .sum();
-  }
-
-  @Transactional(readOnly = true)
-  public double getTotalDurationThisWeek(User user) {
-    java.time.LocalDate today = java.time.LocalDate.now();
-    java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
-
-    java.time.LocalDateTime start = startOfWeek.atStartOfDay();
-    java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
-
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDuration() != null)
-        .mapToDouble(Workout::getDuration)
-        .sum();
-  }
-
-  @Transactional(readOnly = true)
-  public double getTotalCaloriesThisWeek(User user) {
-    java.time.LocalDate today = java.time.LocalDate.now();
-    java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
-
-    java.time.LocalDateTime start = startOfWeek.atStartOfDay();
-    java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
-
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .mapToDouble(workout -> workout.getCalorieBurn() != null ? workout.getCalorieBurn() : 0.0)
-        .sum();
-  }
 }
