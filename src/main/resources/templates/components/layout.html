@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:fragment="head(title)">
+<th:block th:fragment="headAssets">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</th:block>
+<head th:fragment="head(title)">
+  <th:block th:replace="~{components/layout::headAssets}"></th:block>
   <title th:text="${title}">Erreur</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
@@ -34,9 +36,10 @@
     </a>
 
     <nav class="ml-6 hidden items-center gap-1 lg:flex">
-      <a th:href="@{/users/dashbord}" class="btn btn-ghost rounded-full px-4">Dashboard</a>
+      <a th:href="@{/users/dashboard}" class="btn btn-ghost rounded-full px-4">Dashboard</a>
       <a th:href="@{/users/workout}" class="btn btn-ghost rounded-full px-4">Activités</a>
       <a th:href="@{/users/friends}" class="btn btn-ghost rounded-full px-4">Communauté</a>
+      <a th:href="@{/users/users}" class="btn btn-ghost rounded-full px-4">Utilisateur</a>
       <a th:href="@{/users/profile}" class="btn btn-ghost rounded-full px-4">Profil</a>
     </nav>
   </div>
@@ -64,10 +67,9 @@
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button"
            class="flex h-11 w-11 items-center justify-center rounded-full border border-base-300 bg-white shadow-sm transition hover:scale-[1.02] hover:shadow">
-        <div class="avatar placeholder">
-          <div class="w-9 rounded-full bg-orange-500 text-white">
-                                    <span class="text-sm font-bold"
-                                          th:text="${#authentication != null and #authentication.principal != null and #authentication.principal.firstname != null ? #strings.substring(#authentication.principal.firstname,0,1) : 'U'}">U</span>
+        <div class="avatar">
+          <div class="w-9 rounded-full overflow-hidden border border-base-300 bg-base-200">
+            <img th:src="${#authentication.principal.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
           </div>
         </div>
       </div>
@@ -79,10 +81,9 @@
         </li>
         <li class="px-2 py-2">
           <div class="flex items-center gap-3 rounded-2xl bg-base-200 p-3">
-            <div class="avatar placeholder">
-              <div class="w-12 rounded-full bg-orange-500 text-white">
-                                            <span class="font-bold"
-                                                  th:text="${#authentication != null and #authentication.principal != null and #authentication.principal.firstname != null ? #strings.substring(#authentication.principal.firstname,0,1) : 'U'}">U</span>
+            <div class="avatar">
+              <div class="w-12 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                <img th:src="${#authentication.principal.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
               </div>
             </div>
             <div class="min-w-0">
@@ -96,6 +97,7 @@
         </li>
         <li><a th:href="@{/users/profile}">Mon profil</a></li>
         <li><a th:href="@{/users/friends}">Mes amis</a></li>
+        <li><a th:href="@{/users/users}">Utilisateur</a></li>
         <li><a th:href="@{/users/workout}">Mes workouts</a></li>
         <li><a th:href="@{/logout}">Déconnexion</a></li>
       </ul>
@@ -117,9 +119,10 @@
     </div>
 
     <nav class="flex flex-wrap items-center gap-2 text-sm">
-      <a th:href="@{/users/dashbord}" class="btn btn-ghost btn-sm rounded-full">Dashboard</a>
+      <a th:href="@{/users/dashboard}" class="btn btn-ghost btn-sm rounded-full">Dashboard</a>
       <a th:href="@{/users/workout}" class="btn btn-ghost btn-sm rounded-full">Activités</a>
       <a th:href="@{/users/friends}" class="btn btn-ghost btn-sm rounded-full">Amis</a>
+      <a th:href="@{/users/users}" class="btn btn-ghost btn-sm rounded-full">Utilisateur</a>
       <a th:href="@{/users/profile}" class="btn btn-ghost btn-sm rounded-full">Profil</a>
     </nav>
 

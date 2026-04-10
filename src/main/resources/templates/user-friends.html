@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{components/layout::head(title='Mes amis')}">
   <title>Mes amis</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="min-h-screen bg-base-200 text-base-content">
-  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+  <div th:insert="~{components/layout::header}"></div>
+  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-6 pt-24 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
         <div class="alert alert-success" th:if="${message}">
@@ -30,14 +27,23 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>De</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${incomingRequests}">
-                  <td class="font-semibold"
-                    th:text="${friendship.requester.firstname + ' ' + friendship.requester.lastname}"></td>
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.requester.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span th:replace="~{components/user::nameLink(user=${friendship.requester})}"></span>
+                  </td>
                   <td class="flex gap-2">
                     <form method="post" th:action="@{/users/friends/accept}">
                       <input type="hidden" name="friendshipId" th:value="${friendship.id}">
@@ -67,14 +73,23 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Vers</th>
                   <th>Statut</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${outgoingRequests}">
-                  <td class="font-semibold"
-                    th:text="${friendship.addressee.firstname + ' ' + friendship.addressee.lastname}"></td>
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.addressee.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span th:replace="~{components/user::nameLink(user=${friendship.addressee})}"></span>
+                  </td>
                   <td>
                     <span class="badge badge-warning">En attente</span>
                   </td>
@@ -94,14 +109,23 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Nom</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:each="friendship : ${acceptedFriendships}">
-                  <td class="font-semibold"
-                    th:text="${friendship.requester.id == currentUserId ? friendship.addressee.firstname + ' ' +  friendship.addressee.lastname : friendship.addressee.firstname + ' ' + friendship.addressee.lastname}">
+                  <td>
+                    <div class="avatar">
+                      <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                        <img th:src="${friendship.requester.id == currentUserId ? friendship.addressee.profileImagePath : friendship.requester.profileImagePath}" alt="Photo de profil ami" class="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    th:with="friend=${friendship.requester.id == currentUserId ? friendship.addressee : friendship.requester}">
+                    <span th:replace="~{components/user::nameLink(user=${friend})}"></span>
                   </td>
                   <td>
                     <form method="post" th:action="@{/users/friends/unfriend}">
@@ -118,20 +142,10 @@
           </div>
         </div>
 
-        <div class="flex gap-10">
-          <div class="flex gap-2">
-            <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
-          </div>
-          <div class="flex gap-2">
-            <a class="btn btn-outline" th:href="@{/users/create}">Creer un compte</a>
-          </div>
-        </div>
       </div>
     </section>
   </main>
+  <div th:insert="~{components/layout::footer}"></div>
 </body>
 
 </html>

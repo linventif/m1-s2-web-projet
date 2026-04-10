@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{components/layout::head(title='Liste des utilisateurs')}">
   <title>Liste des utilisateurs</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="min-h-screen bg-base-200 text-base-content">
-  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+  <div th:insert="~{components/layout::header}"></div>
+  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-6 pt-24 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
         <div class="alert alert-success" th:if="${message}">
@@ -30,8 +27,8 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Photo</th>
                 <th>Nom</th>
-                <th>Ami</th>
                 <th>Statut</th>
                 <th>Action</th>
               </tr>
@@ -39,12 +36,15 @@
             <tbody>
               <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
-                <td class="font-semibold" th:text="${user.firstname + ' ' + user.lastname}"></td>
                 <td>
-
-                  <button class="btn btn-outside">
-                    Demander en Ami
-                  </button>
+                  <div class="avatar">
+                    <div class="w-10 rounded-full overflow-hidden border border-base-300 bg-base-200">
+                      <img th:src="${user.profileImagePath}" alt="Photo de profil utilisateur" class="h-full w-full object-cover" />
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span th:replace="~{components/user::nameLink(user=${user})}"></span>
                 </td>
                 <td>
                   <span class="badge badge-success" th:if="${#sets.contains(friendIds, user.id)}">Ami</span>
@@ -100,20 +100,10 @@
           </table>
         </div>
 
-        <div class="flex gap-10 ">
-          <div class="flex gap-2">
-            <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activites</a>
-          </div>
-          <div class="flex gap-2">
-            <a class="btn btn-outline" th:href="@{/users/create}">Creer un compte</a>
-          </div>
-        </div>
       </div>
     </section>
   </main>
+  <div th:insert="~{components/layout::footer}"></div>
 </body>
 
 </html>

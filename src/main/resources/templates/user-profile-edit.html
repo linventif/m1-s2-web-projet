@@ -1,45 +1,96 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editer mon profil</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <th:block th:replace="~{components/layout::headAssets}"></th:block>
+  <title>Modifier mon profil</title>
 </head>
 <body class="min-h-screen bg-base-200 text-base-content">
   <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
-      <section class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body gap-6 p-6 sm:p-8">
-          <h3 class="text-xl mb-4">Modifier mes informations personnelles</h3>
-          <form method="post" th:action="@{/users/profile/edit}" class="grid gap-4">
-            <div class="alert alert-error" th:if="${errorMessage}">
-              <span th:text="${errorMessage}">Erreur</span>
-            </div>
+    <section class="card border border-base-300 bg-base-100 shadow-xl">
+      <div class="card-body gap-6 p-6 sm:p-8">
+        <h1 class="text-2xl font-semibold">Modifier mon profil</h1>
+        <div class="avatar">
+          <div class="w-24 rounded-full overflow-hidden border border-base-300 bg-base-200">
+            <img th:src="${user.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+          </div>
+        </div>
+
+        <form method="post" th:action="@{/users/profile/edit}" enctype="multipart/form-data" class="grid gap-4">
+          <div class="alert alert-error" th:if="${errorMessage}">
+            <span th:text="${errorMessage}">Erreur</span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <label class="form-control w-full">
+              <span class="label-text">Prénom</span>
+              <input class="input input-bordered" type="text" name="firstname" required th:value="${user.firstname}">
+            </label>
+
+            <label class="form-control w-full">
+              <span class="label-text">Nom</span>
+              <input class="input input-bordered" type="text" name="lastname" required th:value="${user.lastname}">
+            </label>
+          </div>
+
+          <label class="form-control w-full">
+            <span class="label-text">Email</span>
+            <input class="input input-bordered" type="email" name="email" required th:value="${user.email}">
+          </label>
+
+          <label class="form-control w-full">
+            <span class="label-text">Avatar</span>
+            <input class="file-input file-input-bordered w-full" type="file" name="avatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
+          </label>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label class="form-control w-full">
               <span class="label-text">Sexe</span>
-            <select class="select select-bordered" name="sex" required>
-            <option th:selected="${user.sex == T(utc.miage.tp.user.Sex).MALE}" value="MALE">Homme</option>
-            <option th:selected="${user.sex == T(utc.miage.tp.user.Sex).FEMALE}" value="FEMALE">Femme</option>
-            </select>
+              <select class="select select-bordered" name="sex" required>
+                <option th:each="currentSex : ${sexes}"
+                        th:value="${currentSex}"
+                        th:selected="${user.sex == currentSex}"
+                        th:text="${currentSex == T(utc.miage.tp.user.Sex).MALE ? 'Homme' : 'Femme'}">Sexe</option>
+              </select>
             </label>
+
             <label class="form-control w-full">
-              <span class="label-text">Âge</span>
-              <input class="input input-bordered" type="number" name="age" min="1" max="120" required th:value="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : ''}">
+              <span class="label-text">Niveau sportif</span>
+              <select class="select select-bordered" name="level" required>
+                <option th:each="practiceLevel : ${practiceLevels}"
+                        th:value="${practiceLevel}"
+                        th:selected="${user.level == practiceLevel}"
+                        th:text="${practiceLevel}">BEGINNER</option>
+              </select>
             </label>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <label class="form-control w-full">
+              <span class="label-text">Date de naissance</span>
+              <input class="input input-bordered"
+                     type="date"
+                     name="birthDate"
+                     th:value="${user.birthDate}">
+            </label>
+
             <label class="form-control w-full">
               <span class="label-text">Taille (cm)</span>
               <input class="input input-bordered" type="number" name="height" min="50" max="250" step="0.1" required th:value="${user.height}">
             </label>
+
             <label class="form-control w-full">
               <span class="label-text">Poids (kg)</span>
               <input class="input input-bordered" type="number" name="weight" min="20" max="300" step="0.1" required th:value="${user.weight}">
             </label>
-            <button class="btn btn-primary mt-2" type="submit">Enregistrer</button>
-            <a class="btn btn-outline mt-2" th:href="@{/users/profile}">Annuler</a>
-          </form>
-        </div>
-      </section>
-    </main>
-  </body>
+          </div>
+
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button class="btn btn-primary" type="submit">Enregistrer</button>
+            <a class="btn btn-outline" th:href="@{/users/profile}">Annuler</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
 </html>

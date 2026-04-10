@@ -10,4 +10,14 @@ public class HomeController {
   public String redirectToProfile() {
     return "redirect:/users/profile";
   }
+
+  @GetMapping("/dashboard")
+  public String redirectToDashboard() {
+    return "redirect:/users/dashboard";
+  }
+
+  @GetMapping("/dashbord")
+  public String redirectTypoDashbord() {
+    return "redirect:/dashboard";
+  }
 }
