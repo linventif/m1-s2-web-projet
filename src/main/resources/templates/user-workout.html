@@ -21,7 +21,8 @@
             <table class="table table-zebra">
               <thead>
                 <tr>
-                  <th>Utilisateur</th>
+                  <th>Prenom</th>
+                  <th>Nom de Famille</th>
                   <th>Date</th>
                   <th>Sport</th>
                   <th>Durée</th>
@@ -31,9 +32,8 @@
               </thead>
               <tbody>
                 <tr th:each="workout : ${workouts}">
-                  <td>
-                    <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
-                  </td>
+                  <td th:text="${workout.user.firstname}"></td>
+                  <td th:text="${workout.user.lastname}"></td>
                   <td th:text="${workout.date}"></td>
                   <td th:text="${workout.sport.name}"></td>
                   <td>
@@ -79,7 +79,6 @@
       </div>
     </section>
   </main>
-  <div th:insert="~{components/layout::footer}"></div>
 </body>
 
 </html>

@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,34 +111,11 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    populateProfileView(model, currentUser);
-    model.addAttribute("canEditProfile", true);
+    model.addAttribute("user", currentUser);
+    model.addAttribute("bmi", userService.calculateBMI(currentUser));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
+    model.addAttribute("bmr", userService.calculateBMR(currentUser));
     return "user-profile";
-  }
-
-  @GetMapping("/profile/{userId:[0-9]+}")
-  public String showUserProfile(
-      @AuthenticationPrincipal User currentUser,
-      @PathVariable Long userId,
-      Model model,
-      RedirectAttributes redirectAttributes) {
-    if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
-      return "redirect:/users/profile";
-    }
-
-    return userService
-        .getUserById(userId)
-        .map(
-            user -> {
-              populateProfileView(model, user);
-              model.addAttribute("canEditProfile", false);
-              return "user-profile";
-            })
-        .orElseGet(
-            () -> {
-              redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
-              return "redirect:/users/users";
-            });
   }
 
   @GetMapping("/profile/edit")
