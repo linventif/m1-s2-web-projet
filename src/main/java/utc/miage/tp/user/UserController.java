@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -111,11 +112,34 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("user", currentUser);
-    model.addAttribute("bmi", userService.calculateBMI(currentUser));
-    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
-    model.addAttribute("bmr", userService.calculateBMR(currentUser));
+    populateProfileView(model, currentUser);
+    model.addAttribute("canEditProfile", true);
     return "user-profile";
+  }
+
+  @GetMapping("/profile/{userId:[0-9]+}")
+  public String showUserProfile(
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long userId,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+    if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
+      return "redirect:/users/profile";
+    }
+
+    return userService
+        .getUserById(userId)
+        .map(
+            user -> {
+              populateProfileView(model, user);
+              model.addAttribute("canEditProfile", false);
+              return "user-profile";
+            })
+        .orElseGet(
+            () -> {
+              redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
+              return "redirect:/users/users";
+            });
   }
 
   @GetMapping("/profile/edit")
@@ -365,6 +389,15 @@ public class UserController {
 
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
+    double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
+    double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
+    double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
+
+    int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+    int totalMinutes = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalMinutes / 60;
+    int minutesPart = totalMinutes % 60;
+
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
@@ -372,16 +405,16 @@ public class UserController {
     model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+    model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
+    model.addAttribute("todayIndex", todayIndex);
+    model.addAttribute("hoursPart", hoursPart);
+    model.addAttribute("minutesPart", minutesPart);
+    model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
+
     return "dashboard";
   }
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
-  }
-
-  private void populateProfileEditForm(Model model, User user) {
-    model.addAttribute("user", user);
-    model.addAttribute("sexes", Sex.values());
-    model.addAttribute("practiceLevels", PracticeLevel.values());
   }
 }
