@@ -8,6 +8,16 @@ public class HomeController {
 
   @GetMapping("/")
   public String redirectToProfile() {
-    return "redirect:/users/profile";
+    return "redirect:/user/profile";
+  }
+
+  @GetMapping("/dashboard")
+  public String redirectToDashboard() {
+    return "redirect:/user/dashboard";
+  }
+
+  @GetMapping("/dashbord")
+  public String redirectTypoDashbord() {
+    return "redirect:/dashboard";
   }
 }

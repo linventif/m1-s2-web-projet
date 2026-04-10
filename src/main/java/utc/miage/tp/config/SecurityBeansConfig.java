@@ -39,7 +39,7 @@ public class SecurityBeansConfig {
         .formLogin(
             form ->
                 form.loginPage("/login")
-                    .defaultSuccessUrl("/", true) // Redirige vers l'accueil après connexion
+                    .defaultSuccessUrl("/user/dashboard", true)
                     .permitAll())
         .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll());
 

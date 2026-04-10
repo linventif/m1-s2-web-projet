@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping({"/users", "/user"})
 public class UserController {
 
   private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
@@ -111,11 +112,34 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("user", currentUser);
-    model.addAttribute("bmi", userService.calculateBMI(currentUser));
-    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
-    model.addAttribute("bmr", userService.calculateBMR(currentUser));
+    populateProfileView(model, currentUser);
+    model.addAttribute("canEditProfile", true);
     return "user-profile";
+  }
+
+  @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
+  public String showUserProfile(
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long userId,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+    if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
+      return "redirect:/user/profile";
+    }
+
+    return userService
+        .getUserById(userId)
+        .map(
+            user -> {
+              populateProfileView(model, user);
+              model.addAttribute("canEditProfile", false);
+              return "user-profile";
+            })
+        .orElseGet(
+            () -> {
+              redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
+              return "redirect:/user/users";
+            });
   }
 
   @GetMapping("/profile/edit")
@@ -151,7 +175,7 @@ public class UserController {
         userService.save(updatedUser);
       }
       redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
-      return "redirect:/users/profile";
+      return "redirect:/user/profile";
     } catch (Exception e) {
       currentUser.setFirstname(firstname);
       currentUser.setLastname(lastname);
@@ -292,7 +316,7 @@ public class UserController {
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long targetUserId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
@@ -311,7 +335,7 @@ public class UserController {
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
@@ -326,7 +350,7 @@ public class UserController {
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
@@ -341,7 +365,7 @@ public class UserController {
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);
@@ -353,10 +377,11 @@ public class UserController {
   }
 
   private String resolveReturnTo(String returnTo) {
-    if (returnTo != null && returnTo.startsWith("/users/")) {
+    if (returnTo != null
+        && (returnTo.startsWith("/users/") || returnTo.startsWith("/user/"))) {
       return returnTo;
     }
-    return "/users/friends";
+    return "/user/friends";
   }
 
   @GetMapping("/workout")
