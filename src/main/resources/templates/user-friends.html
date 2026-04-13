@@ -132,7 +132,10 @@
 
           <div>
             <h2 class="mb-3 text-lg font-semibold">Mes amis</h2>
-            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(acceptedFriendships)}">
+            <div
+              class="alert alert-info alert-outline"
+              th:if="${#lists.isEmpty(acceptedFriendships)}"
+            >
               <span>Vous n'avez pas encore d'amis.</span>
             </div>
             <div
