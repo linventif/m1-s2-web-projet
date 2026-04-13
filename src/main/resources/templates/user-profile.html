@@ -79,6 +79,8 @@
             <i th:text="${recommendation}"></i>
           </p>
 
+          <div th:replace="~{components/sport::sportList(sports=${profileSports})}"></div>
+
           <div class="mt-4 space-y-3">
             <h4 class="text-lg font-semibold">Badges</h4>
             <div class="alert alert-info" th:if="${#lists.isEmpty(allBadges)}">

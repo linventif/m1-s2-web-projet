@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +36,7 @@ import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
+import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutService;
@@ -437,11 +439,34 @@ public class UserController {
             .filter(id -> id != null)
             .collect(Collectors.toSet());
     model.addAttribute("user", user);
+    model.addAttribute("profileSports", resolveProfileSports(user));
     model.addAttribute("allBadges", badgeService.getAll());
     model.addAttribute("unlockedBadgeIds", unlockedBadgeIds);
     model.addAttribute("bmi", userService.calculateBMI(user));
     model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
     model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private List<Sport> resolveProfileSports(User user) {
+    if (user == null || user.getId() == null) {
+      return List.of();
+    }
+
+    Map<Long, Sport> sportsById = new LinkedHashMap<>();
+    for (Workout workout : workoutService.getAll()) {
+      if (workout.getUser() == null
+          || workout.getUser().getId() == null
+          || !user.getId().equals(workout.getUser().getId())
+          || workout.getSport() == null) {
+        continue;
+      }
+      Sport sport = workout.getSport();
+      if (sport.getId() == null) {
+        continue;
+      }
+      sportsById.putIfAbsent(sport.getId(), sport);
+    }
+    return List.copyOf(sportsById.values());
   }
 
   private List<Badge> getUnlockedBadgesForWorkout(Workout workout) {
