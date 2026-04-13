@@ -1,17 +1,9 @@
 package utc.miage.tp.workout;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
@@ -25,21 +17,22 @@ public class Workout {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  // Static
+
   @Column(name = "date", nullable = false)
   @ColumnDefault("current_date")
   private LocalDateTime date;
 
-  @Column(nullable = false)
-  private Double distance;
-
-  @Column(name = "duration", nullable = false)
-  private Double duration; // en minutes
+  @Column(name = "duration_sec", nullable = false)
+  private Double durationSec;
 
   @Column(name = "address", nullable = true)
   private String address;
 
   @Column(name = "rating")
   private Integer rating; // note de 1 à 5 par exemple
+
+  // Link
 
   @Embedded
   @AttributeOverrides({
@@ -53,26 +46,65 @@ public class Workout {
   @JoinColumn(name = "sport_id")
   private Sport sport;
 
+  @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<WorkoutExercise> exercises = new ArrayList<>();
+
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id")
   private User user;
 
   public Workout() {}
 
-  public Workout(
-      LocalDateTime date,
-      Double distance,
-      Double duration,
-      Integer rating,
-      Weather weather,
-      Sport sport,
-      User user) {
+  public Workout(Sport sport, User user) {
+    this.date = LocalDateTime.now();
+    this.sport = sport;
+    this.user = user;
+  }
+
+  public Workout(LocalDateTime date, Sport sport, User user) {
     this.date = date;
-    this.distance = distance;
-    this.duration = duration;
-    this.rating = rating;
+    this.sport = sport;
+    this.user = user;
+  }
+
+  public Workout(LocalDateTime date, Weather weather, Sport sport, User user) {
+    this.date = date;
     this.weather = weather;
     this.sport = sport;
+    this.user = user;
+  }
+
+  public Workout(LocalDateTime date, Double durationSec, Sport sport, User user) {
+    this.date = date;
+    this.durationSec = durationSec;
+    this.sport = sport;
+    this.user = user;
+  }
+
+  public Workout(LocalDateTime date, Double durationSec, Integer rating, Sport sport, User user) {
+    this.date = date;
+    this.durationSec = durationSec;
+    this.rating = rating;
+    this.sport = sport;
+    this.user = user;
+  }
+
+  public Workout(
+      LocalDateTime date,
+      String address,
+      Double durationSec,
+      Integer rating,
+      Sport sport,
+      Weather weather,
+      List<WorkoutExercise> exercises,
+      User user) {
+    this.date = date;
+    this.address = address;
+    this.durationSec = durationSec;
+    this.rating = rating;
+    this.sport = sport;
+    this.weather = weather;
+    this.exercises = exercises;
     this.user = user;
   }
 
@@ -80,66 +112,89 @@ public class Workout {
     return id;
   }
 
-  public LocalDateTime getDate() {
-    return date;
-  }
-
-  public Double getDistance() {
-    return distance;
-  }
-
-  public Double getDuration() {
-    return duration;
-  }
-
-  public Integer getRating() {
-    return rating;
-  }
-
-  public Weather getWeather() {
-    return weather;
-  }
-
-  public Sport getSport() {
-    return sport;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public Double getCalorieBurn() {
-    if (sport == null || sport.getCaloryPerMinutes() == null || duration == null) {
-      return 0.0;
-    }
-    return (duration / 60.0) * sport.getCaloryPerMinutes();
-  }
-
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public LocalDateTime getDate() {
+    return date;
   }
 
   public void setDate(LocalDateTime date) {
     this.date = date;
   }
 
-  public void setDistance(Double distance) {
-    this.distance = distance;
+  public Double getDurationSec() {
+    return durationSec;
   }
 
-  public void setDuration(Double duration) {
-    this.duration = duration;
+  public void setDurationSec(Double durationSec) {
+    this.durationSec = durationSec;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public Integer getRating() {
+    return rating;
   }
 
   public void setRating(Integer rating) {
     this.rating = rating;
   }
 
+  public Weather getWeather() {
+    return weather;
+  }
+
   public void setWeather(Weather weather) {
     this.weather = weather;
   }
 
+  public Sport getSport() {
+    return sport;
+  }
+
   public void setSport(Sport sport) {
     this.sport = sport;
+  }
+
+  public List<WorkoutExercise> getExercises() {
+    return exercises;
+  }
+
+  public void setExercises(List<WorkoutExercise> exercises) {
+    this.exercises = exercises;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public double computeCalories() {
+    if (exercises != null && !exercises.isEmpty()) {
+      return exercises.stream()
+          .mapToDouble(
+              ex -> {
+                if (ex.getDurationMin() == null) return 0.0;
+                return ex.getDurationMin();
+              })
+          .sum();
+    }
+
+    if (sport == null || sport.getMET() == null || durationSec == null) {
+      return 0.0;
+    }
+
+    return durationSec * sport.getMET();
   }
 }

@@ -1,4 +1,4 @@
-package utc.miage.tp;
+package utc.miage.tp.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
