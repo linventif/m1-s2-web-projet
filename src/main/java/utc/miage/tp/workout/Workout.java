@@ -35,8 +35,6 @@ public class Workout {
   @Column(name = "rating", nullable = true)
   private Integer rating; // note de 1 à 5 par exemple
 
-  // Link
-
   @Embedded private WeatherStatsDTO weather;
 
   @ManyToOne(optional = false)

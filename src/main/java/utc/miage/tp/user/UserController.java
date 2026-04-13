@@ -318,7 +318,7 @@ public class UserController {
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long targetUserId,
-      @RequestParam(defaultValue = "/user/friends") String returnTo,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
@@ -337,7 +337,7 @@ public class UserController {
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/user/friends") String returnTo,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
@@ -352,7 +352,7 @@ public class UserController {
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/user/friends") String returnTo,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
@@ -367,7 +367,7 @@ public class UserController {
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendId,
-      @RequestParam(defaultValue = "/user/friends") String returnTo,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);

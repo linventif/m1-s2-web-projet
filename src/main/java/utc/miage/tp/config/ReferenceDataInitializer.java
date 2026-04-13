@@ -31,7 +31,6 @@ import utc.miage.tp.user.UserRepository;
 import utc.miage.tp.weather.WeatherStatsDTO;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutExercise;
-import utc.miage.tp.workout.WorkoutExerciseRepository;
 import utc.miage.tp.workout.WorkoutRepository;
 
 @Component
@@ -42,7 +41,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final SportRepository sportRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
-  private final WorkoutExerciseRepository workoutExerciseRepository;
   private final ExerciseRepository exerciseRepository;
 
   @Value("${app.avatar-upload-dir:avatar_upload}")
@@ -54,14 +52,12 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       PasswordEncoder passwordEncoder,
       WorkoutRepository workoutRepository,
       FriendshipService friendshipService,
-      WorkoutExerciseRepository workoutExerciseRepository,
       ExerciseRepository exerciseRepository) {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
     this.passwordEncoder = passwordEncoder;
     this.workoutRepository = workoutRepository;
     this.friendshipService = friendshipService;
-    this.workoutExerciseRepository = workoutExerciseRepository;
     this.exerciseRepository = exerciseRepository;
   }
 
@@ -305,7 +301,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userOogway,
             userPo,
             userTaiLung));
-
     assignDemoAvatars(
         Map.ofEntries(
             Map.entry(userJudy, "judy_hopps.png"),
@@ -467,6 +462,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             exerciseDribble,
             exerciseYogaFlow,
             exerciseMarcheSentier));
+
     sportRepository.saveAll(
         List.of(
             sportCourseCanal,
