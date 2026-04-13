@@ -31,6 +31,7 @@
                     <th>Durée</th>
                     <th>Distance</th>
                     <th>Calorie Bruler</th>
+                    <th>Badges débloqués</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -51,6 +52,29 @@
                     <td>
                       <i th:text="${workout.getCalorieBurn}"></i>
                       kal
+                    </td>
+                    <td>
+                      <div
+                        class="flex flex-wrap items-center gap-2"
+                        th:if="${!#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
+                      >
+                        <div
+                          class="tooltip"
+                          th:each="badge : ${unlockedBadgesByWorkoutId[workout.id]}"
+                          th:attr="data-tip=${badge.name}"
+                        >
+                          <img
+                            th:src="${badge.iconPath}"
+                            th:alt="${badge.name}"
+                            class="h-8 w-8 rounded-md border border-base-300 bg-white object-cover"
+                          />
+                        </div>
+                      </div>
+                      <span
+                        class="text-base-content/50"
+                        th:if="${#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
+                        >-</span
+                      >
                     </td>
                     <!-- <td th:text="${conference.idconf}"></td>
                             <td class="font-semibold" th:text="${conference.titleconf}"></td>

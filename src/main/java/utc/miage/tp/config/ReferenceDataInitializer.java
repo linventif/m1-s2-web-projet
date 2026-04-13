@@ -407,33 +407,40 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 createSportBadge(
                     sportCoursePied,
                     "Rookie 5K",
-                    "Reussir 5 km cumules en " + sportCoursePied.getName() + "."),
+                    "Reussir 5 km cumules en " + sportCoursePied.getName() + ".",
+                    "/images/badge/running_5km.png"),
                 createSportBadge(
                     sportCoursePied,
                     "Marathonien en Herbe",
-                    "Cumuler 42 km en " + sportCoursePied.getName() + "."),
+                    "Cumuler 42 km en " + sportCoursePied.getName() + ".",
+                    "/images/badge/running_42km.png"),
                 createSportBadge(
                     sportCoursePied,
                     "Marathonien",
-                    "Cumuler 42 km en " + sportCoursePied.getName() + " en moins de 4h."),
+                    "Cumuler 42 km en " + sportCoursePied.getName() + " en moins de 4h.",
+                    "/images/badge/running_42km.png"),
                 createSportBadge(
                     sportNatation,
                     "Ondes Maitrisees",
-                    "Completer 3 seances de " + sportNatation.getName() + " en une semaine."),
+                    "Completer 3 seances de " + sportNatation.getName() + " en une semaine.",
+                    "/images/badge/natation.png"),
                 createSportBadge(
                     sportCyclisme,
                     "Rouleur Urbain",
-                    "Atteindre 30 km en " + sportCyclisme.getName() + "."),
+                    "Atteindre 30 km en " + sportCyclisme.getName() + ".",
+                    "/images/badge/cyclisme.png"),
                 createSportBadge(
                     sportEscaladeBloc,
                     "Bloc Determination",
-                    "Valider 5 sessions de " + sportEscaladeBloc.getName() + "."),
+                    "Valider 5 sessions de " + sportEscaladeBloc.getName() + ".",
+                    "/images/badge/escalade.png"),
                 createSportBadge(
                     sportYogaDynamique,
                     "Souplesse Focus",
                     "Maintenir 20 minutes de "
                         + sportYogaDynamique.getName()
-                        + " sans interruption.")));
+                        + " sans interruption.",
+                    "/images/badge/yoga.png")));
     Badge badgeRookie5k = demoBadges.get(0);
     Badge badgeMarathonHerbe = demoBadges.get(1);
     Badge badgeMarathonien = demoBadges.get(2);
@@ -894,8 +901,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return new Sport(name, calPerMin);
   }
 
-  private Badge createSportBadge(Sport sport, String suffix, String description) {
-    return new Badge(sport.getName() + " - " + suffix, description);
+  private Badge createSportBadge(Sport sport, String suffix, String description, String iconPath) {
+    return new Badge(sport.getName() + " - " + suffix, description, iconPath);
   }
 
   private Challenge createSportChallenge(

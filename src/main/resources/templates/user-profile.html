@@ -78,6 +78,34 @@
             Recommandation:
             <i th:text="${recommendation}"></i>
           </p>
+
+          <div class="mt-4 space-y-3">
+            <h4 class="text-lg font-semibold">Badges débloqués</h4>
+            <div class="alert alert-info" th:if="${#lists.isEmpty(user.badges)}">
+              <span>Aucun badge débloqué pour le moment.</span>
+            </div>
+            <div
+              class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              th:if="${!#lists.isEmpty(user.badges)}"
+            >
+              <div
+                class="flex items-center gap-3 rounded-xl border border-base-300 bg-base-200 p-3"
+                th:each="badge : ${user.badges}"
+              >
+                <img
+                  th:src="${badge.iconPath}"
+                  th:alt="${badge.name}"
+                  class="h-10 w-10 rounded-lg border border-base-300 object-cover bg-white"
+                />
+                <div>
+                  <p class="font-medium" th:text="${badge.name}">Nom du badge</p>
+                  <p class="text-xs text-base-content/70" th:text="${badge.description}">
+                    Description du badge
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>

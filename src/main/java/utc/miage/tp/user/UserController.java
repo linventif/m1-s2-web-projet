@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import utc.miage.tp.badge.Badge;
 import utc.miage.tp.badge.BadgeService;
 import utc.miage.tp.challenge.ChallengeService;
 import utc.miage.tp.friendship.Friendship;
@@ -33,6 +36,7 @@ import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
+import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -112,7 +116,11 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    populateProfileView(model, currentUser);
+    User profileUser =
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
+    populateProfileView(model, profileUser);
     model.addAttribute("canEditProfile", true);
     return "user-profile";
   }
@@ -385,7 +393,13 @@ public class UserController {
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workouts", workoutService.getAll());
+    List<Workout> workouts = workoutService.getAll();
+    Map<Long, List<Badge>> unlockedBadgesByWorkoutId = new HashMap<>();
+    for (Workout workout : workouts) {
+      unlockedBadgesByWorkoutId.put(workout.getId(), getUnlockedBadgesForWorkout(workout));
+    }
+    model.addAttribute("workouts", workouts);
+    model.addAttribute("unlockedBadgesByWorkoutId", unlockedBadgesByWorkoutId);
     return "user-workout";
   }
 
@@ -410,6 +424,21 @@ public class UserController {
     model.addAttribute("bmi", userService.calculateBMI(user));
     model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
     model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private List<Badge> getUnlockedBadgesForWorkout(Workout workout) {
+    if (workout == null
+        || workout.getUser() == null
+        || workout.getUser().getBadges() == null
+        || workout.getSport() == null
+        || workout.getSport().getName() == null) {
+      return Collections.emptyList();
+    }
+
+    String sportPrefix = workout.getSport().getName() + " - ";
+    return workout.getUser().getBadges().stream()
+        .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
+        .toList();
   }
 
   private void populateProfileEditForm(Model model, User user) {
