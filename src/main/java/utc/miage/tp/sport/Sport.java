@@ -49,6 +49,10 @@ public class Sport implements Serializable {
     return met;
   }
 
+  public SportType getType() {
+    return SportType.fromSportName(name);
+  }
+
   public void setId(Long id) {
     this.id = id;
   }

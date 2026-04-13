@@ -149,6 +149,9 @@ public class Workout {
   }
 
   public Double getDurationMin() {
+    if (durationSec == null) {
+      return null;
+    }
     return durationSec / 60;
   }
 
@@ -216,7 +219,7 @@ public class Workout {
         if (ex == null
             || ex.getDurationSec() == null
             || ex.getDurationSec() <= 0
-            || (user.getWeight() == 0.0 && ex.getWeightKg() == 0.0)) {
+            || (user.getWeight() == 0.0 && (ex.getWeightKg() == null || ex.getWeightKg() == 0.0))) {
           continue;
         }
 
@@ -225,7 +228,7 @@ public class Workout {
                 / 60.0
                 * sport.getMET()
                 * 3.5
-                * (user.getWeight() + ex.getWeightKg())
+                * (user.getWeight() + (ex.getWeightKg() == null ? 0.0 : ex.getWeightKg()))
                 / 200.0;
       }
 

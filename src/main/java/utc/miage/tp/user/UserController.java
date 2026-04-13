@@ -33,6 +33,8 @@ import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.SportService;
+import utc.miage.tp.workout.Workout;
+import utc.miage.tp.workout.WorkoutDashboardDisplay;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -391,8 +393,12 @@ public class UserController {
 
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
+    List<Workout> workouts = workoutService.getAll();
+
     model.addAttribute("goals", goalService.getAll());
-    model.addAttribute("workouts", workoutService.getAll());
+    model.addAttribute("workouts", workouts);
+    model.addAttribute(
+        "workoutDisplays", workouts.stream().map(WorkoutDashboardDisplay::new).toList());
     model.addAttribute("activeChallenges", challengeService.getAll());
     model.addAttribute("badges", badgeService.getAll());
     model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));

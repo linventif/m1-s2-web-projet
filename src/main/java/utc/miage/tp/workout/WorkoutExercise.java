@@ -126,6 +126,9 @@ public class WorkoutExercise {
   }
 
   public Double getWeightKg() {
+    if (weightG == null) {
+      return null;
+    }
     return weightG / 1000;
   }
 
@@ -134,6 +137,9 @@ public class WorkoutExercise {
   }
 
   public Double getDurationMin() {
+    if (durationSec == null) {
+      return null;
+    }
     return durationSec / 60;
   }
 
@@ -158,11 +164,14 @@ public class WorkoutExercise {
   }
 
   public Double getAverageBpm() {
-    return averageBps / 60;
+    if (averageBps == null) {
+      return null;
+    }
+    return averageBps;
   }
 
   public void setAverageBpm(Double averageBpm) {
-    this.averageBps = averageBpm * 60;
+    this.averageBps = averageBpm;
   }
 
   public Workout getWorkout() {

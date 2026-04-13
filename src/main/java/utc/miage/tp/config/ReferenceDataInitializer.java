@@ -347,28 +347,28 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
 
     // Sports
-    Sport sportCourseCanal = createSport("Course du canal", 9.0);
-    Sport sportSprintCote = createSport("Sprint en cote", 11.0);
+    Sport sportCourseCanal = createSport("Course du canal", 9.8);
+    Sport sportSprintCote = createSport("Sprint en cote", 14.0);
     Sport sportParcoursAgilite = createSport("Parcours d agilite", 8.0);
-    Sport sportFractionneIntense = createSport("Fractionne intense", 12.0);
-    Sport sportRenforcementFonctionnel = createSport("Renforcement fonctionnel", 7.0);
+    Sport sportFractionneIntense = createSport("Fractionne intense", 11.0);
+    Sport sportRenforcementFonctionnel = createSport("Renforcement fonctionnel", 6.0);
     Sport sportEnduranceMixte = createSport("Endurance mixte", 8.0);
-    Sport sportParkourUrbain = createSport("Parkour urbain", 10.0);
-    Sport sportCircuitCardio = createSport("Circuit cardio", 11.0);
-    Sport sportMobiliteActive = createSport("Mobilite active", 4.5);
+    Sport sportParkourUrbain = createSport("Parkour urbain", 8.5);
+    Sport sportCircuitCardio = createSport("Circuit cardio", 8.0);
+    Sport sportMobiliteActive = createSport("Mobilite active", 3.3);
     Sport sportEscaladeVitesse = createSport("Escalade de vitesse", 10.0);
     Sport sportEscaladeBloc = createSport("Escalade bloc", 8.0);
-    Sport sportCoursePied = createSport("Course a pied", 9.5);
-    Sport sportNatation = createSport("Natation", 9.0);
-    Sport sportSautParachute = createSport("Saut en parachute", 4.0);
-    Sport sportPlongee = createSport("Plongee sous-marine", 6.0);
-    Sport sportFootball = createSport("Football", 8.5);
+    Sport sportCoursePied = createSport("Course a pied", 9.8);
+    Sport sportNatation = createSport("Natation", 8.3);
+    Sport sportSautParachute = createSport("Saut en parachute", 3.5);
+    Sport sportPlongee = createSport("Plongee sous-marine", 7.0);
+    Sport sportFootball = createSport("Football", 7.0);
     Sport sportCyclisme = createSport("Cyclisme", 8.0);
-    Sport sportBasketball = createSport("Basketball", 7.5);
-    Sport sportTennis = createSport("Tennis", 7.0);
+    Sport sportBasketball = createSport("Basketball", 8.0);
+    Sport sportTennis = createSport("Tennis", 7.3);
     Sport sportMusculation = createSport("Musculation", 6.0);
-    Sport sportYogaDynamique = createSport("Yoga dynamique", 4.0);
-    Sport sportRandonnee = createSport("Randonnee", 5.5);
+    Sport sportYogaDynamique = createSport("Yoga dynamique", 3.3);
+    Sport sportRandonnee = createSport("Randonnee", 6.0);
 
     sportRepository.saveAll(
         List.of(
@@ -395,11 +395,102 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             sportYogaDynamique,
             sportRandonnee));
 
-    WorkoutExercise workoutExercise =
-        createWorkoutExercise(90.0, 6500.0, 2400.0, 1, 6, null, null, null);
+    Exercise exerciseCourseContinue = createExercice("Course continue", null);
+    Exercise exerciseSprint = createExercice("Sprint", null);
+    Exercise exerciseMonteeCote = createExercice("Montee de cote", null);
+    Exercise exerciseCircuitCardio = createExercice("Circuit cardio", null);
+    Exercise exerciseBurpees = createExercice("Burpees", null);
+    Exercise exercisePompes = createExercice("Pompes", null);
+    Exercise exerciseSquat = createExercice("Squat", null);
+    Exercise exerciseDeveloppeCouche = createExercice("Developpe couche", 0.12);
+    Exercise exerciseDeveloppeMilitaire = createExercice("Developpe militaire", 0.10);
+    Exercise exerciseTractions = createExercice("Tractions", null);
+    Exercise exerciseNageLibre = createExercice("Nage libre", null);
+    Exercise exerciseCrawl = createExercice("Crawl", null);
+    Exercise exerciseEscaladeBloc = createExercice("Escalade bloc", null);
+    Exercise exerciseVoieVitesse = createExercice("Voie de vitesse", null);
+    Exercise exercisePedalage = createExercice("Pedalage endurance", null);
+    Exercise exerciseDribble = createExercice("Dribble et tirs", null);
+    Exercise exerciseYogaFlow = createExercice("Yoga flow", null);
+    Exercise exerciseMarcheSentier = createExercice("Marche sur sentier", null);
 
-    Exercise exerciseDevelopperCoucher = createExercice("Développer Coucher", 8.0, null, null);
-    Exercise exerciseDevelopperMilitaire = createExercice("Développer Militaire", 8.0, null, null);
+    linkExercises(sportCourseCanal, exerciseCourseContinue, exerciseSprint, exerciseMonteeCote);
+    linkExercises(sportSprintCote, exerciseSprint, exerciseMonteeCote);
+    linkExercises(sportParcoursAgilite, exerciseSprint, exerciseBurpees, exerciseTractions);
+    linkExercises(sportFractionneIntense, exerciseSprint, exerciseCourseContinue, exerciseBurpees);
+    linkExercises(
+        sportRenforcementFonctionnel,
+        exercisePompes,
+        exerciseSquat,
+        exerciseTractions,
+        exerciseBurpees);
+    linkExercises(sportEnduranceMixte, exerciseCourseContinue, exerciseCircuitCardio);
+    linkExercises(sportParkourUrbain, exerciseSprint, exerciseTractions, exerciseSquat);
+    linkExercises(sportCircuitCardio, exerciseCircuitCardio, exerciseBurpees, exercisePompes);
+    linkExercises(sportMobiliteActive, exerciseYogaFlow, exerciseSquat);
+    linkExercises(sportEscaladeVitesse, exerciseVoieVitesse, exerciseTractions);
+    linkExercises(sportEscaladeBloc, exerciseEscaladeBloc, exerciseTractions);
+    linkExercises(sportCoursePied, exerciseCourseContinue, exerciseSprint);
+    linkExercises(sportNatation, exerciseNageLibre, exerciseCrawl);
+    linkExercises(sportSautParachute, exerciseSquat);
+    linkExercises(sportPlongee, exerciseNageLibre);
+    linkExercises(sportFootball, exerciseSprint, exerciseCourseContinue, exerciseDribble);
+    linkExercises(sportCyclisme, exercisePedalage);
+    linkExercises(sportBasketball, exerciseSprint, exerciseDribble);
+    linkExercises(sportTennis, exerciseSprint);
+    linkExercises(
+        sportMusculation,
+        exerciseDeveloppeCouche,
+        exerciseDeveloppeMilitaire,
+        exerciseSquat,
+        exerciseTractions);
+    linkExercises(sportYogaDynamique, exerciseYogaFlow);
+    linkExercises(sportRandonnee, exerciseMarcheSentier);
+
+    exerciseRepository.saveAll(
+        List.of(
+            exerciseCourseContinue,
+            exerciseSprint,
+            exerciseMonteeCote,
+            exerciseCircuitCardio,
+            exerciseBurpees,
+            exercisePompes,
+            exerciseSquat,
+            exerciseDeveloppeCouche,
+            exerciseDeveloppeMilitaire,
+            exerciseTractions,
+            exerciseNageLibre,
+            exerciseCrawl,
+            exerciseEscaladeBloc,
+            exerciseVoieVitesse,
+            exercisePedalage,
+            exerciseDribble,
+            exerciseYogaFlow,
+            exerciseMarcheSentier));
+    sportRepository.saveAll(
+        List.of(
+            sportCourseCanal,
+            sportSprintCote,
+            sportParcoursAgilite,
+            sportFractionneIntense,
+            sportRenforcementFonctionnel,
+            sportEnduranceMixte,
+            sportParkourUrbain,
+            sportCircuitCardio,
+            sportMobiliteActive,
+            sportEscaladeVitesse,
+            sportEscaladeBloc,
+            sportCoursePied,
+            sportNatation,
+            sportSautParachute,
+            sportPlongee,
+            sportFootball,
+            sportCyclisme,
+            sportBasketball,
+            sportTennis,
+            sportMusculation,
+            sportYogaDynamique,
+            sportRandonnee));
 
     WeatherStatsDTO clearsky =
         new WeatherStatsDTO("22", "23", "21", "20", "0.00", "10", "clearsky");
@@ -410,20 +501,30 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutRepository.saveAll(
         List.of(
             createWorkout(
+                "Course du canal",
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 clearsky,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        150.0, 6500.0, 2400.0, null, null, null, null, exerciseCourseContinue),
+                    createWorkoutExercise(
+                        170.0, null, 300.0, null, null, null, null, exerciseSprint)),
                 sportCourseCanal,
                 userJudy),
             createWorkout(
+                "Parcours agilité",
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 "Toulouse",
                 cloudy,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        155.0, 800.0, 900.0, null, null, null, null, exerciseSprint),
+                    createWorkoutExercise(160.0, null, 600.0, 12, 4, null, null, exerciseBurpees)),
                 sportParcoursAgilite,
                 userJudy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 "Toulouse",
                 clearsky,
@@ -431,20 +532,31 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCoursePied,
                 userJudy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Toulouse",
                 cloudy,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        178.0, 1200.0, 420.0, null, null, null, null, exerciseSprint),
+                    createWorkoutExercise(
+                        172.0, 900.0, 480.0, null, null, null, null, exerciseMonteeCote)),
                 sportSprintCote,
                 userNick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 5, 10, 0),
                 "Toulouse",
                 rain,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        135.0, 1000.0, 1800.0, null, null, null, null, exerciseCrawl),
+                    createWorkoutExercise(
+                        125.0, 600.0, 900.0, null, null, null, null, exerciseNageLibre)),
                 sportNatation,
                 userNick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 8, 10, 0),
                 "Toulouse",
                 cloudy,
@@ -452,27 +564,38 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCoursePied,
                 userNick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(155.0, null, 900.0, 15, 4, null, null, exerciseBurpees),
+                    createWorkoutExercise(145.0, null, 600.0, 20, 4, null, null, exercisePompes)),
                 sportCircuitCardio,
                 userBogo),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(130.0, null, 720.0, 12, 4, null, null, exerciseSquat),
+                    createWorkoutExercise(140.0, null, 600.0, 8, 4, null, null, exerciseTractions)),
                 sportRenforcementFonctionnel,
                 userBogo),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 "Toulouse",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        160.0, 120.0, 900.0, null, null, null, null, exerciseVoieVitesse),
+                    createWorkoutExercise(145.0, null, 600.0, 8, 3, null, null, exerciseTractions)),
                 sportEscaladeVitesse,
                 userBogo),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Toulouse",
                 null,
@@ -480,6 +603,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportMobiliteActive,
                 userBellwether),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 "Toulouse",
                 null,
@@ -487,6 +611,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportNatation,
                 userBellwether),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 10, 10, 0),
                 "Toulouse",
                 null,
@@ -494,6 +619,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCircuitCardio,
                 userBellwether),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 clearsky,
@@ -501,6 +627,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportFractionneIntense,
                 userHiccup),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
@@ -508,6 +635,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportEnduranceMixte,
                 userHiccup),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 11, 10, 0),
                 "Pau",
                 null,
@@ -515,6 +643,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCoursePied,
                 userHiccup),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 "Toulouse",
                 null,
@@ -522,6 +651,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportFootball,
                 userAstrid),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 "Tarbes",
                 null,
@@ -529,6 +659,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportEscaladeVitesse,
                 userAstrid),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 "Limoges",
                 null,
@@ -536,13 +667,20 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportSautParachute,
                 userAstrid),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Marseille",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        110.0, null, 900.0, 10, 4, 80000.0, null, exerciseDeveloppeCouche),
+                    createWorkoutExercise(
+                        115.0, null, 720.0, 8, 4, 45000.0, null, exerciseDeveloppeMilitaire),
+                    createWorkoutExercise(125.0, null, 900.0, 12, 4, 90000.0, null, exerciseSquat)),
                 sportMusculation,
                 userStoick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 "Toulouse",
                 null,
@@ -550,27 +688,40 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportPlongee,
                 userStoick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 13, 10, 0),
                 "Strasbourg",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        145.0, 22000.0, 3600.0, null, null, null, null, exercisePedalage)),
                 sportCyclisme,
                 userStoick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Perpignan",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        150.0, 2500.0, 1800.0, null, null, null, null, exerciseDribble),
+                    createWorkoutExercise(
+                        165.0, 700.0, 600.0, null, null, null, null, exerciseSprint)),
                 sportBasketball,
                 userFishlegs),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 8, 10, 0),
                 "Marseille",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        145.0, 80.0, 1500.0, null, null, null, null, exerciseEscaladeBloc),
+                    createWorkoutExercise(135.0, null, 600.0, 6, 4, null, null, exerciseTractions)),
                 sportEscaladeBloc,
                 userFishlegs),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 14, 10, 0),
                 "Paris",
                 null,
@@ -578,6 +729,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCoursePied,
                 userFishlegs),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 "Toulouse",
                 null,
@@ -585,6 +737,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportParkourUrbain,
                 userRodney),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 "Toulouse",
                 null,
@@ -592,6 +745,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCircuitCardio,
                 userRodney),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 15, 10, 0),
                 "Toulouse",
                 null,
@@ -599,6 +753,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCyclisme,
                 userRodney),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
@@ -606,6 +761,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportMobiliteActive,
                 userCappy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 10, 10, 0),
                 "Toulouse",
                 null,
@@ -613,13 +769,17 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportNatation,
                 userCappy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 16, 10, 0),
                 "Toulouse",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        95.0, null, 2400.0, null, null, null, null, exerciseYogaFlow)),
                 sportYogaDynamique,
                 userCappy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 5, 10, 0),
                 "Toulouse",
                 null,
@@ -627,6 +787,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportCircuitCardio,
                 userFender),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 11, 10, 0),
                 "Toulouse",
                 null,
@@ -634,6 +795,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportParkourUrbain,
                 userFender),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 17, 10, 0),
                 "Toulouse",
                 null,
@@ -641,6 +803,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportPlongee,
                 userFender),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 "Toulouse",
                 null,
@@ -648,6 +811,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportRenforcementFonctionnel,
                 userBigweld),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 "Toulouse",
                 null,
@@ -655,27 +819,36 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 sportEscaladeBloc,
                 userBigweld),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 18, 10, 0),
                 "Toulouse",
                 null,
-                new ArrayList<>(),
+                List.of(
+                    createWorkoutExercise(
+                        125.0, 12000.0, 5400.0, null, null, null, null, exerciseMarcheSentier)),
                 sportRandonnee,
                 userBigweld)));
   }
 
   private Workout createWorkout(
+      String name,
       LocalDateTime date,
       String address,
       WeatherStatsDTO weather,
       List<WorkoutExercise> exercises,
       Sport sport,
       User user) {
-    if (exercises.isEmpty()) return new Workout(null, date, address, weather, sport, user);
-    return new Workout(null, date, address, weather, exercises, sport, user);
+    if (exercises.isEmpty()) return new Workout(name, date, address, weather, sport, user);
+
+    Workout workout = new Workout(name, date, address, weather, exercises, sport, user);
+    for (WorkoutExercise exercise : exercises) {
+      exercise.setWorkout(workout);
+    }
+    return workout;
   }
 
-  private Sport createSport(String name, Double calPerMin) {
-    return new Sport(name, calPerMin);
+  private Sport createSport(String name, Double met) {
+    return new Sport(name, met);
   }
 
   private WorkoutExercise createWorkoutExercise(
@@ -694,9 +867,15 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return new WorkoutExercise(averageBps, distanceM, durationSec, reps, sets, workout, exercise);
   }
 
-  private Exercise createExercice(
-      String name, Double calPerSec, List<WorkoutExercise> exercises, List<Sport> sports) {
-    return new Exercise(name, calPerSec, exercises, sports);
+  private Exercise createExercice(String name, Double calPerSec) {
+    return new Exercise(name, calPerSec, new ArrayList<>(), new ArrayList<>());
+  }
+
+  private void linkExercises(Sport sport, Exercise... exercises) {
+    sport.setExercises(new ArrayList<>(List.of(exercises)));
+    for (Exercise exercise : exercises) {
+      exercise.getSports().add(sport);
+    }
   }
 
   private void assignDemoAvatars(Map<User, String> avatarByUser) {
