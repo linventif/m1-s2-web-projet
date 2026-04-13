@@ -403,7 +403,7 @@ public class UserController {
     return "user-workout";
   }
 
-  @GetMapping("/goals")
+  @GetMapping({"/goal", "/goals"})
   public String showGoals(@AuthenticationPrincipal User currentUser, Model model) {
     User goalUser =
         currentUser == null
