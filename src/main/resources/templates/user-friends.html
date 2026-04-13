@@ -21,7 +21,7 @@
 
           <div>
             <h2 class="mb-3 text-lg font-semibold">Demandes recues</h2>
-            <div class="alert alert-info" th:if="${#lists.isEmpty(incomingRequests)}">
+            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(incomingRequests)}">
               <span>Aucune demande en attente.</span>
             </div>
             <div
@@ -86,7 +86,7 @@
 
           <div>
             <h2 class="mb-3 text-lg font-semibold">Demandes en attente</h2>
-            <div class="alert alert-info" th:if="${#lists.isEmpty(outgoingRequests)}">
+            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(outgoingRequests)}">
               <span>Aucune demande envoyee en attente.</span>
             </div>
             <div
@@ -132,7 +132,7 @@
 
           <div>
             <h2 class="mb-3 text-lg font-semibold">Mes amis</h2>
-            <div class="alert alert-info" th:if="${#lists.isEmpty(acceptedFriendships)}">
+            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(acceptedFriendships)}">
               <span>Vous n'avez pas encore d'amis.</span>
             </div>
             <div
