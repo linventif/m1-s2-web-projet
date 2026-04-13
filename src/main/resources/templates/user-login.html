@@ -1,53 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{components/layout::head(title='Connexion utilisateur')}">
-  <title>Connexion utilisateur</title>
-</head>
-<body class="min-h-screen bg-base-200 text-base-content">
-
+  <head th:replace="~{components/layout::head(title='Connexion utilisateur')}">
+    <title>Connexion utilisateur</title>
+  </head>
+  <body class="min-h-screen bg-base-200 text-base-content">
     <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
-    <section class="card border border-base-300 bg-base-100 shadow-xl">
+      <section class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body p-6 sm:p-8">
-            <div class="alert alert-info" th:if="${message != null}">
-                <span th:text="${message}">Message</span>
-            </div>
-
-                <div class="alert alert-error" th:if="${errorMessage != null}">
-                    <span th:text="${errorMessage}">Erreur</span>
-                </div>
-
-                <form class="grid gap-5" th:action="@{/users/login}" method="post">
-                    <label class="form-control w-full" for="email">
-                        <div class="label">
-                            <span class="label-text text-sm font-semibold">Email</span>
-                        </div>
-                        <input id="email" class="input input-bordered w-full" name="email" type="email" required>
-                    </label>
-
-                    <label class="form-control w-full" for="password">
-                        <div class="label">
-                            <span class="label-text text-sm font-semibold">Mot de passe</span>
-                        </div>
-                        <input id="password" class="input input-bordered w-full" name="password" type="password" required>
-                    </label>
-
-                        <button class="btn btn-primary" type="submit">Se connecter</button>
-
-                </form>
-                   <div class="flex gap-10 ">
-          <div class="flex gap-2">
-          <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-          <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
+          <div class="alert alert-info" th:if="${message != null}">
+            <span th:text="${message}">Message</span>
           </div>
-          <div class="flex gap-2">
+
+          <div class="alert alert-error" th:if="${errorMessage != null}">
+            <span th:text="${errorMessage}">Erreur</span>
+          </div>
+
+          <form class="grid gap-5" th:action="@{/users/login}" method="post">
+            <label class="form-control w-full" for="email">
+              <div class="label">
+                <span class="label-text text-sm font-semibold">Email</span>
+              </div>
+              <input
+                id="email"
+                class="input input-bordered w-full"
+                name="email"
+                type="email"
+                required
+              />
+            </label>
+
+            <label class="form-control w-full" for="password">
+              <div class="label">
+                <span class="label-text text-sm font-semibold">Mot de passe</span>
+              </div>
+              <input
+                id="password"
+                class="input input-bordered w-full"
+                name="password"
+                type="password"
+                required
+              />
+            </label>
+
+            <button class="btn btn-primary" type="submit">Se connecter</button>
+          </form>
+          <div class="flex gap-10">
+            <div class="flex gap-2">
+              <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
+              <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
+              <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
+              <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
+            </div>
+            <div class="flex gap-2">
               <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
               <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
+            </div>
           </div>
         </div>
-            </div>
-        </section>
+      </section>
     </main>
-</body>
+  </body>
 </html>
