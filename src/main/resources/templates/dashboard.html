@@ -20,7 +20,7 @@
                             <div class="flex items-center gap-4">
                                 <div class="avatar">
                                     <div class="w-16 rounded-full overflow-hidden border border-base-300 bg-base-200">
-                                        <img th:src="${#authentication.principal.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+                                        <img th:src="${#authentication.principal.profileImagePath}" alt="Avatar profile" class="h-full w-full object-cover" />
                                     </div>
                                 </div>
                                 <div class="min-w-0">
@@ -133,7 +133,7 @@
                                      class="flex items-center gap-3 rounded-2xl border border-base-300 bg-base-200/70 p-3">
                                     <div class="avatar">
                                         <div class="w-12 rounded-full overflow-hidden border border-base-300 bg-base-200">
-                                            <img th:src="${friend.profileImagePath}" alt="Photo de profil ami" class="h-full w-full object-cover" />
+                                            <img th:src="${friend.profileImagePath}" alt="Avatar friend profile" class="h-full w-full object-cover" />
                                         </div>
                                     </div>
                                     <div class="min-w-0 flex-1">
@@ -173,7 +173,7 @@
                                     <div class="flex items-start gap-4">
                                         <div class="avatar hidden sm:block">
                                             <div class="w-14 rounded-full overflow-hidden border border-base-300 bg-base-200">
-                                                <img th:src="${workout.user.profileImagePath}" alt="Photo de profil sportif" class="h-full w-full object-cover" />
+                                                <img th:src="${workout.user.profileImagePath}" alt="Avatar sportive" class="h-full w-full object-cover" />
                                             </div>
                                         </div>
                                         <div>
@@ -283,7 +283,7 @@
                                         </div>
                                         <div class="radial-progress text-emerald-600 text-xs font-bold"
                                              th:style="|--value:${goal.progressPercent}; --size:3rem;|"
-                                             role="progressbar" th:text="|${goal.progressPercent}%|">40%</div>
+                                             role="progress" th:text="|${goal.progressPercent}%|">40%</div>
                                     </div>
                                     <progress class="progress progress-success mt-3 w-full"
                                               th:value="${goal.progressPercent}" max="100"></progress>

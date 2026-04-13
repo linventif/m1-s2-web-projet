@@ -37,17 +37,17 @@ public class WorkoutService {
     return workoutRepository.save(savedWorkout);
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Workout> getAll() {
     return workoutRepository.findAll();
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Workout> getAllStatutsForUser(User user) {
     return workoutRepository.findAll();
   }
 
-  @Transactional(readOnly = true)
+   
   public double getTotalDistanceThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -61,7 +61,7 @@ public class WorkoutService {
         .sum();
   }
 
-  @Transactional(readOnly = true)
+   
   public double getTotalDistanceThisMonth(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -75,7 +75,7 @@ public class WorkoutService {
         .sum();
   }
 
-  @Transactional(readOnly = true)
+   
   public double getTotalDistanceThisYear(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfYear = today.withDayOfYear(1);
@@ -89,7 +89,7 @@ public class WorkoutService {
         .sum();
 }
 
-  @Transactional(readOnly = true)
+   
   public double getTotalDurationThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -103,7 +103,7 @@ public class WorkoutService {
         .sum();
   }
 
-  @Transactional(readOnly = true)
+   
   public double getTotalCaloriesThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -112,12 +112,14 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .mapToDouble(workout -> workout.getCalorieBurn() != null ? workout.getCalorieBurn() : 0.0)
-        .sum();
+    .mapToDouble(workout -> {
+      Double calories = workout.getCalorieBurn();
+      return calories != null ? calories : 0.0;
+    })        .sum();
   }
 
   // Evolution month button
-  @Transactional(readOnly = true)
+   
     public List<Double> getMonthlyDistancesCurrentYear(User user) {
       int currentYear = LocalDate.now().getYear();
       List<Double> monthlyDistances = new ArrayList<>();
@@ -171,7 +173,7 @@ public class WorkoutService {
     return bars;
   }
 
-  @Transactional(readOnly = true)
+   
   public double getAverageMonthlyDistanceThisYear(User user) {
     int currentYear = LocalDate.now().getYear();
     LocalDate today = LocalDate.now();
@@ -205,14 +207,14 @@ public class WorkoutService {
     return total / currentMonth;
   }
 
-  @Transactional(readOnly = true)
+
   public double getDistanceGapVsAverageMonthly(User user) {
     double thisMonth = getTotalDistanceThisMonth(user);
     double average = getAverageMonthlyDistanceThisYear(user);
     return thisMonth - average;
   }
 
-  @Transactional(readOnly = true)
+
   public int getMonthlyProgressPercent(User user, double monthlyGoalKm) {
     if (monthlyGoalKm <= 0) {
       return 0;
@@ -223,12 +225,12 @@ public class WorkoutService {
     return Math.min(percent, 100);
   }
 
-  @Transactional(readOnly = true)
+   
   public List<String> getMonthDayLabels() {
     return List.of("S1", "S2", "S3", "S4");
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Double> getCurrentMonthCurve(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -248,7 +250,7 @@ public class WorkoutService {
     return curve.stream().map(v -> Math.round(v * 10.0) / 10.0).toList();
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Double> getYearAverageCurve(User user) {
     int currentYear = LocalDate.now().getYear();
     int currentMonth = LocalDate.now().getMonthValue();
@@ -284,12 +286,12 @@ public class WorkoutService {
         Math.round((sumS4 / currentMonth) * 10.0) / 10.0);
   }
 
-  @Transactional(readOnly = true)
+   
   public List<String> getWeekLabels() {
     return List.of("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim");
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Double> getWeekDistances(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
@@ -314,7 +316,7 @@ public class WorkoutService {
     return distances;
   }
 
-  @Transactional(readOnly = true)
+   
   public List<String> getMonthLabelsForChart() {
     LocalDate today = LocalDate.now();
     int daysInMonth = today.lengthOfMonth();
@@ -327,7 +329,7 @@ public class WorkoutService {
     return labels;
   }
 
-  @Transactional(readOnly = true)
+   
   public List<Double> getMonthDistancesForChart(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -353,7 +355,7 @@ public class WorkoutService {
     return distances;
   }
 
-  @Transactional(readOnly = true)
+   
   public List<String> getYearLabelsForChart() {
     return List.of("Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc");
   }

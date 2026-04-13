@@ -34,7 +34,6 @@ import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
-import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -57,7 +56,6 @@ public class UserController {
   public UserController(
       UserService userService,
       WorkoutService workoutService,
-      SportService sportService,
       GoalService goalService,
       ChallengeService challengeService,
       BadgeService badgeService,
