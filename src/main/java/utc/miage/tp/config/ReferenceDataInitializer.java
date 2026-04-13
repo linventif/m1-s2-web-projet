@@ -17,7 +17,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import utc.miage.tp.badge.Badge;
+import utc.miage.tp.badge.BadgeRepository;
+import utc.miage.tp.challenge.Challenge;
+import utc.miage.tp.challenge.ChallengeRepository;
+import utc.miage.tp.challenge.ChallengeType;
 import utc.miage.tp.friendship.FriendshipService;
+import utc.miage.tp.goal.Goal;
+import utc.miage.tp.goal.GoalRepository;
+import utc.miage.tp.goal.GoalType;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportRepository;
 import utc.miage.tp.user.PracticeLevel;
@@ -35,6 +43,9 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final WorkoutRepository workoutRepository;
   private final UserRepository userRepository;
   private final SportRepository sportRepository;
+  private final BadgeRepository badgeRepository;
+  private final ChallengeRepository challengeRepository;
+  private final GoalRepository goalRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
 
@@ -44,11 +55,17 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   public ReferenceDataInitializer(
       UserRepository userRepository,
       SportRepository sportRepository,
+      BadgeRepository badgeRepository,
+      ChallengeRepository challengeRepository,
+      GoalRepository goalRepository,
       PasswordEncoder passwordEncoder,
       WorkoutRepository workoutRepository,
       FriendshipService friendshipService) {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
+    this.badgeRepository = badgeRepository;
+    this.challengeRepository = challengeRepository;
+    this.goalRepository = goalRepository;
     this.passwordEncoder = passwordEncoder;
     this.workoutRepository = workoutRepository;
     this.friendshipService = friendshipService;
@@ -382,6 +399,140 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             sportMusculation,
             sportYogaDynamique,
             sportRandonnee));
+
+    // Badges (axes sur certains sports)
+    List<Badge> demoBadges =
+        badgeRepository.saveAll(
+            List.of(
+                createSportBadge(
+                    sportCoursePied,
+                    "Rookie 5K",
+                    "Reussir 5 km cumules en " + sportCoursePied.getName() + "."),
+                createSportBadge(
+                    sportCoursePied,
+                    "Marathonien en Herbe",
+                    "Cumuler 42 km en " + sportCoursePied.getName() + "."),
+                createSportBadge(
+                    sportCoursePied,
+                    "Marathonien",
+                    "Cumuler 42 km en " + sportCoursePied.getName() + " en moins de 4h."),
+                createSportBadge(
+                    sportNatation,
+                    "Ondes Maitrisees",
+                    "Completer 3 seances de " + sportNatation.getName() + " en une semaine."),
+                createSportBadge(
+                    sportCyclisme,
+                    "Rouleur Urbain",
+                    "Atteindre 30 km en " + sportCyclisme.getName() + "."),
+                createSportBadge(
+                    sportEscaladeBloc,
+                    "Bloc Determination",
+                    "Valider 5 sessions de " + sportEscaladeBloc.getName() + "."),
+                createSportBadge(
+                    sportYogaDynamique,
+                    "Souplesse Focus",
+                    "Maintenir 20 minutes de "
+                        + sportYogaDynamique.getName()
+                        + " sans interruption.")));
+    Badge badgeRookie5k = demoBadges.get(0);
+    Badge badgeMarathonHerbe = demoBadges.get(1);
+    Badge badgeMarathonien = demoBadges.get(2);
+    Badge badgeNatation = demoBadges.get(3);
+    Badge badgeCyclisme = demoBadges.get(4);
+    Badge badgeEscalade = demoBadges.get(5);
+    Badge badgeYoga = demoBadges.get(6);
+
+    LocalDate today = LocalDate.now();
+    // Challenges (axes sur certains sports)
+    challengeRepository.saveAll(
+        List.of(
+            createSportChallenge(
+                sportCoursePied,
+                "Challenge Running 25K",
+                "Cumuler 25 km en " + sportCoursePied.getName() + " sur la periode.",
+                ChallengeType.DISTANCE,
+                25.0,
+                today.minusDays(5),
+                today.plusDays(21),
+                userAlice),
+            createSportChallenge(
+                sportNatation,
+                "Challenge Natation Endurance",
+                "Cumuler 180 minutes de " + sportNatation.getName() + ".",
+                ChallengeType.DUREE,
+                180.0,
+                today.minusDays(3),
+                today.plusDays(18),
+                userNick),
+            createSportChallenge(
+                sportCyclisme,
+                "Challenge Cyclisme 80K",
+                "Atteindre 80 km en " + sportCyclisme.getName() + ".",
+                ChallengeType.DISTANCE,
+                80.0,
+                today.minusDays(7),
+                today.plusDays(28),
+                userStoick),
+            createSportChallenge(
+                sportEscaladeVitesse,
+                "Challenge Escalade Vitesse",
+                "Cumuler 1500 calories sur des seances de " + sportEscaladeVitesse.getName() + ".",
+                ChallengeType.CALORIE,
+                1500.0,
+                today.minusDays(2),
+                today.plusDays(20),
+                userAstrid),
+            createSportChallenge(
+                sportMusculation,
+                "Challenge Musculation Regulier",
+                "Enregistrer 12 seances de " + sportMusculation.getName() + ".",
+                ChallengeType.REPETITION,
+                12.0,
+                today.minusDays(1),
+                today.plusDays(30),
+                userBogo)));
+
+    // Goals (associes a des personnes precises)
+    Goal goalAliceCourse =
+        createGoal(
+            "Objectif running mensuel Alice", GoalType.DISTANCE, 50.0, 22.5, "km", userAlice);
+    Goal goalNickNatation =
+        createGoal("Objectif natation Nick", GoalType.DUREE, 240.0, 75.0, "min", userNick);
+    Goal goalAstridEscalade =
+        createGoal(
+            "Objectif escalade Astrid", GoalType.CALORIES, 1800.0, 650.0, "kcal", userAstrid);
+    Goal goalStoickCyclisme =
+        createGoal("Objectif cyclisme Stoick", GoalType.DISTANCE, 120.0, 48.0, "km", userStoick);
+    Goal goalBogoMusculation =
+        createGoal(
+            "Objectif musculation Bogo", GoalType.REPETITIONS, 300.0, 120.0, "reps", userBogo);
+
+    List<Goal> seededGoals =
+        goalRepository.saveAll(
+            List.of(
+                goalAliceCourse,
+                goalNickNatation,
+                goalAstridEscalade,
+                goalStoickCyclisme,
+                goalBogoMusculation));
+
+    // Attribution badges + goals a certaines personnes
+    userAlice.getBadges().addAll(List.of(badgeRookie5k, badgeMarathonHerbe));
+    userAlice.getGoals().add(seededGoals.get(0));
+
+    userNick.getBadges().add(badgeNatation);
+    userNick.getGoals().add(seededGoals.get(1));
+
+    userAstrid.getBadges().addAll(List.of(badgeEscalade, badgeMarathonien));
+    userAstrid.getGoals().add(seededGoals.get(2));
+
+    userStoick.getBadges().add(badgeCyclisme);
+    userStoick.getGoals().add(seededGoals.get(3));
+
+    userBogo.getBadges().add(badgeYoga);
+    userBogo.getGoals().add(seededGoals.get(4));
+
+    userRepository.saveAll(List.of(userAlice, userNick, userAstrid, userStoick, userBogo));
 
     WeatherStatsDTO clearsky =
         new WeatherStatsDTO("22", "23", "21", "20", "0.00", "10", "clearsky");
@@ -729,8 +880,41 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return new Workout(date, distance, duration, address, rating, weather, sport, user);
   }
 
+  private Goal createGoal(
+      String label,
+      GoalType type,
+      Double targetValue,
+      Double currentValue,
+      String unit,
+      User user) {
+    return new Goal(label, type, targetValue, currentValue, unit, user);
+  }
+
   private Sport createSport(String name, Double calPerMin) {
     return new Sport(name, calPerMin);
+  }
+
+  private Badge createSportBadge(Sport sport, String suffix, String description) {
+    return new Badge(sport.getName() + " - " + suffix, description);
+  }
+
+  private Challenge createSportChallenge(
+      Sport sport,
+      String title,
+      String description,
+      ChallengeType type,
+      Double targetValue,
+      LocalDate startDate,
+      LocalDate endDate,
+      User creator) {
+    return new Challenge(
+        title + " (" + sport.getName() + ")",
+        description,
+        type,
+        targetValue,
+        startDate,
+        endDate,
+        creator);
   }
 
   private void assignDemoAvatars(Map<User, String> avatarByUser) {
