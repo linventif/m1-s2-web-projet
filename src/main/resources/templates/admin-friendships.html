@@ -23,16 +23,34 @@
                 <h1 class="text-3xl font-black">Administration - Friendships</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
                   <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
-                  <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full">Sports</a>
-                  <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full">Workouts</a>
-                  <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full">Badges</a>
-                  <a th:href="@{/admin/goals}" class="btn btn-outline btn-sm rounded-full">Objectifs</a>
-                  <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full">Challenges</a>
-                  <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary">Friendships</a>
+                  <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
+                    >Sports</a
+                  >
+                  <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
+                    >Workouts</a
+                  >
+                  <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
+                    >Badges</a
+                  >
+                  <a th:href="@{/admin/goals}" class="btn btn-outline btn-sm rounded-full"
+                    >Objectifs</a
+                  >
+                  <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
+                    >Challenges</a
+                  >
+                  <a
+                    th:href="@{/admin/friendships}"
+                    class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
+                    >Friendships</a
+                  >
                 </div>
 
-                <div th:if="${message}" class="alert alert-success"><span th:text="${message}"></span></div>
-                <div th:if="${errorMessage}" class="alert alert-error"><span th:text="${errorMessage}"></span></div>
+                <div th:if="${message}" class="alert alert-success">
+                  <span th:text="${message}"></span>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-error">
+                  <span th:text="${errorMessage}"></span>
+                </div>
               </div>
             </section>
 
@@ -40,54 +58,111 @@
               <div class="card-body space-y-4">
                 <h2 class="card-title text-2xl">Friendships</h2>
 
-                <form th:action="@{/admin/friendships/create}" method="post" class="rounded-2xl bg-base-200 p-4">
+                <form
+                  th:action="@{/admin/friendships/create}"
+                  method="post"
+                  class="rounded-2xl bg-base-200 p-4"
+                >
                   <h3 class="mb-3 text-lg font-bold">Creer / synchroniser une relation</h3>
                   <div class="grid gap-3 md:grid-cols-3">
                     <select name="requesterId" class="select select-bordered" required>
                       <option value="" disabled selected>Requester</option>
-                      <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"></option>
+                      <option
+                        th:each="user : ${users.?[#this != null]}"
+                        th:value="${user.id}"
+                        th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
+                      ></option>
                     </select>
                     <select name="addresseeId" class="select select-bordered" required>
                       <option value="" disabled selected>Addressee</option>
-                      <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"></option>
+                      <option
+                        th:each="user : ${users.?[#this != null]}"
+                        th:value="${user.id}"
+                        th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
+                      ></option>
                     </select>
                     <select name="status" class="select select-bordered" required>
-                      <option th:each="friendshipStatus : ${friendshipStatuses}" th:value="${friendshipStatus}" th:text="${friendshipStatus}"></option>
+                      <option
+                        th:each="friendshipStatus : ${friendshipStatuses}"
+                        th:value="${friendshipStatus}"
+                        th:text="${friendshipStatus}"
+                      ></option>
                     </select>
                   </div>
                   <button type="submit" class="btn btn-primary mt-4">Enregistrer</button>
                 </form>
 
-                <div class="space-y-3" th:if="${#lists.isEmpty(friendships)}"><div class="alert"><span>Aucune relation.</span></div></div>
+                <div class="space-y-3" th:if="${#lists.isEmpty(friendships)}">
+                  <div class="alert"><span>Aucune relation.</span></div>
+                </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(friendships)}">
-                  <details th:each="friendship : ${friendships.?[#this != null]}" class="collapse collapse-arrow border border-base-300 bg-base-100">
+                  <details
+                    th:each="friendship : ${friendships.?[#this != null]}"
+                    class="collapse collapse-arrow border border-base-300 bg-base-100"
+                  >
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${friendship.id}">1</span> -
-                      <span th:text="${friendship.requester != null ? friendship.requester.firstname + ' ' + friendship.requester.lastname : 'Requester inconnu'}">Requester</span>
+                      <span
+                        th:text="${friendship.requester != null ? friendship.requester.firstname + ' ' + friendship.requester.lastname : 'Requester inconnu'}"
+                        >Requester</span
+                      >
                       ->
-                      <span th:text="${friendship.addressee != null ? friendship.addressee.firstname + ' ' + friendship.addressee.lastname : 'Addressee inconnu'}">Addressee</span>
+                      <span
+                        th:text="${friendship.addressee != null ? friendship.addressee.firstname + ' ' + friendship.addressee.lastname : 'Addressee inconnu'}"
+                        >Addressee</span
+                      >
                       (<span th:text="${friendship.status}">PENDING</span>)
                     </summary>
                     <div class="collapse-content space-y-3">
                       <p class="text-sm text-base-content/60">
-                        Creee le <span th:text="${friendship.createdAt != null ? #temporals.format(friendship.createdAt, 'yyyy-MM-dd HH:mm') : '-'}">date</span>
-                        | MAJ le <span th:text="${friendship.updatedAt != null ? #temporals.format(friendship.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}">date</span>
+                        Creee le
+                        <span
+                          th:text="${friendship.createdAt != null ? #temporals.format(friendship.createdAt, 'yyyy-MM-dd HH:mm') : '-'}"
+                          >date</span
+                        >
+                        | MAJ le
+                        <span
+                          th:text="${friendship.updatedAt != null ? #temporals.format(friendship.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"
+                          >date</span
+                        >
                       </p>
 
-                      <form th:action="@{/admin/friendships/{id}/update(id=${friendship.id})}" method="post" class="grid gap-3 md:grid-cols-3">
+                      <form
+                        th:action="@{/admin/friendships/{id}/update(id=${friendship.id})}"
+                        method="post"
+                        class="grid gap-3 md:grid-cols-3"
+                      >
                         <select name="requesterId" class="select select-bordered" required>
-                          <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}" th:selected="${friendship.requester != null and user != null and user.id != null and friendship.requester.id == user.id}"></option>
+                          <option
+                            th:each="user : ${users.?[#this != null]}"
+                            th:value="${user.id}"
+                            th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
+                            th:selected="${friendship.requester != null and user != null and user.id != null and friendship.requester.id == user.id}"
+                          ></option>
                         </select>
                         <select name="addresseeId" class="select select-bordered" required>
-                          <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}" th:selected="${friendship.addressee != null and user != null and user.id != null and friendship.addressee.id == user.id}"></option>
+                          <option
+                            th:each="user : ${users.?[#this != null]}"
+                            th:value="${user.id}"
+                            th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
+                            th:selected="${friendship.addressee != null and user != null and user.id != null and friendship.addressee.id == user.id}"
+                          ></option>
                         </select>
                         <select name="status" class="select select-bordered" required>
-                          <option th:each="friendshipStatus : ${friendshipStatuses}" th:value="${friendshipStatus}" th:text="${friendshipStatus}" th:selected="${friendshipStatus == friendship.status}"></option>
+                          <option
+                            th:each="friendshipStatus : ${friendshipStatuses}"
+                            th:value="${friendshipStatus}"
+                            th:text="${friendshipStatus}"
+                            th:selected="${friendshipStatus == friendship.status}"
+                          ></option>
                         </select>
                         <button type="submit" class="btn btn-primary">Mettre a jour</button>
                       </form>
 
-                      <form th:action="@{/admin/friendships/{id}/delete(id=${friendship.id})}" method="post">
+                      <form
+                        th:action="@{/admin/friendships/{id}/delete(id=${friendship.id})}"
+                        method="post"
+                      >
                         <button type="submit" class="btn btn-error btn-outline">Supprimer</button>
                       </form>
                     </div>
