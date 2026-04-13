@@ -377,8 +377,7 @@ public class UserController {
   }
 
   private String resolveReturnTo(String returnTo) {
-    if (returnTo != null
-        && (returnTo.startsWith("/users/") || returnTo.startsWith("/user/"))) {
+    if (returnTo != null && (returnTo.startsWith("/users/") || returnTo.startsWith("/user/"))) {
       return returnTo;
     }
     return "/user/friends";

@@ -1,7 +1,5 @@
 package utc.miage.tp.workout;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -41,8 +39,7 @@ public class Workout {
   @Column(name = "rating")
   private Integer rating; // note de 1 à 5 par exemple
 
-  @Embedded
-  private WeatherStatsDTO weather;
+  @Embedded private WeatherStatsDTO weather;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "sport_id")
