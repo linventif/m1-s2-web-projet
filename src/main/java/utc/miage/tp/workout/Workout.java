@@ -180,7 +180,7 @@ public class Workout {
     this.user = user;
   }
 
-  public double computeCalories() {
+  public double getCalories() {
     if (exercises != null && !exercises.isEmpty()) {
       return exercises.stream()
           .mapToDouble(
