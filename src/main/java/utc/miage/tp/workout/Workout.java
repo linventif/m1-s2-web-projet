@@ -162,4 +162,8 @@ public class Workout {
   public void setSport(Sport sport) {
     this.sport = sport;
   }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 }

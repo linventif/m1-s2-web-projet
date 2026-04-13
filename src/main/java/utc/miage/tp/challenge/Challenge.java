@@ -127,4 +127,8 @@ public class Challenge {
   public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
   }
+
+  public void setCreator(User creator) {
+    this.creator = creator;
+  }
 }
