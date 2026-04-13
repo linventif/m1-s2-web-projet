@@ -403,6 +403,17 @@ public class UserController {
     return "user-workout";
   }
 
+  @GetMapping("/goals")
+  public String showGoals(@AuthenticationPrincipal User currentUser, Model model) {
+    User goalUser =
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
+    model.addAttribute("user", goalUser);
+    model.addAttribute("goals", goalUser == null ? List.of() : goalUser.getGoals());
+    return "user-goals";
+  }
+
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     model.addAttribute("goals", goalService.getAll());
@@ -420,7 +431,14 @@ public class UserController {
   }
 
   private void populateProfileView(Model model, User user) {
+    Set<Long> unlockedBadgeIds =
+        user.getBadges().stream()
+            .map(Badge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
     model.addAttribute("user", user);
+    model.addAttribute("allBadges", badgeService.getAll());
+    model.addAttribute("unlockedBadgeIds", unlockedBadgeIds);
     model.addAttribute("bmi", userService.calculateBMI(user));
     model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
     model.addAttribute("bmr", userService.calculateBMR(user));

@@ -80,28 +80,39 @@
           </p>
 
           <div class="mt-4 space-y-3">
-            <h4 class="text-lg font-semibold">Badges débloqués</h4>
-            <div class="alert alert-info" th:if="${#lists.isEmpty(user.badges)}">
-              <span>Aucun badge débloqué pour le moment.</span>
+            <h4 class="text-lg font-semibold">Badges</h4>
+            <div class="alert alert-info" th:if="${#lists.isEmpty(allBadges)}">
+              <span>Aucun badge disponible pour le moment.</span>
             </div>
             <div
               class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
-              th:if="${!#lists.isEmpty(user.badges)}"
+              th:if="${!#lists.isEmpty(allBadges)}"
             >
               <div
                 class="flex items-center gap-3 rounded-xl border border-base-300 bg-base-200 p-3"
-                th:each="badge : ${user.badges}"
+                th:each="badge : ${allBadges}"
               >
                 <img
                   th:src="${badge.iconPath}"
                   th:alt="${badge.name}"
                   class="h-10 w-10 rounded-lg border border-base-300 object-cover bg-white"
+                  th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? '' : ' grayscale opacity-50 blur-[1px]'"
                 />
                 <div>
                   <p class="font-medium" th:text="${badge.name}">Nom du badge</p>
                   <p class="text-xs text-base-content/70" th:text="${badge.description}">
                     Description du badge
                   </p>
+                  <span
+                    class="badge badge-success badge-sm mt-1"
+                    th:if="${#sets.contains(unlockedBadgeIds, badge.id)}"
+                    >Débloqué</span
+                  >
+                  <span
+                    class="badge badge-ghost badge-sm mt-1"
+                    th:if="${!#sets.contains(unlockedBadgeIds, badge.id)}"
+                    >Verrouillé</span
+                  >
                 </div>
               </div>
             </div>
