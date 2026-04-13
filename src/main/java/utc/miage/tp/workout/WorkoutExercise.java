@@ -1,6 +1,7 @@
 package utc.miage.tp.workout;
 
 import jakarta.persistence.*;
+import utc.miage.tp.exercise.Exercise;
 
 @Entity
 @Table(name = "workout_exercise")
@@ -32,6 +33,10 @@ public class WorkoutExercise {
   @JoinColumn(name = "workout_id")
   private Workout workout;
 
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "exercise_id")
+  private Exercise exercise;
+
   public WorkoutExercise(
       Long id,
       Double averageBps,
@@ -40,7 +45,8 @@ public class WorkoutExercise {
       Integer reps,
       Integer sets,
       Double weightG,
-      Workout workout) {
+      Workout workout,
+      Exercise exercise) {
     this.id = id;
     this.averageBps = averageBps;
     this.distanceM = distanceM;
@@ -49,9 +55,18 @@ public class WorkoutExercise {
     this.sets = sets;
     this.weightG = weightG;
     this.workout = workout;
+    this.exercise = exercise;
   }
 
   public WorkoutExercise() {}
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public Integer getSets() {
     return sets;
@@ -109,11 +124,11 @@ public class WorkoutExercise {
     this.workout = workout;
   }
 
-  public Long getId() {
-    return id;
+  public Exercise getExercise() {
+    return exercise;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setExercise(Exercise exercise) {
+    this.exercise = exercise;
   }
 }

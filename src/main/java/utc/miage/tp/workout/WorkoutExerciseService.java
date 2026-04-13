@@ -25,7 +25,8 @@ public class WorkoutExerciseService {
             workoutExercise.getSets(),
             workoutExercise.getReps(),
             workoutExercise.getWeightKg(),
-            workoutExercise.getWorkout());
+            workoutExercise.getWorkout(),
+            workoutExercise.getExercise());
 
     WorkoutExercise savedWorkoutExercise = workoutExerciseRepository.save(newWorkoutExercise);
 

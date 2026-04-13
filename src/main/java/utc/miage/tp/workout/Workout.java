@@ -23,13 +23,13 @@ public class Workout {
   @ColumnDefault("current_date")
   private LocalDateTime date;
 
-  @Column(name = "duration_sec", nullable = false)
+  @Column(name = "duration_sec", nullable = true)
   private Double durationSec;
 
   @Column(name = "address", nullable = true)
   private String address;
 
-  @Column(name = "rating")
+  @Column(name = "rating", nullable = true)
   private Integer rating; // note de 1 à 5 par exemple
 
   // Link
