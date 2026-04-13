@@ -1,13 +1,31 @@
 package utc.miage.tp.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import utc.miage.tp.badge.Badge;
+import utc.miage.tp.badge.BadgeRepository;
+import utc.miage.tp.challenge.Challenge;
+import utc.miage.tp.challenge.ChallengeRepository;
+import utc.miage.tp.challenge.ChallengeType;
 import utc.miage.tp.friendship.FriendshipService;
+import utc.miage.tp.goal.Goal;
+import utc.miage.tp.goal.GoalRepository;
+import utc.miage.tp.goal.GoalType;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportRepository;
 import utc.miage.tp.user.PracticeLevel;
@@ -15,7 +33,7 @@ import utc.miage.tp.user.Role;
 import utc.miage.tp.user.Sex;
 import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserRepository;
-import utc.miage.tp.weather.Weather;
+import utc.miage.tp.weather.WeatherStatsDTO;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutRepository;
 
@@ -25,17 +43,29 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final WorkoutRepository workoutRepository;
   private final UserRepository userRepository;
   private final SportRepository sportRepository;
+  private final BadgeRepository badgeRepository;
+  private final ChallengeRepository challengeRepository;
+  private final GoalRepository goalRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
+
+  @Value("${app.avatar-upload-dir:avatar_upload}")
+  private String avatarUploadDir;
 
   public ReferenceDataInitializer(
       UserRepository userRepository,
       SportRepository sportRepository,
+      BadgeRepository badgeRepository,
+      ChallengeRepository challengeRepository,
+      GoalRepository goalRepository,
       PasswordEncoder passwordEncoder,
       WorkoutRepository workoutRepository,
       FriendshipService friendshipService) {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
+    this.badgeRepository = badgeRepository;
+    this.challengeRepository = challengeRepository;
+    this.goalRepository = goalRepository;
     this.passwordEncoder = passwordEncoder;
     this.workoutRepository = workoutRepository;
     this.friendshipService = friendshipService;
@@ -259,23 +289,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             LocalDate.of(1991, 2, 17),
             PracticeLevel.ADVANCED);
 
-    userJudy.setProfileImagePath("/images/avatars/judy_hopps.png");
-    userNick.setProfileImagePath("/images/avatars/nick_wilde.png");
-    userBogo.setProfileImagePath("/images/avatars/chief_bogo.png");
-    userBellwether.setProfileImagePath("/images/avatars/dawn_bellwether.png");
-    userHiccup.setProfileImagePath("/images/avatars/hiccup_haddock.png");
-    userAstrid.setProfileImagePath("/images/avatars/astrid_hofferson.png");
-    userStoick.setProfileImagePath("/images/avatars/stoick_the_vast.png");
-    userFishlegs.setProfileImagePath("/images/avatars/fishlegs_ingerman.png");
-    userRodney.setProfileImagePath("/images/avatars/rodney_copperbottom.png");
-    userCappy.setProfileImagePath("/images/avatars/cappy_barra.png");
-    userFender.setProfileImagePath("/images/avatars/fender_def.png");
-    userBigweld.setProfileImagePath("/images/avatars/bigweld_bold.png");
-    userShifu.setProfileImagePath("/images/avatars/maitre_shifu_me.png");
-    userOogway.setProfileImagePath("/images/avatars/maitre_oogway_away.png");
-    userPo.setProfileImagePath("/images/avatars/po_ping_pong.png");
-    userTaiLung.setProfileImagePath("/images/avatars/tai_lung_shi.png");
-
     userRepository.saveAll(
         List.of(
             userAlice,
@@ -298,6 +311,24 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userOogway,
             userPo,
             userTaiLung));
+    assignDemoAvatars(
+        Map.ofEntries(
+            Map.entry(userJudy, "judy_hopps.png"),
+            Map.entry(userNick, "nick_wilde.png"),
+            Map.entry(userBogo, "chief_bogo.png"),
+            Map.entry(userBellwether, "dawn_bellwether.png"),
+            Map.entry(userHiccup, "hiccup_haddock.png"),
+            Map.entry(userAstrid, "astrid_hofferson.png"),
+            Map.entry(userStoick, "stoick_the_vast.png"),
+            Map.entry(userFishlegs, "fishlegs_ingerman.png"),
+            Map.entry(userRodney, "rodney_copperbottom.png"),
+            Map.entry(userCappy, "cappy_barra.png"),
+            Map.entry(userFender, "fender_def.png"),
+            Map.entry(userBigweld, "bigweld_bold.png"),
+            Map.entry(userShifu, "maitre_shifu_me.png"),
+            Map.entry(userOogway, "maitre_oogway_away.png"),
+            Map.entry(userPo, "po_ping_pong.png"),
+            Map.entry(userTaiLung, "tai_lung_shi.png")));
 
     // Friendships
     friendshipService.createAcceptedFriendship(userAlice.getId(), userOwen.getId());
@@ -369,6 +400,152 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             sportYogaDynamique,
             sportRandonnee));
 
+    // Badges (axes sur certains sports)
+    List<Badge> demoBadges =
+        badgeRepository.saveAll(
+            List.of(
+                createSportBadge(
+                    sportCoursePied,
+                    "Rookie 5K",
+                    "Reussir 5 km cumules en " + sportCoursePied.getName() + ".",
+                    "/images/badge/running_5km.png"),
+                createSportBadge(
+                    sportCoursePied,
+                    "Marathonien en Herbe",
+                    "Cumuler 42 km en " + sportCoursePied.getName() + ".",
+                    "/images/badge/running_42km.png"),
+                createSportBadge(
+                    sportCoursePied,
+                    "Marathonien",
+                    "Cumuler 42 km en " + sportCoursePied.getName() + " en moins de 4h.",
+                    "/images/badge/running_42km.png"),
+                createSportBadge(
+                    sportNatation,
+                    "Ondes Maitrisees",
+                    "Completer 3 seances de " + sportNatation.getName() + " en une semaine.",
+                    "/images/badge/natation.png"),
+                createSportBadge(
+                    sportCyclisme,
+                    "Rouleur Urbain",
+                    "Atteindre 30 km en " + sportCyclisme.getName() + ".",
+                    "/images/badge/cyclisme.png"),
+                createSportBadge(
+                    sportEscaladeBloc,
+                    "Bloc Determination",
+                    "Valider 5 sessions de " + sportEscaladeBloc.getName() + ".",
+                    "/images/badge/escalade.png"),
+                createSportBadge(
+                    sportYogaDynamique,
+                    "Souplesse Focus",
+                    "Maintenir 20 minutes de "
+                        + sportYogaDynamique.getName()
+                        + " sans interruption.",
+                    "/images/badge/yoga.png")));
+    Badge badgeRookie5k = demoBadges.get(0);
+    Badge badgeMarathonHerbe = demoBadges.get(1);
+    Badge badgeMarathonien = demoBadges.get(2);
+    Badge badgeNatation = demoBadges.get(3);
+    Badge badgeCyclisme = demoBadges.get(4);
+    Badge badgeEscalade = demoBadges.get(5);
+    Badge badgeYoga = demoBadges.get(6);
+
+    LocalDate today = LocalDate.now();
+    // Challenges (axes sur certains sports)
+    challengeRepository.saveAll(
+        List.of(
+            createSportChallenge(
+                sportCoursePied,
+                "Challenge Running 25K",
+                "Cumuler 25 km en " + sportCoursePied.getName() + " sur la periode.",
+                ChallengeType.DISTANCE,
+                25.0,
+                today.minusDays(5),
+                today.plusDays(21),
+                userAlice),
+            createSportChallenge(
+                sportNatation,
+                "Challenge Natation Endurance",
+                "Cumuler 180 minutes de " + sportNatation.getName() + ".",
+                ChallengeType.DUREE,
+                180.0,
+                today.minusDays(3),
+                today.plusDays(18),
+                userNick),
+            createSportChallenge(
+                sportCyclisme,
+                "Challenge Cyclisme 80K",
+                "Atteindre 80 km en " + sportCyclisme.getName() + ".",
+                ChallengeType.DISTANCE,
+                80.0,
+                today.minusDays(7),
+                today.plusDays(28),
+                userStoick),
+            createSportChallenge(
+                sportEscaladeVitesse,
+                "Challenge Escalade Vitesse",
+                "Cumuler 1500 calories sur des seances de " + sportEscaladeVitesse.getName() + ".",
+                ChallengeType.CALORIE,
+                1500.0,
+                today.minusDays(2),
+                today.plusDays(20),
+                userAstrid),
+            createSportChallenge(
+                sportMusculation,
+                "Challenge Musculation Regulier",
+                "Enregistrer 12 seances de " + sportMusculation.getName() + ".",
+                ChallengeType.REPETITION,
+                12.0,
+                today.minusDays(1),
+                today.plusDays(30),
+                userBogo)));
+
+    // Goals (associes a des personnes precises)
+    Goal goalAliceCourse =
+        createGoal(
+            "Objectif running mensuel Alice", GoalType.DISTANCE, 50.0, 22.5, "km", userAlice);
+    Goal goalNickNatation =
+        createGoal("Objectif natation Nick", GoalType.DUREE, 240.0, 75.0, "min", userNick);
+    Goal goalAstridEscalade =
+        createGoal(
+            "Objectif escalade Astrid", GoalType.CALORIES, 1800.0, 650.0, "kcal", userAstrid);
+    Goal goalStoickCyclisme =
+        createGoal("Objectif cyclisme Stoick", GoalType.DISTANCE, 120.0, 48.0, "km", userStoick);
+    Goal goalBogoMusculation =
+        createGoal(
+            "Objectif musculation Bogo", GoalType.REPETITIONS, 300.0, 120.0, "reps", userBogo);
+
+    List<Goal> seededGoals =
+        goalRepository.saveAll(
+            List.of(
+                goalAliceCourse,
+                goalNickNatation,
+                goalAstridEscalade,
+                goalStoickCyclisme,
+                goalBogoMusculation));
+
+    // Attribution badges + goals a certaines personnes
+    userAlice.getBadges().addAll(List.of(badgeRookie5k, badgeMarathonHerbe));
+    userAlice.getGoals().add(seededGoals.get(0));
+
+    userNick.getBadges().add(badgeNatation);
+    userNick.getGoals().add(seededGoals.get(1));
+
+    userAstrid.getBadges().addAll(List.of(badgeEscalade, badgeMarathonien));
+    userAstrid.getGoals().add(seededGoals.get(2));
+
+    userStoick.getBadges().add(badgeCyclisme);
+    userStoick.getGoals().add(seededGoals.get(3));
+
+    userBogo.getBadges().add(badgeYoga);
+    userBogo.getGoals().add(seededGoals.get(4));
+
+    userRepository.saveAll(List.of(userAlice, userNick, userAstrid, userStoick, userBogo));
+
+    WeatherStatsDTO clearsky =
+        new WeatherStatsDTO("22", "23", "21", "20", "0.00", "10", "clearsky");
+    WeatherStatsDTO cloudy = new WeatherStatsDTO("18", "19", "17", "16", "0.10", "12", "cloudy");
+    WeatherStatsDTO rain = new WeatherStatsDTO("15", "16", "14", "13", "1.00", "8", "rain");
+
     // Workouts
     workoutRepository.saveAll(
         List.of(
@@ -376,30 +553,61 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 4.2,
                 32.0,
+                "Toulouse",
                 4,
-                new Weather(LocalDate.of(2026, 4, 1), "ensoleille"),
+                clearsky,
                 sportCourseCanal,
                 userJudy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 3.8,
                 29.0,
+                "Toulouse",
                 4,
-                new Weather(LocalDate.of(2026, 4, 3), "nuageux"),
+                cloudy,
                 sportParcoursAgilite,
                 userJudy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 6, 10, 0), 5.0, 37.0, 5, null, sportCoursePied, userJudy),
+                LocalDateTime.of(2026, 4, 6, 10, 0),
+                5.0,
+                37.0,
+                "Toulouse",
+                5,
+                clearsky,
+                sportCoursePied,
+                userJudy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 2, 10, 0), 6.5, 43.0, 4, null, sportSprintCote, userNick),
+                LocalDateTime.of(2026, 4, 2, 10, 0),
+                6.5,
+                43.0,
+                "Toulouse",
+                4,
+                cloudy,
+                sportSprintCote,
+                userNick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 5, 10, 0), 2.4, 30.0, 3, null, sportNatation, userNick),
+                LocalDateTime.of(2026, 4, 5, 10, 0),
+                2.4,
+                30.0,
+                "Toulouse",
+                3,
+                rain,
+                sportNatation,
+                userNick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 8, 10, 0), 7.2, 48.0, 5, null, sportCoursePied, userNick),
+                LocalDateTime.of(2026, 4, 8, 10, 0),
+                7.2,
+                48.0,
+                "Toulouse",
+                5,
+                cloudy,
+                sportCoursePied,
+                userNick),
             createWorkout(
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 3.0,
                 36.0,
+                "Toulouse",
                 4,
                 null,
                 sportCircuitCardio,
@@ -408,6 +616,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 4.4,
                 38.0,
+                "Toulouse",
                 4,
                 null,
                 sportRenforcementFonctionnel,
@@ -416,6 +625,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 2.2,
                 28.0,
+                "Toulouse",
                 3,
                 null,
                 sportEscaladeVitesse,
@@ -424,6 +634,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 3.7,
                 31.0,
+                "Toulouse",
                 3,
                 null,
                 sportMobiliteActive,
@@ -432,6 +643,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 2.9,
                 27.0,
+                "Toulouse",
                 4,
                 null,
                 sportNatation,
@@ -440,6 +652,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 10, 10, 0),
                 4.1,
                 33.0,
+                "Toulouse",
                 4,
                 null,
                 sportCircuitCardio,
@@ -448,14 +661,16 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 12.0,
                 58.0,
+                "Toulouse",
                 5,
-                new Weather(LocalDate.of(2026, 4, 1), "venteux"),
+                clearsky,
                 sportFractionneIntense,
                 userHiccup),
             createWorkout(
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 6.0,
                 45.0,
+                "Toulouse",
                 4,
                 null,
                 sportEnduranceMixte,
@@ -464,16 +679,25 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 11, 10, 0),
                 8.3,
                 52.0,
+                "Pau",
                 5,
                 null,
                 sportCoursePied,
                 userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 3, 10, 0), 5.5, 41.0, 4, null, sportFootball, userAstrid),
+                LocalDateTime.of(2026, 4, 3, 10, 0),
+                5.5,
+                41.0,
+                "Toulouse",
+                4,
+                null,
+                sportFootball,
+                userAstrid),
             createWorkout(
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 4.6,
                 36.0,
+                "Tarbes",
                 4,
                 null,
                 sportEscaladeVitesse,
@@ -482,6 +706,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 7.0,
                 49.0,
+                "Limoges",
                 3,
                 null,
                 sportSautParachute,
@@ -490,16 +715,25 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 4.8,
                 44.0,
+                "Marseille",
                 4,
                 null,
                 sportMusculation,
                 userStoick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 6, 10, 0), 3.1, 35.0, 3, null, sportPlongee, userStoick),
+                LocalDateTime.of(2026, 4, 6, 10, 0),
+                3.1,
+                35.0,
+                "Toulouse",
+                3,
+                null,
+                sportPlongee,
+                userStoick),
             createWorkout(
                 LocalDateTime.of(2026, 4, 13, 10, 0),
                 6.2,
                 50.0,
+                "Strasbourg",
                 5,
                 null,
                 sportCyclisme,
@@ -508,6 +742,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 4.0,
                 39.0,
+                "Perpignan",
                 4,
                 null,
                 sportBasketball,
@@ -516,6 +751,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 8, 10, 0),
                 3.3,
                 33.0,
+                "Marseille",
                 4,
                 null,
                 sportEscaladeBloc,
@@ -524,6 +760,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 14, 10, 0),
                 5.9,
                 47.0,
+                "Paris",
                 4,
                 null,
                 sportCoursePied,
@@ -532,6 +769,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 6.1,
                 42.0,
+                "Toulouse",
                 4,
                 null,
                 sportParkourUrbain,
@@ -540,6 +778,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 4.9,
                 37.0,
+                "Toulouse",
                 4,
                 null,
                 sportCircuitCardio,
@@ -548,24 +787,34 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 15, 10, 0),
                 7.4,
                 51.0,
+                "Toulouse",
                 5,
-                null,
+                clearsky,
                 sportCyclisme,
                 userRodney),
             createWorkout(
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 3.6,
                 30.0,
+                "Toulouse",
                 3,
                 null,
                 sportMobiliteActive,
                 userCappy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 10, 10, 0), 4.2, 34.0, 4, null, sportNatation, userCappy),
+                LocalDateTime.of(2026, 4, 10, 10, 0),
+                4.2,
+                34.0,
+                "Toulouse",
+                4,
+                null,
+                sportNatation,
+                userCappy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 16, 10, 0),
                 5.0,
                 39.0,
+                "Toulouse",
                 3,
                 null,
                 sportYogaDynamique,
@@ -574,6 +823,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 5, 10, 0),
                 5.2,
                 40.0,
+                "Toulouse",
                 4,
                 null,
                 sportCircuitCardio,
@@ -582,16 +832,25 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 11, 10, 0),
                 4.5,
                 35.0,
+                "Toulouse",
                 4,
                 null,
                 sportParkourUrbain,
                 userFender),
             createWorkout(
-                LocalDateTime.of(2026, 4, 17, 10, 0), 6.6, 46.0, 4, null, sportPlongee, userFender),
+                LocalDateTime.of(2026, 4, 17, 10, 0),
+                6.6,
+                46.0,
+                "Toulouse",
+                4,
+                null,
+                sportPlongee,
+                userFender),
             createWorkout(
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 4.7,
                 43.0,
+                "Toulouse",
                 4,
                 null,
                 sportRenforcementFonctionnel,
@@ -600,6 +859,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 5.3,
                 44.0,
+                "Toulouse",
                 4,
                 null,
                 sportEscaladeBloc,
@@ -608,6 +868,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 18, 10, 0),
                 7.1,
                 53.0,
+                "Toulouse",
                 5,
                 null,
                 sportRandonnee,
@@ -618,17 +879,113 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       LocalDateTime date,
       Double distance,
       Double duration,
+      String address,
       Integer rating,
-      Weather weather,
+      WeatherStatsDTO weather,
       Sport sport,
       User user) {
-    // Seed values are defined in minutes; store duration in seconds.
-    double durationInSeconds = duration == null ? 0.0 : duration * 60.0;
-    return new Workout(date, distance, durationInSeconds, rating, weather, sport, user);
+    return new Workout(date, distance, duration, address, rating, weather, sport, user);
+  }
+
+  private Goal createGoal(
+      String label,
+      GoalType type,
+      Double targetValue,
+      Double currentValue,
+      String unit,
+      User user) {
+    return new Goal(label, type, targetValue, currentValue, unit, user);
   }
 
   private Sport createSport(String name, Double calPerMin) {
     return new Sport(name, calPerMin);
+  }
+
+  private Badge createSportBadge(Sport sport, String suffix, String description, String iconPath) {
+    return new Badge(sport.getName() + " - " + suffix, description, iconPath);
+  }
+
+  private Challenge createSportChallenge(
+      Sport sport,
+      String title,
+      String description,
+      ChallengeType type,
+      Double targetValue,
+      LocalDate startDate,
+      LocalDate endDate,
+      User creator) {
+    return new Challenge(
+        title + " (" + sport.getName() + ")",
+        description,
+        type,
+        targetValue,
+        startDate,
+        endDate,
+        creator);
+  }
+
+  private void assignDemoAvatars(Map<User, String> avatarByUser) {
+    try {
+      Path uploadDir = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+      Files.createDirectories(uploadDir);
+      for (Map.Entry<User, String> entry : avatarByUser.entrySet()) {
+        User user = entry.getKey();
+        String sourceFileName = entry.getValue();
+        if (user == null
+            || user.getId() == null
+            || sourceFileName == null
+            || sourceFileName.isBlank()) {
+          continue;
+        }
+
+        cleanupExistingUserAvatars(uploadDir, user.getId());
+
+        String extension = extractExtension(sourceFileName);
+        if (extension.isBlank()) {
+          continue;
+        }
+
+        String targetFileName = "user_" + user.getId() + "." + extension;
+        Path targetPath = uploadDir.resolve(targetFileName).normalize();
+        if (!targetPath.startsWith(uploadDir)) {
+          continue;
+        }
+
+        ClassPathResource resource =
+            new ClassPathResource("static/images/avatars/" + sourceFileName);
+        if (!resource.exists()) {
+          continue;
+        }
+
+        try (InputStream inputStream = resource.getInputStream()) {
+          Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+          user.setProfileImagePath("/avatar_upload/" + targetFileName);
+          userRepository.save(user);
+        }
+      }
+    } catch (IOException exception) {
+      throw new IllegalStateException("Impossible de copier les avatars de demo.", exception);
+    }
+  }
+
+  private String extractExtension(String filename) {
+    if (filename == null || !filename.contains(".")) {
+      return "";
+    }
+    int lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex == filename.length() - 1) {
+      return "";
+    }
+    return filename.substring(lastDotIndex + 1);
+  }
+
+  private void cleanupExistingUserAvatars(Path uploadDir, Long userId) throws IOException {
+    String pattern = "user_" + userId + ".*";
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadDir, pattern)) {
+      for (Path path : stream) {
+        Files.deleteIfExists(path);
+      }
+    }
   }
 
   @SuppressWarnings("java:S6437") // Demo seed credential; not used outside local sample data.

@@ -1,0 +1,52 @@
+name: Auto Format
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-format-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: Format Java + HTML
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Apply Java formatter
+        run: mvn -B spotless:apply
+
+      - name: Apply HTML formatter (2 spaces)
+        run: npx --yes prettier@3 --write "src/main/resources/**/*.html"
+
+      - name: Commit formatted files
+        run: |
+          if git diff --quiet; then
+            echo "No formatting changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "style: auto-format java and html [skip ci]"
+          git push

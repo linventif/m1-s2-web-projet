@@ -17,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
-import utc.miage.tp.weather.Weather;
+import utc.miage.tp.weather.WeatherStatsDTO;
 
 @Entity
 @Table(name = "workout")
@@ -35,7 +35,7 @@ public class Workout {
   private Double distance;
 
   @Column(name = "duration", nullable = false)
-  private Double duration; // en secondes
+  private Double duration; // en minutes
 
   @Column(name = "address", nullable = true)
   private String address;
@@ -43,13 +43,7 @@ public class Workout {
   @Column(name = "rating")
   private Integer rating; // note de 1 à 5 par exemple
 
-  @Embedded
-  @AttributeOverrides({
-    @AttributeOverride(name = "date", column = @Column(name = "weather_date")),
-    @AttributeOverride(name = "nom", column = @Column(name = "weather_nom"))
-  })
-  @Column(name = "weather_")
-  private Weather weather;
+  @Embedded private WeatherStatsDTO weather;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "sport_id")
@@ -65,13 +59,33 @@ public class Workout {
       LocalDateTime date,
       Double distance,
       Double duration,
+      String address,
       Integer rating,
-      Weather weather,
       Sport sport,
       User user) {
     this.date = date;
     this.distance = distance;
     this.duration = duration;
+    this.address = address;
+    this.rating = rating;
+    this.sport = sport;
+    this.user = user;
+  }
+
+  // Constructor with weather (for data initialization)
+  public Workout(
+      LocalDateTime date,
+      Double distance,
+      Double duration,
+      String address,
+      Integer rating,
+      WeatherStatsDTO weather,
+      Sport sport,
+      User user) {
+    this.date = date;
+    this.distance = distance;
+    this.duration = duration;
+    this.address = address;
     this.rating = rating;
     this.weather = weather;
     this.sport = sport;
@@ -94,11 +108,15 @@ public class Workout {
     return duration;
   }
 
+  public String getAddress() {
+    return address;
+  }
+
   public Integer getRating() {
     return rating;
   }
 
-  public Weather getWeather() {
+  public WeatherStatsDTO getWeather() {
     return weather;
   }
 
@@ -133,11 +151,15 @@ public class Workout {
     this.duration = duration;
   }
 
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
   public void setRating(Integer rating) {
     this.rating = rating;
   }
 
-  public void setWeather(Weather weather) {
+  public void setWeather(WeatherStatsDTO weather) {
     this.weather = weather;
   }
 

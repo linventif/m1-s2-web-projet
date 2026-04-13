@@ -36,6 +36,9 @@ public class UserService implements UserDetailsService {
         .findById(id)
         .map(
             user -> {
+              // Initialize lazy collections needed by Thymeleaf views.
+              user.getBadges().size();
+              user.getGoals().size();
               return user;
             });
   }

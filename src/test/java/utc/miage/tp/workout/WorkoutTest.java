@@ -26,7 +26,8 @@ class WorkoutTest {
             LocalDate.of(2024, 3, 31),
             PracticeLevel.BEGINNER);
     Workout workout =
-        new Workout(LocalDateTime.of(2026, 1, 1, 10, 0), 5000.0, 120.0, 3, null, sport, user);
+        new Workout(
+            LocalDateTime.of(2026, 1, 1, 10, 0), 5000.0, 120.0, "Toulouse", 3, null, sport, user);
     assertEquals(16.0, workout.getCalorieBurn(), 0.0001);
   }
 }

@@ -1,5 +1,8 @@
 package utc.miage.tp.weather;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class WeatherStatsDTO {
   String averageTemperature;
   String maxTemperature;
@@ -8,6 +11,25 @@ public class WeatherStatsDTO {
   String averagePrecipitation;
   String averageWindSpeed;
   String weatherIndicator;
+
+  public WeatherStatsDTO() {}
+
+  public WeatherStatsDTO(
+      String averageTemperature,
+      String maxTemperature,
+      String minTemperature,
+      String averageApparentTemperature,
+      String averagePrecipitation,
+      String averageWindSpeed,
+      String weatherIndicator) {
+    this.averageTemperature = averageTemperature;
+    this.maxTemperature = maxTemperature;
+    this.minTemperature = minTemperature;
+    this.averageApparentTemperature = averageApparentTemperature;
+    this.averagePrecipitation = averagePrecipitation;
+    this.averageWindSpeed = averageWindSpeed;
+    this.weatherIndicator = weatherIndicator;
+  }
 
   public String getAverageTemperature() {
     return averageTemperature;
@@ -62,23 +84,6 @@ public class WeatherStatsDTO {
   }
 
   public void setWeatherIndicator(String weatherIndicator) {
-    this.weatherIndicator = weatherIndicator;
-  }
-
-  public WeatherStatsDTO(
-      String averageTemperature,
-      String maxTemperature,
-      String minTemperature,
-      String averageApparentTemperature,
-      String averagePrecipitation,
-      String averageWindSpeed,
-      String weatherIndicator) {
-    this.averageTemperature = averageTemperature;
-    this.maxTemperature = maxTemperature;
-    this.minTemperature = minTemperature;
-    this.averageApparentTemperature = averageApparentTemperature;
-    this.averagePrecipitation = averagePrecipitation;
-    this.averageWindSpeed = averageWindSpeed;
     this.weatherIndicator = weatherIndicator;
   }
 }

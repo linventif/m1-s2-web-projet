@@ -18,8 +18,22 @@ concurrency:
 
 jobs:
   build:
-    name: Build Javadoc
+    name: Build Javadoc + Swagger
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: projet
+          POSTGRES_USER: psql
+          POSTGRES_PASSWORD: psql
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U psql -d projet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Checkout repository
@@ -38,10 +52,43 @@ jobs:
       - name: Generate Javadoc
         run: mvn -B -DskipTests javadoc:javadoc
 
-      - name: Upload Javadoc artifact
+      - name: Generate OpenAPI spec
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/projet
+          SPRING_DATASOURCE_USERNAME: psql
+          SPRING_DATASOURCE_PASSWORD: psql
+          SPRING_DEVTOOLS_RESTART_ENABLED: "false"
+        run: |
+          set -euo pipefail
+          mvn -B -DskipTests spring-boot:run > /tmp/spring.log 2>&1 &
+          APP_PID=$!
+          trap 'kill "${APP_PID}" || true' EXIT
+
+          for _ in {1..90}; do
+            if curl -fsS http://localhost:8080/v3/api-docs -o target/openapi.json; then
+              break
+            fi
+            sleep 2
+          done
+
+          if [ ! -s target/openapi.json ]; then
+            echo "OpenAPI generation failed. Spring logs:"
+            tail -n 200 /tmp/spring.log || true
+            exit 1
+          fi
+
+      - name: Build Pages artifact
+        run: |
+          set -euo pipefail
+          mkdir -p target/gh-pages/swagger target/gh-pages/java-docs
+          cp -R .github/pages/. target/gh-pages/
+          cp -R target/reports/apidocs/. target/gh-pages/java-docs/
+          cp target/openapi.json target/gh-pages/swagger/openapi.json
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: target/reports/apidocs
+          path: target/gh-pages
 
   deploy:
     name: Deploy Javadoc

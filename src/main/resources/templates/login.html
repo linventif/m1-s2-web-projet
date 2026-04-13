@@ -1,63 +1,95 @@
-<!DOCTYPE html>
-<html
-    lang="fr"
-    xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{components/layout::head(title='Login - My App')}">
-  <title>Login - My App</title>
-</head>
-<body class="bg-base-200 min-h-screen flex items-center justify-center">
-
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{components/layout::head(title='Login - My App')}">
+    <title>Login - My App</title>
+  </head>
+  <body class="bg-base-200 min-h-screen flex items-center justify-center">
     <div class="card w-full max-auto max-w-sm shadow-2xl bg-base-100">
-        <div class="card-body">
-            <h2 class="card-title text-2xl font-bold mb-4">Login</h2>
+      <div class="card-body">
+        <h2 class="card-title text-2xl font-bold mb-4">Login</h2>
 
-            <div th:if="${param.error}" class="alert alert-error shadow-lg mb-4 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span class="text-sm">Invalid email or password.</span>
-            </div>
-
-            <div th:if="${param.success}" class="alert alert-success shadow-lg mb-4 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span class="text-sm">Account created! Please log in.</span>
-            </div>
-
-            <div th:if="${param.logout}" class="alert alert-info shadow-lg mb-4 py-2">
-                <span class="text-sm">You have been signed out.</span>
-            </div>
-
-            <form th:action="@{/login}" method="post" class="space-y-4">
-                <div class="form-control">
-                    <label class="label" for="username">
-                        <span class="label-text">Email</span>
-                    </label>
-                    <input id="username" type="email" name="username" placeholder="email@example.com"
-                           class="input input-bordered focus:input-primary" required />
-                </div>
-
-                <div class="form-control">
-                    <label class="label" for="password">
-                        <span class="label-text">Password</span>
-                    </label>
-                    <input id="password" type="password" name="password" placeholder="••••••••"
-                           class="input input-bordered focus:input-primary" required />
-                    <div class="label">
-                        <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
-                    </div>
-                </div>
-
-                <div class="form-control mt-6">
-                    <button type="submit" class="btn btn-primary">Sign In</button>
-                </div>
-            </form>
-
-            <div class="divider">OR</div>
-
-            <p class="text-center text-sm">
-                New here?
-                <a th:href="@{/register}" class="link link-primary font-semibold">Create an account</a>
-            </p>
+        <div th:if="${param.error}" class="alert alert-error shadow-lg mb-4 py-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span class="text-sm">Invalid email or password.</span>
         </div>
-    </div>
 
-</body>
+        <div th:if="${param.success}" class="alert alert-success shadow-lg mb-4 py-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span class="text-sm">Account created! Please log in.</span>
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert-info alert-outline shadow-lg mb-4 py-2">
+          <span class="text-sm">You have been signed out.</span>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="space-y-4">
+          <div class="form-control">
+            <label class="label" for="username">
+              <span class="label-text">Email</span>
+            </label>
+            <input
+              id="username"
+              type="email"
+              name="username"
+              placeholder="email@example.com"
+              class="input input-bordered focus:input-primary"
+              required
+            />
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="password">
+              <span class="label-text">Password</span>
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              class="input input-bordered focus:input-primary"
+              required
+            />
+            <div class="label">
+              <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+            </div>
+          </div>
+
+          <div class="form-control mt-6">
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </div>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <p class="text-center text-sm">
+          New here?
+          <a th:href="@{/register}" class="link link-primary font-semibold">Create an account</a>
+        </p>
+      </div>
+    </div>
+  </body>
 </html>
