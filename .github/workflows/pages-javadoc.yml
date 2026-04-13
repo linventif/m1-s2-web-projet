@@ -81,8 +81,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p target/gh-pages/swagger target/gh-pages/java-docs
+          cp -R .github/pages/. target/gh-pages/
           cp -R target/reports/apidocs/. target/gh-pages/java-docs/
-          cp .github/pages/swagger/index.html target/gh-pages/swagger/index.html
           cp target/openapi.json target/gh-pages/swagger/openapi.json
 
       - name: Upload Pages artifact
