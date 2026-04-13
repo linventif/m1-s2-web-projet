@@ -18,7 +18,6 @@ public class WorkoutExerciseService {
   public WorkoutExercise createWorkout(WorkoutExercise workoutExercise) {
     WorkoutExercise newWorkoutExercise =
         new WorkoutExercise(
-            workoutExercise.getId(),
             workoutExercise.getAverageBpm(),
             workoutExercise.getDistanceM(),
             workoutExercise.getDurationMin(),

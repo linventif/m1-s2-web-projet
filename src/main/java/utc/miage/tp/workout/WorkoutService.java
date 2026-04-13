@@ -22,6 +22,7 @@ public class WorkoutService {
   public Workout createWorkout(Workout workout) {
     Workout newWorkout =
         new Workout(
+            workout.getName(),
             workout.getDate(),
             workout.getAddress(),
             workout.getDurationSec(),

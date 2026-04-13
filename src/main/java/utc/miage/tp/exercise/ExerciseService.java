@@ -17,7 +17,6 @@ public class ExerciseService {
   public Exercise createExercise(Exercise exercise) {
     Exercise newExercise =
         new Exercise(
-            exercise.getId(),
             exercise.getName(),
             exercise.getCaloriesPerSec(),
             exercise.getWorkoutExercises(),

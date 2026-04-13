@@ -19,6 +19,9 @@ public class Workout {
 
   // Static
 
+  @Column(name = "name", nullable = false)
+  private String name;
+
   @Column(name = "date", nullable = false)
   @ColumnDefault("current_date")
   private LocalDateTime date;
@@ -49,20 +52,24 @@ public class Workout {
 
   public Workout() {}
 
-  public Workout(Sport sport, User user) {
-    this.date = LocalDateTime.now();
-    this.sport = sport;
-    this.user = user;
-  }
+  public Workout(String address, WeatherStatsDTO weather, Sport sport, User user) {
 
-  public Workout(LocalDateTime date, Sport sport, User user) {
-    this.date = date;
+    this.date = LocalDateTime.now();
+    this.address = address;
+    this.weather = weather;
     this.sport = sport;
     this.user = user;
   }
 
   public Workout(
-      LocalDateTime date, String address, WeatherStatsDTO weather, Sport sport, User user) {
+      String name,
+      LocalDateTime date,
+      String address,
+      WeatherStatsDTO weather,
+      Sport sport,
+      User user) {
+    if (name == null) this.name = "Workout from : " + date;
+    else this.name = name;
     this.date = date;
     this.address = address;
     this.weather = weather;
@@ -70,22 +77,26 @@ public class Workout {
     this.user = user;
   }
 
-  public Workout(LocalDateTime date, Double durationSec, Sport sport, User user) {
+  public Workout(
+      String name,
+      LocalDateTime date,
+      String address,
+      WeatherStatsDTO weather,
+      List<WorkoutExercise> exercises,
+      Sport sport,
+      User user) {
+    if (name == null) this.name = "Workout from : " + date;
+    else this.name = name;
     this.date = date;
-    this.durationSec = durationSec;
-    this.sport = sport;
-    this.user = user;
-  }
-
-  public Workout(LocalDateTime date, Double durationSec, Integer rating, Sport sport, User user) {
-    this.date = date;
-    this.durationSec = durationSec;
-    this.rating = rating;
+    this.address = address;
+    this.weather = weather;
+    this.exercises = exercises;
     this.sport = sport;
     this.user = user;
   }
 
   public Workout(
+      String name,
       LocalDateTime date,
       String address,
       Double durationSec,
@@ -94,6 +105,7 @@ public class Workout {
       WeatherStatsDTO weather,
       List<WorkoutExercise> exercises,
       User user) {
+    this.name = name;
     this.date = date;
     this.address = address;
     this.durationSec = durationSec;
@@ -112,6 +124,14 @@ public class Workout {
     this.id = id;
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public LocalDateTime getDate() {
     return date;
   }
@@ -126,6 +146,14 @@ public class Workout {
 
   public void setDurationSec(Double durationSec) {
     this.durationSec = durationSec;
+  }
+
+  public Double getDurationMin() {
+    return durationSec / 60;
+  }
+
+  public void setDurationMin(Double durationMin) {
+    this.durationSec = durationMin * 60;
   }
 
   public String getAddress() {
@@ -177,20 +205,38 @@ public class Workout {
   }
 
   public double getCalories() {
-    if (exercises != null && !exercises.isEmpty()) {
-      return exercises.stream()
-          .mapToDouble(
-              ex -> {
-                if (ex.getDurationMin() == null) return 0.0;
-                return ex.getDurationMin();
-              })
-          .sum();
-    }
-
-    if (sport == null || sport.getMET() == null || durationSec == null) {
+    if (sport == null || sport.getMET() == null || user == null || user.getWeight() == null) {
       return 0.0;
     }
 
-    return durationSec * sport.getMET();
+    double totalCalories = 0.0;
+
+    if (exercises != null && !exercises.isEmpty()) {
+      for (WorkoutExercise ex : exercises) {
+        if (ex == null
+            || ex.getDurationSec() == null
+            || ex.getDurationSec() <= 0
+            || (user.getWeight() == 0.0 && ex.getWeightKg() == 0.0)) {
+          continue;
+        }
+
+        totalCalories +=
+            ex.getDurationSec()
+                / 60.0
+                * sport.getMET()
+                * 3.5
+                * (user.getWeight() + ex.getWeightKg())
+                / 200.0;
+      }
+
+      return totalCalories;
+    }
+
+    if (durationSec == null || durationSec <= 0) {
+      return 0.0;
+    }
+
+    double durationMin = durationSec / 60.0;
+    return durationMin * sport.getMET() * 3.5 * user.getWeight() / 200.0;
   }
 }

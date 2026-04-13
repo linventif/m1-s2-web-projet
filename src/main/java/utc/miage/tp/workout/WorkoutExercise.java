@@ -38,7 +38,6 @@ public class WorkoutExercise {
   private Exercise exercise;
 
   public WorkoutExercise(
-      Long id,
       Double averageBps,
       Double distanceM,
       Double durationSec,
@@ -47,9 +46,51 @@ public class WorkoutExercise {
       Double weightG,
       Workout workout,
       Exercise exercise) {
-    this.id = id;
     this.averageBps = averageBps;
     this.distanceM = distanceM;
+    this.durationSec = durationSec;
+    this.reps = reps;
+    this.sets = sets;
+    this.weightG = weightG;
+    this.workout = workout;
+    this.exercise = exercise;
+  }
+
+  public WorkoutExercise(
+      Double averageBps,
+      Double distanceM,
+      Double durationSec,
+      Integer reps,
+      Integer sets,
+      Workout workout,
+      Exercise exercise) {
+    this.averageBps = averageBps;
+    this.distanceM = distanceM;
+    this.durationSec = durationSec;
+    this.reps = reps;
+    this.sets = sets;
+    this.workout = workout;
+    this.exercise = exercise;
+  }
+
+  public WorkoutExercise(
+      Double averageBps, Double distanceM, Double durationSec, Workout workout, Exercise exercise) {
+    this.averageBps = averageBps;
+    this.distanceM = distanceM;
+    this.durationSec = durationSec;
+    this.workout = workout;
+    this.exercise = exercise;
+  }
+
+  public WorkoutExercise(
+      Double averageBps,
+      Double durationSec,
+      Integer reps,
+      Integer sets,
+      Double weightG,
+      Workout workout,
+      Exercise exercise) {
+    this.averageBps = averageBps;
     this.durationSec = durationSec;
     this.reps = reps;
     this.sets = sets;
@@ -98,6 +139,14 @@ public class WorkoutExercise {
 
   public void setDurationMin(Double durationMin) {
     this.durationSec = durationMin * 60;
+  }
+
+  public Double getDurationSec() {
+    return durationSec;
+  }
+
+  public void setDurationSec(Double durationSec) {
+    this.durationSec = durationSec;
   }
 
   public Double getDistanceM() {

@@ -31,18 +31,11 @@ public class Exercise {
 
   public Exercise() {}
 
-  public Exercise(String name, Double caloriesPerSecond) {
-    this.name = name;
-    this.caloriesPerSecond = caloriesPerSecond;
-  }
-
   public Exercise(
-      Long id,
       String name,
       Double caloriesPerSecond,
       List<WorkoutExercise> workoutExercises,
       List<Sport> sports) {
-    this.id = id;
     this.name = name;
     this.caloriesPerSecond = caloriesPerSecond;
     this.workoutExercises = workoutExercises;

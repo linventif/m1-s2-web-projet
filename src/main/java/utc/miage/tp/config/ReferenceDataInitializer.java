@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.exercise.Exercise;
+import utc.miage.tp.exercise.ExerciseRepository;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportRepository;
@@ -28,6 +30,8 @@ import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserRepository;
 import utc.miage.tp.weather.WeatherStatsDTO;
 import utc.miage.tp.workout.Workout;
+import utc.miage.tp.workout.WorkoutExercise;
+import utc.miage.tp.workout.WorkoutExerciseRepository;
 import utc.miage.tp.workout.WorkoutRepository;
 
 @Component
@@ -38,6 +42,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final SportRepository sportRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
+  private final WorkoutExerciseRepository workoutExerciseRepository;
+  private final ExerciseRepository exerciseRepository;
 
   @Value("${app.avatar-upload-dir:avatar_upload}")
   private String avatarUploadDir;
@@ -47,12 +53,16 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       SportRepository sportRepository,
       PasswordEncoder passwordEncoder,
       WorkoutRepository workoutRepository,
-      FriendshipService friendshipService) {
+      FriendshipService friendshipService,
+      WorkoutExerciseRepository workoutExerciseRepository,
+      ExerciseRepository exerciseRepository) {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
     this.passwordEncoder = passwordEncoder;
     this.workoutRepository = workoutRepository;
     this.friendshipService = friendshipService;
+    this.workoutExerciseRepository = workoutExerciseRepository;
+    this.exerciseRepository = exerciseRepository;
   }
 
   @Override
@@ -385,6 +395,12 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             sportYogaDynamique,
             sportRandonnee));
 
+    WorkoutExercise workoutExercise =
+        createWorkoutExercise(90.0, 6500.0, 2400.0, 1, 6, null, null, null);
+
+    Exercise exerciseDevelopperCoucher = createExercice("Développer Coucher", 8.0, null, null);
+    Exercise exerciseDevelopperMilitaire = createExercice("Développer Militaire", 8.0, null, null);
+
     WeatherStatsDTO clearsky =
         new WeatherStatsDTO("22", "23", "21", "20", "0.00", "10", "clearsky");
     WeatherStatsDTO cloudy = new WeatherStatsDTO("18", "19", "17", "16", "0.10", "12", "cloudy");
@@ -397,192 +413,290 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 clearsky,
+                new ArrayList<>(),
                 sportCourseCanal,
                 userJudy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 "Toulouse",
                 cloudy,
+                new ArrayList<>(),
                 sportParcoursAgilite,
                 userJudy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 "Toulouse",
                 clearsky,
+                new ArrayList<>(),
                 sportCoursePied,
                 userJudy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 2, 10, 0), "Toulouse", cloudy, sportSprintCote, userNick),
+                LocalDateTime.of(2026, 4, 2, 10, 0),
+                "Toulouse",
+                cloudy,
+                new ArrayList<>(),
+                sportSprintCote,
+                userNick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 5, 10, 0), "Toulouse", rain, sportNatation, userNick),
+                LocalDateTime.of(2026, 4, 5, 10, 0),
+                "Toulouse",
+                rain,
+                new ArrayList<>(),
+                sportNatation,
+                userNick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 8, 10, 0), "Toulouse", cloudy, sportCoursePied, userNick),
+                LocalDateTime.of(2026, 4, 8, 10, 0),
+                "Toulouse",
+                cloudy,
+                new ArrayList<>(),
+                sportCoursePied,
+                userNick),
             createWorkout(
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userBogo),
             createWorkout(
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportRenforcementFonctionnel,
                 userBogo),
             createWorkout(
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportEscaladeVitesse,
                 userBogo),
             createWorkout(
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportMobiliteActive,
                 userBellwether),
             createWorkout(
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportNatation,
                 userBellwether),
             createWorkout(
                 LocalDateTime.of(2026, 4, 10, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userBellwether),
             createWorkout(
                 LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
                 clearsky,
+                new ArrayList<>(),
                 sportFractionneIntense,
                 userHiccup),
             createWorkout(
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportEnduranceMixte,
                 userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 11, 10, 0), "Pau", null, sportCoursePied, userHiccup),
+                LocalDateTime.of(2026, 4, 11, 10, 0),
+                "Pau",
+                null,
+                new ArrayList<>(),
+                sportCoursePied,
+                userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 3, 10, 0), "Toulouse", null, sportFootball, userAstrid),
+                LocalDateTime.of(2026, 4, 3, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
+                sportFootball,
+                userAstrid),
             createWorkout(
                 LocalDateTime.of(2026, 4, 7, 10, 0),
                 "Tarbes",
                 null,
+                new ArrayList<>(),
                 sportEscaladeVitesse,
                 userAstrid),
             createWorkout(
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 "Limoges",
                 null,
+                new ArrayList<>(),
                 sportSautParachute,
                 userAstrid),
             createWorkout(
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Marseille",
                 null,
+                new ArrayList<>(),
                 sportMusculation,
                 userStoick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 6, 10, 0), "Toulouse", null, sportPlongee, userStoick),
+                LocalDateTime.of(2026, 4, 6, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
+                sportPlongee,
+                userStoick),
             createWorkout(
                 LocalDateTime.of(2026, 4, 13, 10, 0),
                 "Strasbourg",
                 null,
+                new ArrayList<>(),
                 sportCyclisme,
                 userStoick),
             createWorkout(
                 LocalDateTime.of(2026, 4, 2, 10, 0),
                 "Perpignan",
                 null,
+                new ArrayList<>(),
                 sportBasketball,
                 userFishlegs),
             createWorkout(
                 LocalDateTime.of(2026, 4, 8, 10, 0),
                 "Marseille",
                 null,
+                new ArrayList<>(),
                 sportEscaladeBloc,
                 userFishlegs),
             createWorkout(
-                LocalDateTime.of(2026, 4, 14, 10, 0), "Paris", null, sportCoursePied, userFishlegs),
+                LocalDateTime.of(2026, 4, 14, 10, 0),
+                "Paris",
+                null,
+                new ArrayList<>(),
+                sportCoursePied,
+                userFishlegs),
             createWorkout(
                 LocalDateTime.of(2026, 4, 3, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportParkourUrbain,
                 userRodney),
             createWorkout(
                 LocalDateTime.of(2026, 4, 9, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userRodney),
             createWorkout(
-                LocalDateTime.of(2026, 4, 15, 10, 0), "Toulouse", null, sportCyclisme, userRodney),
+                LocalDateTime.of(2026, 4, 15, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
+                sportCyclisme,
+                userRodney),
             createWorkout(
                 LocalDateTime.of(2026, 4, 4, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportMobiliteActive,
                 userCappy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 10, 10, 0), "Toulouse", null, sportNatation, userCappy),
+                LocalDateTime.of(2026, 4, 10, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
+                sportNatation,
+                userCappy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 16, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportYogaDynamique,
                 userCappy),
             createWorkout(
                 LocalDateTime.of(2026, 4, 5, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userFender),
             createWorkout(
                 LocalDateTime.of(2026, 4, 11, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportParkourUrbain,
                 userFender),
             createWorkout(
-                LocalDateTime.of(2026, 4, 17, 10, 0), "Toulouse", null, sportPlongee, userFender),
+                LocalDateTime.of(2026, 4, 17, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
+                sportPlongee,
+                userFender),
             createWorkout(
                 LocalDateTime.of(2026, 4, 6, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportRenforcementFonctionnel,
                 userBigweld),
             createWorkout(
                 LocalDateTime.of(2026, 4, 12, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportEscaladeBloc,
                 userBigweld),
             createWorkout(
                 LocalDateTime.of(2026, 4, 18, 10, 0),
                 "Toulouse",
                 null,
+                new ArrayList<>(),
                 sportRandonnee,
                 userBigweld)));
   }
 
   private Workout createWorkout(
-      LocalDateTime date, String address, WeatherStatsDTO weather, Sport sport, User user) {
-    if (weather == null) return new Workout(date, sport, user);
-    return new Workout(date, address, weather, sport, user);
+      LocalDateTime date,
+      String address,
+      WeatherStatsDTO weather,
+      List<WorkoutExercise> exercises,
+      Sport sport,
+      User user) {
+    if (exercises.isEmpty()) return new Workout(null, date, address, weather, sport, user);
+    return new Workout(null, date, address, weather, exercises, sport, user);
   }
 
   private Sport createSport(String name, Double calPerMin) {
     return new Sport(name, calPerMin);
   }
 
-  private Exercise createExercice(String name, Double calPerMin) {
-    return new Exercise(name, calPerMin);
+  private WorkoutExercise createWorkoutExercise(
+      Double averageBps,
+      Double distanceM,
+      Double durationSec,
+      Integer reps,
+      Integer sets,
+      Double weightG,
+      Workout workout,
+      Exercise exercise) {
+    if (distanceM == null)
+      return new WorkoutExercise(averageBps, durationSec, reps, sets, weightG, workout, exercise);
+    if (weightG == null && reps == null && sets == null)
+      return new WorkoutExercise(averageBps, distanceM, durationSec, workout, exercise);
+    return new WorkoutExercise(averageBps, distanceM, durationSec, reps, sets, workout, exercise);
+  }
+
+  private Exercise createExercice(
+      String name, Double calPerSec, List<WorkoutExercise> exercises, List<Sport> sports) {
+    return new Exercise(name, calPerSec, exercises, sports);
   }
 
   private void assignDemoAvatars(Map<User, String> avatarByUser) {
