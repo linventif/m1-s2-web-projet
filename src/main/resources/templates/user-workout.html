@@ -42,15 +42,15 @@
                     <td th:text="${workout.date}"></td>
                     <td th:text="${workout.sport.name}"></td>
                     <td>
-                      <i th:text="${workout.duration}"></i>
+                      <span th:text="${workout.duration}"></span>
                       s
                     </td>
                     <td>
-                      <i th:text="${workout.distance}"></i>
+                      <span th:text="${workout.distance}"></span>
                       km
                     </td>
                     <td>
-                      <i th:text="${workout.getCalorieBurn}"></i>
+                      <span th:text="${#numbers.formatDecimal(workout.calorieBurn, 1, 0)}"></span>
                       kal
                     </td>
                     <td>
