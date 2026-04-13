@@ -136,10 +136,7 @@
         <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(allBadges)}">
           <span>Aucun badge disponible pour le moment.</span>
         </div>
-        <div
-          class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          th:if="${!#lists.isEmpty(allBadges)}"
-        >
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" th:if="${!#lists.isEmpty(allBadges)}">
           <div
             class="rounded-2xl border p-3 transition hover:-translate-y-0.5 hover:shadow-md"
             th:each="badge : ${allBadges}"
