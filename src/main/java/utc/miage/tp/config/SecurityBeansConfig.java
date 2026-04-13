@@ -37,10 +37,7 @@ public class SecurityBeansConfig {
                     .anyRequest()
                     .hasAnyRole("USER", "ADMIN"))
         .formLogin(
-            form ->
-                form.loginPage("/login")
-                    .defaultSuccessUrl("/", true) // Redirige vers l'accueil après connexion
-                    .permitAll())
+            form -> form.loginPage("/login").defaultSuccessUrl("/user/dashboard", true).permitAll())
         .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll());
 
     return http.build();

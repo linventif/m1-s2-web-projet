@@ -1,17 +1,30 @@
 package utc.miage.tp.user;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import utc.miage.tp.badge.BadgeService;
 import utc.miage.tp.challenge.ChallengeService;
@@ -23,8 +36,14 @@ import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping({"/users", "/user"})
 public class UserController {
+
+  private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
+      Set.of("png", "jpg", "jpeg", "webp", "gif");
+
+  @Value("${app.avatar-upload-dir:avatar_upload}")
+  private String avatarUploadDir;
 
   private final UserService userService;
   private final WorkoutService workoutService;
@@ -93,42 +112,131 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("user", currentUser);
-    model.addAttribute("bmi", userService.calculateBMI(currentUser));
-    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
-    model.addAttribute("bmr", userService.calculateBMR(currentUser));
+    populateProfileView(model, currentUser);
+    model.addAttribute("canEditProfile", true);
     return "user-profile";
+  }
+
+  @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
+  public String showUserProfile(
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long userId,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+    if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
+      return "redirect:/user/profile";
+    }
+
+    return userService
+        .getUserById(userId)
+        .map(
+            user -> {
+              populateProfileView(model, user);
+              model.addAttribute("canEditProfile", false);
+              return "user-profile";
+            })
+        .orElseGet(
+            () -> {
+              redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
+              return "redirect:/user/users";
+            });
   }
 
   @GetMapping("/profile/edit")
   public String showEditProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("user", currentUser);
+    populateProfileEditForm(model, currentUser);
     return "user-profile-edit";
   }
 
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
+      @RequestParam String firstname,
+      @RequestParam String lastname,
+      @RequestParam String email,
       @RequestParam Double weight,
       @RequestParam Double height,
       @RequestParam Sex sex,
-      @RequestParam Integer age,
+      @RequestParam PracticeLevel level,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate birthDate,
+      @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
       Model model,
       RedirectAttributes redirectAttributes) {
     try {
+      User updatedUser =
+          userService.updateCurrentUserProfile(
+              currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
+      if (avatarFile != null && !avatarFile.isEmpty()) {
+        String avatarPath = storeAvatarForUser(updatedUser.getId(), avatarFile);
+        String avatarPathWithVersion = avatarPath + "?v=" + System.currentTimeMillis();
+        updatedUser.setProfileImagePath(avatarPathWithVersion);
+        currentUser.setProfileImagePath(avatarPathWithVersion);
+        userService.save(updatedUser);
+      }
+      redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
+      return "redirect:/user/profile";
+    } catch (Exception e) {
+      currentUser.setFirstname(firstname);
+      currentUser.setLastname(lastname);
+      currentUser.setEmail(email);
       currentUser.setWeight(weight);
       currentUser.setHeight(height);
       currentUser.setSex(sex);
-      // Calculer birthDate à partir de l'âge
-      java.time.LocalDate birthDate = java.time.LocalDate.now().minusYears(age);
       currentUser.setBirthDate(birthDate);
-      userService.save(currentUser);
-      redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
-      return "redirect:/users/profile";
-    } catch (Exception e) {
-      model.addAttribute("user", currentUser);
+      currentUser.setLevel(level);
+      populateProfileEditForm(model, currentUser);
       model.addAttribute("errorMessage", e.getMessage());
       return "user-profile-edit";
+    }
+  }
+
+  private String storeAvatarForUser(Long userId, MultipartFile avatarFile) throws IOException {
+    if (userId == null) {
+      throw new IllegalArgumentException("Impossible de sauvegarder l'avatar.");
+    }
+    if (avatarFile.getContentType() == null || !avatarFile.getContentType().startsWith("image/")) {
+      throw new IllegalArgumentException("Le fichier doit etre une image.");
+    }
+
+    String extension = extractExtension(avatarFile.getOriginalFilename());
+    if (!ALLOWED_AVATAR_EXTENSIONS.contains(extension)) {
+      throw new IllegalArgumentException("Format d'image non supporte.");
+    }
+
+    Path uploadDir = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+    Files.createDirectories(uploadDir);
+    cleanupExistingUserAvatars(uploadDir, userId);
+
+    String fileName = "user_" + userId + "." + extension;
+    Path targetPath = uploadDir.resolve(fileName).normalize();
+    if (!targetPath.startsWith(uploadDir)) {
+      throw new IllegalArgumentException("Nom de fichier invalide.");
+    }
+
+    try (InputStream inputStream = avatarFile.getInputStream()) {
+      Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+    }
+    return "/avatar_upload/" + fileName;
+  }
+
+  private String extractExtension(String originalFilename) {
+    if (originalFilename == null || !originalFilename.contains(".")) {
+      return "";
+    }
+    int lastDotIndex = originalFilename.lastIndexOf('.');
+    if (lastDotIndex == originalFilename.length() - 1) {
+      return "";
+    }
+    return originalFilename.substring(lastDotIndex + 1).toLowerCase(Locale.ROOT);
+  }
+
+  private void cleanupExistingUserAvatars(Path uploadDir, Long userId) throws IOException {
+    String pattern = "user_" + userId + ".*";
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadDir, pattern)) {
+      for (Path path : stream) {
+        Files.deleteIfExists(path);
+      }
     }
   }
 
@@ -208,7 +316,7 @@ public class UserController {
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long targetUserId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
@@ -227,7 +335,7 @@ public class UserController {
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
@@ -242,7 +350,7 @@ public class UserController {
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendshipId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
@@ -257,7 +365,7 @@ public class UserController {
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
       @RequestParam Long friendId,
-      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      @RequestParam(defaultValue = "/user/friends") String returnTo,
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);
@@ -269,7 +377,7 @@ public class UserController {
   }
 
   private String resolveReturnTo(String returnTo) {
-    if (returnTo != null && returnTo.startsWith("/users/")) {
+    if (returnTo != null && (returnTo.startsWith("/users/") || returnTo.startsWith("/user/"))) {
       return returnTo;
     }
     return "/users/friends";
@@ -295,5 +403,18 @@ public class UserController {
 
   private void populateUserCreationForm(Model model, User user) {
     model.addAttribute("user", user);
+  }
+
+  private void populateProfileView(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("bmi", userService.calculateBMI(user));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
+    model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private void populateProfileEditForm(Model model, User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("sexes", Sex.values());
+    model.addAttribute("practiceLevels", PracticeLevel.values());
   }
 }

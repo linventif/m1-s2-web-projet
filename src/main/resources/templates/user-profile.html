@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{components/layout::head(title='Profile')}">
   <title>Profile</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="min-h-screen bg-base-200 text-base-content">
-  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+  <div th:insert="~{components/layout::header}"></div>
+  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-6 pt-24 sm:px-6 lg:px-8">
     <section class="card border border-base-300 bg-base-100 shadow-xl">
       <div class="card-body gap-6 p-6 sm:p-8">
-        <h3 class="text-xl">
-          Informations
-        </h3>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="text-xl">Informations</h3>
+          <a class="btn btn-primary" th:if="${canEditProfile}" th:href="@{/user/profile/edit}">Modifier mon profil</a>
+        </div>
+        <div class="avatar">
+          <div class="w-24 rounded-full overflow-hidden border border-base-300 bg-base-200">
+            <img th:src="${user.profileImagePath}" alt="Photo de profil" class="h-full w-full object-cover" />
+          </div>
+        </div>
+        <div class="alert alert-success" th:if="${message}">
+          <span th:text="${message}">Profil mis à jour avec succès.</span>
+        </div>
         <p>
           Prenom:
           <i class="" th:text="${user.firstname}">cm</i>
@@ -23,6 +29,10 @@
         <p>
           Nom de famille:
           <i class="" th:text="${user.lastname}">cm</i>
+        </p>
+        <p>
+          Email:
+          <i class="" th:text="${user.email}">email@example.com</i>
         </p>
         <p>
           Taille:
@@ -58,21 +68,10 @@
           Recommandation:
           <i th:text="${recommendation}"></i>
         </p>
-        <div class="flex gap-10 ">
-          <div class="flex gap-2">
-            <a class="btn btn-outline group-item" th:href="@{/users/profile}">Profil</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/friends}">Amis</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/users}">Utilisateurs</a>
-            <a class="btn btn-outline group-item" th:href="@{/users/workout}">Activités</a>
-          </div>
-          <div class="flex gap-2">
-            <a class="btn btn-outline" th:href="@{/users/login}">Se Connecter</a>
-            <a class="btn btn-outline" th:href="@{/users/create}">Créer un Compte</a>
-          </div>
-        </div>
       </div>
     </section>
   </main>
+  <div th:insert="~{components/layout::footer}"></div>
 </body>
 
 </html>

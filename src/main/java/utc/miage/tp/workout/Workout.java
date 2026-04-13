@@ -7,7 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
-import utc.miage.tp.weather.Weather;
+import utc.miage.tp.weather.WeatherStatsDTO;
 
 @Entity
 @Table(name = "workout")
@@ -34,13 +34,7 @@ public class Workout {
 
   // Link
 
-  @Embedded
-  @AttributeOverrides({
-    @AttributeOverride(name = "date", column = @Column(name = "weather_date")),
-    @AttributeOverride(name = "nom", column = @Column(name = "weather_nom"))
-  })
-  @Column(name = "weather_")
-  private Weather weather;
+  @Embedded private WeatherStatsDTO weather;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "sport_id")
@@ -67,8 +61,10 @@ public class Workout {
     this.user = user;
   }
 
-  public Workout(LocalDateTime date, Weather weather, Sport sport, User user) {
+  public Workout(
+      LocalDateTime date, String address, WeatherStatsDTO weather, Sport sport, User user) {
     this.date = date;
+    this.address = address;
     this.weather = weather;
     this.sport = sport;
     this.user = user;
@@ -95,7 +91,7 @@ public class Workout {
       Double durationSec,
       Integer rating,
       Sport sport,
-      Weather weather,
+      WeatherStatsDTO weather,
       List<WorkoutExercise> exercises,
       User user) {
     this.date = date;
@@ -148,11 +144,11 @@ public class Workout {
     this.rating = rating;
   }
 
-  public Weather getWeather() {
+  public WeatherStatsDTO getWeather() {
     return weather;
   }
 
-  public void setWeather(Weather weather) {
+  public void setWeather(WeatherStatsDTO weather) {
     this.weather = weather;
   }
 

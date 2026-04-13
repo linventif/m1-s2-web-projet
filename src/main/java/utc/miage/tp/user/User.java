@@ -66,6 +66,9 @@ public class User implements UserDetails {
   @Column(nullable = false)
   private PracticeLevel level = PracticeLevel.BEGINNER;
 
+  @Column(name = "profile_image")
+  private String profileImagePath;
+
   @ManyToMany
   @JoinTable(
       name = "user_sports",
@@ -198,6 +201,12 @@ public class User implements UserDetails {
     return role;
   }
 
+  public String getProfileImagePath() {
+    return profileImagePath == null || profileImagePath.isBlank()
+        ? "/images/avatars/user_0.png"
+        : profileImagePath;
+  }
+
   public void setId(Long id) {
     this.id = id;
   }
@@ -244,6 +253,10 @@ public class User implements UserDetails {
 
   public void setRole(Role role) {
     this.role = role;
+  }
+
+  public void setProfileImagePath(String profileImagePath) {
+    this.profileImagePath = profileImagePath;
   }
 
   public void addSport(Sport sport) {

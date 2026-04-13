@@ -1,29 +1,31 @@
 package utc.miage.tp.weather;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WeatherService {
 
   private final RestTemplate restTemplate;
+  private final RestClient restClient;
 
   @Autowired
-  public WeatherService(RestTemplate restTemplate) {
+  public WeatherService(RestTemplate restTemplate, RestClient restClient) {
     this.restTemplate = restTemplate;
+    this.restClient = restClient;
   }
 
   @Value("${weather.base-url}")
   private String baseUrlWeather;
-
-  @Value("${geo.base-url}")
-  private String baseUrlGeo;
 
   public String mapWeatherCode(String code) {
     return switch (code) {
@@ -78,22 +80,33 @@ public class WeatherService {
     return getWeather(latitude, longitude, date);
   }
 
-  private Map<String, Double> getCoordinates(String address) {
-    String url =
-        baseUrlGeo + "?name=" + URI.create(address).toASCIIString() + "&count=1&format=json";
+  public List<CityResultDTO> searchAddress(String query) {
+    return restClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path("/search")
+                    .queryParam("q", query)
+                    .queryParam("format", "json")
+                    .queryParam("limit", 1)
+                    .queryParam("addressdetails", 1)
+                    .build())
+        .header("User-Agent", "SchoolSpringProject/1.0 (leushuis.robbe@gmail.com)")
+        .retrieve()
+        .body(new ParameterizedTypeReference<List<CityResultDTO>>() {});
+  }
 
-    // Map directly to your DTO
-    GeocodingResponseDTO response = restTemplate.getForObject(url, GeocodingResponseDTO.class);
+  public Map<String, Double> getCoordinates(String address) {
+    List<CityResultDTO> results = searchAddress(address);
 
-    if (response != null && response.getResults() != null && !response.getResults().isEmpty()) {
-      GeocodingResponseDTO.CityResultDTO firstMatch = response.getResults().get(0);
-
+    if (results != null && !results.isEmpty()) {
+      CityResultDTO firstMatch = results.get(0);
       return Map.of(
           "lat", firstMatch.getLatitude(),
           "lon", firstMatch.getLongitude());
     }
-
-    return null;
+    return Collections.emptyMap();
   }
 
   public WeatherStatsDTO getWeatherStats(String address, LocalDateTime startDate, Double duration) {

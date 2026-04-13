@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="nameLink(user)">
+  <a
+    th:if="${user != null and user.id != null}"
+    th:href="@{/user/{id}/profile(id=${user.id})}"
+    class="link link-hover font-semibold text-base-content">
+    <span th:text="${user.firstname}">Prenom</span>
+    <span th:text="${user.lastname}">Nom</span>
+  </a>
+  <span th:unless="${user != null and user.id != null}" class="font-semibold">
+    <span th:text="${user != null ? user.firstname : 'Utilisateur'}">Utilisateur</span>
+    <span th:text="${user != null ? user.lastname : ''}"></span>
+  </span>
+</th:block>
+</html>
