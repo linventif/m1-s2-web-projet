@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,12 +29,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import utc.miage.tp.badge.Badge;
 import utc.miage.tp.badge.BadgeService;
 import utc.miage.tp.challenge.ChallengeService;
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
+import utc.miage.tp.sport.Sport;
 import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutDashboardDisplay;
@@ -114,7 +119,11 @@ public class UserController {
 
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
-    populateProfileView(model, currentUser);
+    User profileUser =
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
+    populateProfileView(model, profileUser);
     model.addAttribute("canEditProfile", true);
     return "user-profile";
   }
@@ -387,8 +396,25 @@ public class UserController {
 
   @GetMapping("/workout")
   public String showWorkout(Model model) {
-    model.addAttribute("workouts", workoutService.getAll());
+    List<Workout> workouts = workoutService.getAll();
+    Map<Long, List<Badge>> unlockedBadgesByWorkoutId = new HashMap<>();
+    for (Workout workout : workouts) {
+      unlockedBadgesByWorkoutId.put(workout.getId(), getUnlockedBadgesForWorkout(workout));
+    }
+    model.addAttribute("workouts", workouts);
+    model.addAttribute("unlockedBadgesByWorkoutId", unlockedBadgesByWorkoutId);
     return "user-workout";
+  }
+
+  @GetMapping({"/goal", "/goals"})
+  public String showGoals(@AuthenticationPrincipal User currentUser, Model model) {
+    User goalUser =
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
+    model.addAttribute("user", goalUser);
+    model.addAttribute("goals", goalUser == null ? List.of() : goalUser.getGoals());
+    return "user-goals";
   }
 
   @GetMapping("/dashboard")
@@ -412,10 +438,55 @@ public class UserController {
   }
 
   private void populateProfileView(Model model, User user) {
+    Set<Long> unlockedBadgeIds =
+        user.getBadges().stream()
+            .map(Badge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
     model.addAttribute("user", user);
+    model.addAttribute("profileSports", resolveProfileSports(user));
+    model.addAttribute("allBadges", badgeService.getAll());
+    model.addAttribute("unlockedBadgeIds", unlockedBadgeIds);
     model.addAttribute("bmi", userService.calculateBMI(user));
     model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
     model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private List<Sport> resolveProfileSports(User user) {
+    if (user == null || user.getId() == null) {
+      return List.of();
+    }
+
+    Map<Long, Sport> sportsById = new LinkedHashMap<>();
+    for (Workout workout : workoutService.getAll()) {
+      if (workout.getUser() == null
+          || workout.getUser().getId() == null
+          || !user.getId().equals(workout.getUser().getId())
+          || workout.getSport() == null) {
+        continue;
+      }
+      Sport sport = workout.getSport();
+      if (sport.getId() == null) {
+        continue;
+      }
+      sportsById.putIfAbsent(sport.getId(), sport);
+    }
+    return List.copyOf(sportsById.values());
+  }
+
+  private List<Badge> getUnlockedBadgesForWorkout(Workout workout) {
+    if (workout == null
+        || workout.getUser() == null
+        || workout.getUser().getBadges() == null
+        || workout.getSport() == null
+        || workout.getSport().getName() == null) {
+      return Collections.emptyList();
+    }
+
+    String sportPrefix = workout.getSport().getName() + " - ";
+    return workout.getUser().getBadges().stream()
+        .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
+        .toList();
   }
 
   private void populateProfileEditForm(Model model, User user) {
