@@ -1,0 +1,137 @@
+<!doctype html>
+<html
+  lang="fr"
+  data-theme="emerald"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{components/layout::head(title='Admin - Users')}">
+    <title>Admin - Users</title>
+  </head>
+
+  <body class="strava-shell min-h-screen text-base-content">
+    <div class="drawer">
+      <input id="mobile-nav" type="checkbox" class="drawer-toggle" />
+
+      <div class="drawer-content min-h-screen">
+        <div th:insert="~{components/layout::header}"></div>
+
+        <main class="px-3 pb-8 pt-24 md:px-5">
+          <div class="mx-auto max-w-[1600px] space-y-6">
+            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+              <div class="card-body space-y-4">
+                <h1 class="text-3xl font-black">Administration - Users</h1>
+                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary">Users</a>
+                  <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full">Sports</a>
+                  <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full">Workouts</a>
+                  <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full">Badges</a>
+                  <a th:href="@{/admin/goals}" class="btn btn-outline btn-sm rounded-full">Objectifs</a>
+                  <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full">Challenges</a>
+                  <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full">Friendships</a>
+                </div>
+
+                <div th:if="${message}" class="alert alert-success"><span th:text="${message}"></span></div>
+                <div th:if="${errorMessage}" class="alert alert-error"><span th:text="${errorMessage}"></span></div>
+              </div>
+            </section>
+
+            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+              <div class="card-body space-y-4">
+                <h2 class="card-title text-2xl">Users</h2>
+
+                <form th:action="@{/admin/users/create}" method="post" class="rounded-2xl bg-base-200 p-4">
+                  <h3 class="mb-3 text-lg font-bold">Creer un user</h3>
+                  <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    <input name="firstname" class="input input-bordered" placeholder="Prenom" required />
+                    <input name="lastname" class="input input-bordered" placeholder="Nom" required />
+                    <input name="email" type="email" class="input input-bordered" placeholder="Email" required />
+                    <input name="password" type="password" class="input input-bordered" placeholder="Mot de passe" required />
+                    <select name="role" class="select select-bordered" required>
+                      <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                    </select>
+                    <input name="weight" type="number" step="0.1" min="1" class="input input-bordered" placeholder="Poids (kg)" required />
+                    <input name="height" type="number" step="0.1" min="1" class="input input-bordered" placeholder="Taille (cm)" required />
+                    <select name="sex" class="select select-bordered" required>
+                      <option th:each="sex : ${sexes}" th:value="${sex}" th:text="${sex}"></option>
+                    </select>
+                    <select name="level" class="select select-bordered" required>
+                      <option th:each="level : ${levels}" th:value="${level}" th:text="${level}"></option>
+                    </select>
+                    <input name="birthDate" type="date" class="input input-bordered" />
+                    <input name="profileImagePath" class="input input-bordered md:col-span-2" placeholder="Chemin avatar (optionnel)" />
+                    <select name="sportIds" multiple class="select select-bordered h-32">
+                      <option th:each="sport : ${sports.?[#this != null]}" th:value="${sport.id}" th:text="${sport.name}"></option>
+                    </select>
+                    <select name="badgeIds" multiple class="select select-bordered h-32">
+                      <option th:each="badge : ${badges.?[#this != null]}" th:value="${badge.id}" th:text="${badge.name}"></option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                </form>
+
+                <div class="space-y-3" th:if="${#lists.isEmpty(users)}"><div class="alert"><span>Aucun user.</span></div></div>
+                <div class="space-y-3" th:unless="${#lists.isEmpty(users)}">
+                  <details th:each="user : ${users.?[#this != null]}" class="collapse collapse-arrow border border-base-300 bg-base-100">
+                    <summary class="collapse-title font-semibold">
+                      #<span th:text="${user.id}">1</span> -
+                      <span th:text="${user.firstname}">Prenom</span>
+                      <span th:text="${user.lastname}">Nom</span>
+                      (<span th:text="${user.email}">email@demo.local</span>)
+                    </summary>
+                    <div class="collapse-content space-y-4">
+                      <form th:action="@{/admin/users/{id}/update(id=${user.id})}" method="post">
+                        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                          <input name="firstname" class="input input-bordered" th:value="${user.firstname}" required />
+                          <input name="lastname" class="input input-bordered" th:value="${user.lastname}" required />
+                          <input name="email" type="email" class="input input-bordered" th:value="${user.email}" required />
+                          <input name="password" type="password" class="input input-bordered" placeholder="Nouveau mot de passe (optionnel)" />
+                          <select name="role" class="select select-bordered" required>
+                            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}" th:selected="${role == user.role}"></option>
+                          </select>
+                          <input name="weight" type="number" step="0.1" min="1" class="input input-bordered" th:value="${user.weight}" required />
+                          <input name="height" type="number" step="0.1" min="1" class="input input-bordered" th:value="${user.height}" required />
+                          <select name="sex" class="select select-bordered" required>
+                            <option th:each="sex : ${sexes}" th:value="${sex}" th:text="${sex}" th:selected="${sex == user.sex}"></option>
+                          </select>
+                          <select name="level" class="select select-bordered" required>
+                            <option th:each="level : ${levels}" th:value="${level}" th:text="${level}" th:selected="${level == user.level}"></option>
+                          </select>
+                          <input name="birthDate" type="date" class="input input-bordered" th:value="${user.birthDate}" />
+                          <input name="profileImagePath" class="input input-bordered md:col-span-2" th:value="${user.profileImagePath}" />
+                          <select name="sportIds" multiple class="select select-bordered h-32">
+                            <option
+                              th:each="sport : ${sports.?[#this != null]}"
+                              th:value="${sport.id}"
+                              th:text="${sport.name}"
+                              th:selected="${#sport != null and user.sports != null and user.sports.?[#this != null and #this.id == #sport.id].size() > 0}"
+                            ></option>
+                          </select>
+                          <select name="badgeIds" multiple class="select select-bordered h-32">
+                            <option
+                              th:each="badge : ${badges.?[#this != null]}"
+                              th:value="${badge.id}"
+                              th:text="${badge.name}"
+                              th:selected="${#badge != null and user.badges != null and user.badges.?[#this != null and #this.id == #badge.id].size() > 0}"
+                            ></option>
+                          </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Mettre a jour</button>
+                      </form>
+
+                      <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">
+                        <button type="submit" class="btn btn-error btn-outline">Supprimer</button>
+                      </form>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <div th:replace="~{components/layout::footer}"></div>
+      </div>
+    </div>
+  </body>
+</html>

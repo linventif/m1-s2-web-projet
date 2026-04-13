@@ -1,0 +1,104 @@
+<!doctype html>
+<html
+  lang="fr"
+  data-theme="emerald"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{components/layout::head(title='Admin Dashboard')}">
+    <title>Admin Dashboard</title>
+  </head>
+
+  <body class="strava-shell min-h-screen text-base-content">
+    <div class="drawer">
+      <input id="mobile-nav" type="checkbox" class="drawer-toggle" />
+
+      <div class="drawer-content min-h-screen">
+        <div th:insert="~{components/layout::header}"></div>
+
+        <main class="px-3 pb-8 pt-24 md:px-5">
+          <div class="mx-auto max-w-[1600px] space-y-6">
+            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+              <div class="card-body space-y-4">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h1 class="text-3xl font-black">Administration</h1>
+                    <p class="text-sm text-base-content/70">
+                      Espace admin decoupe par categories pour gerer chaque entite sur sa propre
+                      page.
+                    </p>
+                  </div>
+                  <div class="badge badge-warning badge-lg rounded-full">Reserve ROLE_ADMIN</div>
+                </div>
+
+                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full">Sports</a>
+                  <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full">Workouts</a>
+                  <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full">Badges</a>
+                  <a th:href="@{/admin/goals}" class="btn btn-outline btn-sm rounded-full">Objectifs</a>
+                  <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full">Challenges</a>
+                  <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full">Friendships</a>
+                </div>
+
+                <div th:if="${message}" class="alert alert-success">
+                  <span th:text="${message}">Operation terminee.</span>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-error">
+                  <span th:text="${errorMessage}">Une erreur est survenue.</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <a th:href="@{/admin/users}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Users</p>
+                  <p class="text-3xl font-black" th:text="${usersCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/sports}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Sports</p>
+                  <p class="text-3xl font-black" th:text="${sportsCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/workouts}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Workouts</p>
+                  <p class="text-3xl font-black" th:text="${workoutsCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/badges}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Badges</p>
+                  <p class="text-3xl font-black" th:text="${badgesCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/goals}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Objectifs</p>
+                  <p class="text-3xl font-black" th:text="${goalsCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/challenges}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Challenges</p>
+                  <p class="text-3xl font-black" th:text="${challengesCount}">0</p>
+                </div>
+              </a>
+              <a th:href="@{/admin/friendships}" class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition">
+                <div class="card-body">
+                  <p class="text-sm text-base-content/60">Friendships</p>
+                  <p class="text-3xl font-black" th:text="${friendshipsCount}">0</p>
+                </div>
+              </a>
+            </section>
+          </div>
+        </main>
+
+        <div th:replace="~{components/layout::footer}"></div>
+      </div>
+    </div>
+  </body>
+</html>

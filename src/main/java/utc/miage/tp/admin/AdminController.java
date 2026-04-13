@@ -77,51 +77,87 @@ public class AdminController {
 
   @GetMapping({"", "/", "/panel"})
   public String showPanel(Model model) {
-    List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    users.removeIf(Objects::isNull);
-    users.forEach(
-        user -> {
-          user.getSports().removeIf(Objects::isNull);
-          user.getBadges().removeIf(Objects::isNull);
-          user.getGoals().removeIf(Objects::isNull);
-        });
+    List<User> users = loadUsers();
+    List<Sport> sports = loadSports();
+    List<Workout> workouts = loadWorkouts();
+    List<Badge> badges = loadBadges();
+    List<Goal> goals = loadGoals();
+    List<Challenge> challenges = loadChallenges();
+    List<Friendship> friendships = loadFriendships();
 
-    List<Sport> sports = sportRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    sports.removeIf(Objects::isNull);
+    model.addAttribute("usersCount", users.size());
+    model.addAttribute("sportsCount", sports.size());
+    model.addAttribute("workoutsCount", workouts.size());
+    model.addAttribute("badgesCount", badges.size());
+    model.addAttribute("goalsCount", goals.size());
+    model.addAttribute("challengesCount", challenges.size());
+    model.addAttribute("friendshipsCount", friendships.size());
+    model.addAttribute("activeAdminPage", "index");
+    return "admin-index";
+  }
 
-    List<Workout> workouts = workoutRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
-    workouts.removeIf(Objects::isNull);
-
-    List<Badge> badges = badgeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    badges.removeIf(Objects::isNull);
-
-    List<Goal> goals = goalRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    goals.removeIf(Objects::isNull);
-
-    List<Challenge> challenges = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    challenges.removeIf(Objects::isNull);
-
-    List<Friendship> friendships = friendshipRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    friendships.removeIf(Objects::isNull);
-
-    model.addAttribute("users", users);
-    model.addAttribute("sports", sports);
-    model.addAttribute("workouts", workouts);
-    model.addAttribute("badges", badges);
-    model.addAttribute("goals", goals);
-    model.addAttribute("challenges", challenges);
-    model.addAttribute("friendships", friendships);
-
+  @GetMapping("/users")
+  public String showUsersPage(Model model) {
+    model.addAttribute("users", loadUsers());
+    model.addAttribute("sports", loadSports());
+    model.addAttribute("badges", loadBadges());
     model.addAttribute("roles", Role.values());
     model.addAttribute("sexes", Sex.values());
     model.addAttribute("levels", PracticeLevel.values());
-    model.addAttribute("goalTypes", GoalType.values());
-    model.addAttribute("challengeTypes", ChallengeType.values());
-    model.addAttribute("friendshipStatuses", FriendshipStatus.values());
+    model.addAttribute("activeAdminPage", "users");
+    return "admin-users";
+  }
 
-    model.addAttribute("today", LocalDate.now());
+  @GetMapping("/sports")
+  public String showSportsPage(Model model) {
+    model.addAttribute("sports", loadSports());
+    model.addAttribute("activeAdminPage", "sports");
+    return "admin-sports";
+  }
+
+  @GetMapping("/workouts")
+  public String showWorkoutsPage(Model model) {
+    model.addAttribute("workouts", loadWorkouts());
+    model.addAttribute("sports", loadSports());
+    model.addAttribute("users", loadUsers());
     model.addAttribute("currentDateTime", LocalDateTime.now().withSecond(0).withNano(0));
-    return "admin-panel";
+    model.addAttribute("activeAdminPage", "workouts");
+    return "admin-workouts";
+  }
+
+  @GetMapping("/badges")
+  public String showBadgesPage(Model model) {
+    model.addAttribute("badges", loadBadges());
+    model.addAttribute("activeAdminPage", "badges");
+    return "admin-badges";
+  }
+
+  @GetMapping("/goals")
+  public String showGoalsPage(Model model) {
+    model.addAttribute("goals", loadGoals());
+    model.addAttribute("users", loadUsers());
+    model.addAttribute("goalTypes", GoalType.values());
+    model.addAttribute("activeAdminPage", "goals");
+    return "admin-goals";
+  }
+
+  @GetMapping("/challenges")
+  public String showChallengesPage(Model model) {
+    model.addAttribute("challenges", loadChallenges());
+    model.addAttribute("users", loadUsers());
+    model.addAttribute("challengeTypes", ChallengeType.values());
+    model.addAttribute("today", LocalDate.now());
+    model.addAttribute("activeAdminPage", "challenges");
+    return "admin-challenges";
+  }
+
+  @GetMapping("/friendships")
+  public String showFriendshipsPage(Model model) {
+    model.addAttribute("friendships", loadFriendships());
+    model.addAttribute("users", loadUsers());
+    model.addAttribute("friendshipStatuses", FriendshipStatus.values());
+    model.addAttribute("activeAdminPage", "friendships");
+    return "admin-friendships";
   }
 
   @PostMapping("/users/create")
@@ -751,7 +787,16 @@ public class AdminController {
   }
 
   private String redirectTo(String section) {
-    return "redirect:/admin#" + section;
+    return switch (section) {
+      case "users" -> "redirect:/admin/users";
+      case "sports" -> "redirect:/admin/sports";
+      case "workouts" -> "redirect:/admin/workouts";
+      case "badges" -> "redirect:/admin/badges";
+      case "goals" -> "redirect:/admin/goals";
+      case "challenges" -> "redirect:/admin/challenges";
+      case "friendships" -> "redirect:/admin/friendships";
+      default -> "redirect:/admin";
+    };
   }
 
   private String buildErrorMessage(Exception exception) {
@@ -931,5 +976,53 @@ public class AdminController {
         userRepository.save(user);
       }
     }
+  }
+
+  private List<User> loadUsers() {
+    List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    users.removeIf(Objects::isNull);
+    users.forEach(
+        user -> {
+          user.getSports().removeIf(Objects::isNull);
+          user.getBadges().removeIf(Objects::isNull);
+          user.getGoals().removeIf(Objects::isNull);
+        });
+    return users;
+  }
+
+  private List<Sport> loadSports() {
+    List<Sport> sports = sportRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    sports.removeIf(Objects::isNull);
+    return sports;
+  }
+
+  private List<Workout> loadWorkouts() {
+    List<Workout> workouts = workoutRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+    workouts.removeIf(Objects::isNull);
+    return workouts;
+  }
+
+  private List<Badge> loadBadges() {
+    List<Badge> badges = badgeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    badges.removeIf(Objects::isNull);
+    return badges;
+  }
+
+  private List<Goal> loadGoals() {
+    List<Goal> goals = goalRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    goals.removeIf(Objects::isNull);
+    return goals;
+  }
+
+  private List<Challenge> loadChallenges() {
+    List<Challenge> challenges = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    challenges.removeIf(Objects::isNull);
+    return challenges;
+  }
+
+  private List<Friendship> loadFriendships() {
+    List<Friendship> friendships = friendshipRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    friendships.removeIf(Objects::isNull);
+    return friendships;
   }
 }
