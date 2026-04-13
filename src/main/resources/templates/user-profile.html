@@ -95,7 +95,7 @@
                 <img
                   th:src="${badge.iconPath}"
                   th:alt="${badge.name}"
-                  class="h-10 w-10 rounded-lg border border-base-300 object-cover bg-white"
+                  class="h-10 w-10 rounded-lg object-cover"
                   th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? '' : ' grayscale opacity-50 blur-[1px]'"
                 />
                 <div>
@@ -103,16 +103,6 @@
                   <p class="text-xs text-base-content/70" th:text="${badge.description}">
                     Description du badge
                   </p>
-                  <span
-                    class="badge badge-success badge-sm mt-1"
-                    th:if="${#sets.contains(unlockedBadgeIds, badge.id)}"
-                    >Débloqué</span
-                  >
-                  <span
-                    class="badge badge-ghost badge-sm mt-1"
-                    th:if="${!#sets.contains(unlockedBadgeIds, badge.id)}"
-                    >Verrouillé</span
-                  >
                 </div>
               </div>
             </div>
