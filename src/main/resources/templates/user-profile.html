@@ -31,53 +31,84 @@
           </div>
           <p>
             Prenom:
-            <i class="" th:text="${user.firstname}">cm</i>
+            <span th:text="${user.firstname}">Prenom</span>
           </p>
           <p>
             Nom de famille:
-            <i class="" th:text="${user.lastname}">cm</i>
+            <span th:text="${user.lastname}">Nom</span>
           </p>
           <p>
             Email:
-            <i class="" th:text="${user.email}">email@example.com</i>
+            <span th:text="${user.email}">email@example.com</span>
           </p>
           <p>
             Taille:
-            <i class="" th:text="${user.height}">cm</i>
+            <span th:text="${user.height}">0</span>
             cm
           </p>
           <p>
             Masse:
-            <i class="" th:text="${user.weight}">kg</i>
+            <span th:text="${user.weight}">0</span>
             kg
           </p>
           <p>
             Sexe:
-            <i class="" th:text="${user.sex}">sexe</i>
+            <span th:text="${user.sex}">Sexe</span>
           </p>
           <p>
             Sport level:
-            <i class="" th:text="${user.level}">level</i>
+            <span th:text="${user.level}">Niveau</span>
           </p>
           <p>
             Âge:
-            <i
+            <span
               th:text="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : ''}"
-            ></i>
+            ></span>
             ans
           </p>
           <p>
             BMI:
-            <i th:text="${bmi}"></i>
+            <span th:text="${bmi}">0</span>
           </p>
           <p>
             BMR:
-            <i th:text="${bmr}"></i>
+            <span th:text="${bmr}">0</span>
           </p>
           <p>
             Recommandation:
-            <i th:text="${recommendation}"></i>
+            <span th:text="${recommendation}">Aucune recommandation</span>
           </p>
+
+          <div th:replace="~{components/sport::sportList(sports=${profileSports})}"></div>
+
+          <div class="mt-4 space-y-3">
+            <h4 class="text-lg font-semibold">Badges</h4>
+            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(allBadges)}">
+              <span>Aucun badge disponible pour le moment.</span>
+            </div>
+            <div
+              class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              th:if="${!#lists.isEmpty(allBadges)}"
+            >
+              <div
+                class="flex items-center gap-3 rounded-xl border border-base-300 bg-base-200 p-3"
+                th:each="badge : ${allBadges}"
+              >
+                <img
+                  th:src="${badge.iconPath}"
+                  th:alt="${badge.name}"
+                  class="h-10 w-10 rounded-lg object-cover"
+                  th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? '' : ' grayscale opacity-50 blur-[1px]'"
+                />
+                <div>
+                  <p class="font-medium" th:text="${badge.name}">Nom du badge</p>
+                  <p class="text-xs text-base-content/70" th:text="${badge.description}">
+                    Description du badge
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
