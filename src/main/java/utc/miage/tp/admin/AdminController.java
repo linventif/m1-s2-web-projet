@@ -145,6 +145,7 @@ public class AdminController {
   public String showChallengesPage(Model model) {
     model.addAttribute("challenges", loadChallenges());
     model.addAttribute("users", loadUsers());
+    model.addAttribute("badges", loadBadges());
     model.addAttribute("challengeTypes", ChallengeType.values());
     model.addAttribute("today", LocalDate.now());
     model.addAttribute("activeAdminPage", "challenges");
@@ -654,6 +655,7 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
     try {
       validateChallengeDates(startDate, endDate);
@@ -666,6 +668,7 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.setBadges(resolveBadges(badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge cree avec succes.");
@@ -686,6 +689,7 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
     try {
       validateChallengeDates(startDate, endDate);
@@ -698,6 +702,8 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.getBadges().clear();
+      challenge.getBadges().addAll(resolveBadges(badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge mis a jour.");
@@ -1017,6 +1023,7 @@ public class AdminController {
   private List<Challenge> loadChallenges() {
     List<Challenge> challenges = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     challenges.removeIf(Objects::isNull);
+    challenges.forEach(challenge -> challenge.getBadges().removeIf(Objects::isNull));
     return challenges;
   }
 

@@ -54,7 +54,10 @@
                       <option value="" disabled selected>Createur</option>
                       <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"></option>
                     </select>
-                    <input name="description" class="input input-bordered md:col-span-2" placeholder="Description (optionnel)" />
+                    <select name="badgeIds" multiple class="select select-bordered h-32 md:col-span-2">
+                      <option th:each="badge : ${badges.?[#this != null]}" th:value="${badge.id}" th:text="${badge.name}"></option>
+                    </select>
+                    <input name="description" class="input input-bordered md:col-span-2 xl:col-span-4" placeholder="Description (optionnel)" />
                   </div>
                   <button type="submit" class="btn btn-primary mt-4">Creer</button>
                 </form>
@@ -68,6 +71,19 @@
                       (<span th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'Createur inconnu'}">Creator</span>)
                     </summary>
                     <div class="collapse-content space-y-3">
+                      <p class="text-sm text-base-content/60">
+                        Badges:
+                        <span
+                          th:if="${#lists.isEmpty(challenge.badges)}"
+                          class="italic"
+                          >Aucun</span
+                        >
+                        <span
+                          th:unless="${#lists.isEmpty(challenge.badges)}"
+                          th:text="${#strings.listJoin(challenge.badges.![name], ', ')}"
+                          >Badge A, Badge B</span
+                        >
+                      </p>
                       <form th:action="@{/admin/challenges/{id}/update(id=${challenge.id})}" method="post" class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                         <input name="title" class="input input-bordered md:col-span-2" th:value="${challenge.title}" required />
                         <select name="type" class="select select-bordered" required>
@@ -79,7 +95,15 @@
                         <select name="creatorId" class="select select-bordered" required>
                           <option th:each="user : ${users.?[#this != null]}" th:value="${user.id}" th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}" th:selected="${challenge.creator != null and user != null and user.id != null and challenge.creator.id == user.id}"></option>
                         </select>
-                        <input name="description" class="input input-bordered md:col-span-2" th:value="${challenge.description}" />
+                        <select name="badgeIds" multiple class="select select-bordered h-32 md:col-span-2">
+                          <option
+                            th:each="badge : ${badges.?[#this != null]}"
+                            th:value="${badge.id}"
+                            th:text="${badge.name}"
+                            th:selected="${challenge.badges != null and challenge.badges.?[#this != null and #this.id == #badge.id].size() > 0}"
+                          ></option>
+                        </select>
+                        <input name="description" class="input input-bordered md:col-span-2 xl:col-span-4" th:value="${challenge.description}" />
                         <button type="submit" class="btn btn-primary">Mettre a jour</button>
                       </form>
                       <form th:action="@{/admin/challenges/{id}/delete(id=${challenge.id})}" method="post">
