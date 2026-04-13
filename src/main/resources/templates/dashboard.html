@@ -281,9 +281,15 @@
                                                 <span th:text="${goal.unit}">km</span>
                                             </p>
                                         </div>
-                                        <div class="radial-progress text-emerald-600 text-xs font-bold"
-                                             th:style="|--value:${goal.progressPercent}; --size:3rem;|"
-                                             role="progress" th:text="|${goal.progressPercent}%|">40%</div>
+                                    <div class="radial-progress text-emerald-600 text-xs font-bold"
+                                        th:style="'--value:' + ${goal.progressPercent} + '; --size:3rem;'"
+                                        aria-hidden="true"
+                                        th:text="|${goal.progressPercent}%|">40%</div>
+
+                                    <progress class="progress progress-success mt-3 w-full"
+                                            th:value="${goal.progressPercent}"
+                                            max="100">
+                                    </progress>
                                     </div>
                                     <progress class="progress progress-success mt-3 w-full"
                                               th:value="${goal.progressPercent}" max="100"></progress>

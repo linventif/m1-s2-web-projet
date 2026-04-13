@@ -43,7 +43,7 @@ public class WorkoutService {
   }
 
    
-  public List<Workout> getAllStatutsForUser(User user) {
+  public List<Workout> getAllStatutsForUser() {
     return workoutRepository.findAll();
   }
 
