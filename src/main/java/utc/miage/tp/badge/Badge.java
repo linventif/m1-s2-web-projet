@@ -11,6 +11,8 @@ import jakarta.persistence.Table;
 @Table(name = "badge")
 public class Badge {
 
+  private static final String DEFAULT_ICON_PATH = "/images/badge/running_5km.png";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -21,11 +23,20 @@ public class Badge {
   @Column(length = 500)
   private String description;
 
+  @Column(name = "icon_path", nullable = false, length = 255)
+  private String iconPath = DEFAULT_ICON_PATH;
+
   public Badge() {}
 
   public Badge(String name, String description) {
     this.name = name;
     this.description = description;
+  }
+
+  public Badge(String name, String description, String iconPath) {
+    this.name = name;
+    this.description = description;
+    this.iconPath = iconPath;
   }
 
   public Long getId() {
@@ -40,6 +51,10 @@ public class Badge {
     return description;
   }
 
+  public String getIconPath() {
+    return iconPath == null || iconPath.isBlank() ? DEFAULT_ICON_PATH : iconPath;
+  }
+
   public void setId(Long id) {
     this.id = id;
   }
@@ -50,5 +65,9 @@ public class Badge {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public void setIconPath(String iconPath) {
+    this.iconPath = iconPath;
   }
 }
