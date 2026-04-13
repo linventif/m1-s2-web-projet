@@ -7,105 +7,159 @@
   <body class="min-h-screen bg-base-200 text-base-content">
     <div th:insert="~{components/layout::header}"></div>
     <main
-      class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-6 pt-24 sm:px-6 lg:px-8"
+      class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 pb-6 pt-24 sm:px-6 lg:px-8"
     >
-      <section class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body gap-6 p-6 sm:p-8">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <h3 class="text-xl">Informations</h3>
+      <div class="alert alert-success" th:if="${message}">
+        <span th:text="${message}">Profil mis à jour avec succès.</span>
+      </div>
+
+      <section
+        class="relative overflow-hidden rounded-3xl border border-base-300 bg-base-100 shadow-xl"
+      >
+        <div
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.25),_transparent_55%),radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.18),_transparent_50%)]"
+        ></div>
+        <div class="relative flex flex-col gap-8 p-6 sm:p-8">
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex items-center gap-4">
+              <div class="avatar">
+                <div
+                  class="w-24 rounded-2xl overflow-hidden border-2 border-orange-400/50 bg-base-200 shadow-md"
+                >
+                  <img
+                    th:src="${user.profileImagePath}"
+                    alt="Photo de profil"
+                    class="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <h1 class="text-2xl font-black tracking-tight sm:text-3xl">
+                  <span th:text="${user.firstname}">Prenom</span>
+                  <span th:text="${user.lastname}">Nom</span>
+                </h1>
+                <p class="text-sm text-base-content/70" th:text="${user.email}">
+                  email@example.com
+                </p>
+                <span class="badge badge-warning badge-lg border-none text-slate-900">
+                  Niveau:
+                  <span class="ml-1" th:text="${user.level}">BEGINNER</span>
+                </span>
+              </div>
+            </div>
+
             <a class="btn btn-primary" th:if="${canEditProfile}" th:href="@{/user/profile/edit}"
               >Modifier mon profil</a
             >
           </div>
-          <div class="avatar">
-            <div class="w-24 rounded-full overflow-hidden border border-base-300 bg-base-200">
-              <img
-                th:src="${user.profileImagePath}"
-                alt="Photo de profil"
-                class="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-          <div class="alert alert-success" th:if="${message}">
-            <span th:text="${message}">Profil mis à jour avec succès.</span>
-          </div>
-          <p>
-            Prenom:
-            <span th:text="${user.firstname}">Prenom</span>
-          </p>
-          <p>
-            Nom de famille:
-            <span th:text="${user.lastname}">Nom</span>
-          </p>
-          <p>
-            Email:
-            <span th:text="${user.email}">email@example.com</span>
-          </p>
-          <p>
-            Taille:
-            <span th:text="${user.height}">0</span>
-            cm
-          </p>
-          <p>
-            Masse:
-            <span th:text="${user.weight}">0</span>
-            kg
-          </p>
-          <p>
-            Sexe:
-            <span th:text="${user.sex}">Sexe</span>
-          </p>
-          <p>
-            Sport level:
-            <span th:text="${user.level}">Niveau</span>
-          </p>
-          <p>
-            Âge:
-            <span
-              th:text="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : ''}"
-            ></span>
-            ans
-          </p>
-          <p>
-            BMI:
-            <span th:text="${bmi}">0</span>
-          </p>
-          <p>
-            BMR:
-            <span th:text="${bmr}">0</span>
-          </p>
-          <p>
-            Recommandation:
-            <span th:text="${recommendation}">Aucune recommandation</span>
-          </p>
 
-          <div th:replace="~{components/sport::sportList(sports=${profileSports})}"></div>
-
-          <div class="mt-4 space-y-3">
-            <h4 class="text-lg font-semibold">Badges</h4>
-            <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(allBadges)}">
-              <span>Aucun badge disponible pour le moment.</span>
-            </div>
-            <div
-              class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
-              th:if="${!#lists.isEmpty(allBadges)}"
-            >
-              <div
-                class="flex items-center gap-3 rounded-xl border border-base-300 bg-base-200 p-3"
-                th:each="badge : ${allBadges}"
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
+              <p class="text-xs uppercase tracking-wide text-base-content/60">Âge</p>
+              <p
+                class="mt-2 text-2xl font-semibold"
+                th:text="${user.birthDate != null ? T(java.time.Period).between(user.birthDate, T(java.time.LocalDate).now()).getYears() : '-'}"
               >
-                <img
-                  th:src="${badge.iconPath}"
-                  th:alt="${badge.name}"
-                  class="h-10 w-10 rounded-lg object-cover"
-                  th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? '' : ' grayscale opacity-50 blur-[1px]'"
-                />
-                <div>
-                  <p class="font-medium" th:text="${badge.name}">Nom du badge</p>
-                  <p class="text-xs text-base-content/70" th:text="${badge.description}">
-                    Description du badge
-                  </p>
-                </div>
+                -
+              </p>
+            </div>
+            <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
+              <p class="text-xs uppercase tracking-wide text-base-content/60">BMI</p>
+              <p class="mt-2 text-2xl font-semibold" th:text="${bmi}">0</p>
+            </div>
+            <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
+              <p class="text-xs uppercase tracking-wide text-base-content/60">BMR</p>
+              <p class="mt-2 text-2xl font-semibold" th:text="${bmr}">0</p>
+            </div>
+            <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
+              <p class="text-xs uppercase tracking-wide text-base-content/60">Badges débloqués</p>
+              <p class="mt-2 text-2xl font-semibold" th:text="${unlockedBadgeIds.size()}">0</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <article class="xl:col-span-2 rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xl">
+          <div class="mb-5 flex items-center justify-between">
+            <h2 class="text-xl font-bold">Données personnelles</h2>
+            <span class="badge badge-outline">Profil sportif</span>
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Prénom</p>
+              <p class="mt-1 font-medium" th:text="${user.firstname}">Prenom</p>
+            </div>
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Nom</p>
+              <p class="mt-1 font-medium" th:text="${user.lastname}">Nom</p>
+            </div>
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Email</p>
+              <p class="mt-1 font-medium break-all" th:text="${user.email}">email@example.com</p>
+            </div>
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Sexe</p>
+              <p class="mt-1 font-medium" th:text="${user.sex}">Sexe</p>
+            </div>
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Taille</p>
+              <p class="mt-1 font-medium"><span th:text="${user.height}">0</span> cm</p>
+            </div>
+            <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
+              <p class="text-xs uppercase text-base-content/60">Poids</p>
+              <p class="mt-1 font-medium"><span th:text="${user.weight}">0</span> kg</p>
+            </div>
+          </div>
+          <div class="mt-5 rounded-2xl border border-orange-300/70 bg-orange-50 p-4">
+            <p class="text-xs uppercase tracking-wide text-orange-700">Recommandation</p>
+            <p class="mt-2 font-medium text-slate-800" th:text="${recommendation}">
+              Aucune recommandation
+            </p>
+          </div>
+        </article>
+
+        <aside class="rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xl">
+          <div th:replace="~{components/sport::sportList(sports=${profileSports})}"></div>
+        </aside>
+      </section>
+
+      <section class="rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xl">
+        <div class="mb-5 flex items-center justify-between">
+          <h2 class="text-xl font-bold">Collection de badges</h2>
+          <span class="badge badge-outline">
+            <span th:text="${unlockedBadgeIds.size()}">0</span>
+            /
+            <span th:text="${#lists.size(allBadges)}">0</span>
+          </span>
+        </div>
+        <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(allBadges)}">
+          <span>Aucun badge disponible pour le moment.</span>
+        </div>
+        <div
+          class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          th:if="${!#lists.isEmpty(allBadges)}"
+        >
+          <div
+            class="rounded-2xl border p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+            th:each="badge : ${allBadges}"
+            th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? ' border-orange-300 bg-orange-50/60' : ' border-base-300 bg-base-200/60'"
+          >
+            <div class="flex items-center gap-3">
+              <img
+                th:src="${badge.iconPath}"
+                th:alt="${badge.name}"
+                class="h-12 w-12 rounded-xl object-cover"
+                th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? '' : ' grayscale opacity-50 blur-[1px]'"
+              />
+              <div>
+                <p class="font-semibold leading-tight" th:text="${badge.name}">Nom du badge</p>
+                <p
+                  class="mt-1 text-xs text-base-content/70 leading-relaxed"
+                  th:text="${badge.description}"
+                >
+                  Description du badge
+                </p>
               </div>
             </div>
           </div>
