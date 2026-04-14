@@ -4,11 +4,13 @@ import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import web.sportflow.sport.SportService;
 import web.sportflow.user.User;
 import web.sportflow.workout.comment.CommentService;
 
@@ -18,10 +20,13 @@ public class WorkoutController {
 
   private final WorkoutService workoutService;
   private final CommentService commentService;
+  private final SportService sportService;
 
-  public WorkoutController(WorkoutService workoutService, CommentService commentService) {
+  public WorkoutController(
+      WorkoutService workoutService, CommentService commentService, SportService sportService) {
     this.workoutService = workoutService;
     this.commentService = commentService;
+    this.sportService = sportService;
   }
 
   @PostMapping("/{id}/kudo")
@@ -46,5 +51,43 @@ public class WorkoutController {
     commentService.addComment(workoutId, currentUser.getEmail(), content);
     model.addAttribute("workout", workoutService.findById(workoutId).orElseThrow());
     return "components/comment-section :: comment-section";
+  }
+
+  @GetMapping("/new")
+  public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
+    model.addAttribute("workout", new Workout());
+    model.addAttribute("sports", sportService.findAll());
+    return "user-workout-form";
+  }
+
+  @GetMapping("/{id}/edit")
+  public String editWorkoutForm(
+      @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
+    Workout workout = workoutService.findById(workoutId).orElseThrow();
+    model.addAttribute("workout", workout);
+    model.addAttribute("sports", sportService.findAll());
+    return "user-workout-form";
+  }
+
+  @PostMapping("/save")
+  public String saveWorkout(WorkoutDto workoutDto, @AuthenticationPrincipal User currentUser) {
+    Workout workout;
+    if (workoutDto.getId() != null) {
+      Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
+      if (!existingWorkout.getUser().getEmail().equals(currentUser.getEmail())) {
+        return "redirect:/dashboard";
+      }
+      workout = existingWorkout;
+    } else {
+      workout = new Workout();
+    }
+    workout.setSport(workoutDto.getSport());
+    workout.setDate(workoutDto.getDate());
+    workout.setDuration(workoutDto.getDuration());
+    workout.setWeather(workoutDto.getWeather());
+    workout.setDistance(workoutDto.getDistance());
+    workout.setAddress(workoutDto.getAddress());
+    workoutService.saveWorkout(workout, currentUser);
+    return "redirect:/dashboard";
   }
 }

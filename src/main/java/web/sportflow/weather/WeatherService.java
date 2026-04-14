@@ -115,8 +115,7 @@ public class WeatherService {
 
     double latitude = coordinates.get("lat");
     double longitude = coordinates.get("lon");
-
-    LocalDateTime endDate = startDate.plusMinutes(duration.longValue());
+    LocalDateTime endDate = startDate.plusSeconds(duration.longValue());
     WeatherDTO weather =
         getWeather(latitude, longitude, startDate.toLocalDate(), endDate.toLocalDate());
 

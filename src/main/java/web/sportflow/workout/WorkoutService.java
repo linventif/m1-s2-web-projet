@@ -49,11 +49,11 @@ public class WorkoutService {
   }
 
   public List<Workout> getAll() {
-    return workoutRepository.findAll();
+    return workoutRepository.findAllByOrderByDateDesc();
   }
 
   public List<Workout> getAllStatutsForUser() {
-    return workoutRepository.findAll();
+    return workoutRepository.findAllByOrderByDateDesc();
   }
 
   public double getTotalDistanceThisWeek(User user) {
@@ -395,6 +395,11 @@ public class WorkoutService {
       workout.addKudo(currentUser);
     }
 
+    workoutRepository.save(workout);
+  }
+
+  public void saveWorkout(Workout workout, User currentUser) {
+    workout.setUser(currentUser);
     workoutRepository.save(workout);
   }
 }
