@@ -189,11 +189,11 @@ public class Workout {
     this.sport = sport;
   }
 
-  public List<WorkoutExercise> getExercises() {
+  public List<WorkoutExercise> getWorkoutExercises() {
     return exercises;
   }
 
-  public void setExercises(List<WorkoutExercise> exercises) {
+  public void setWorkoutExercises(List<WorkoutExercise> exercises) {
     this.exercises = exercises;
   }
 
@@ -239,9 +239,5 @@ public class Workout {
 
     double durationMin = durationSec / 60.0;
     return durationMin * sport.getMET() * 3.5 * user.getWeight() / 200.0;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
   }
 }

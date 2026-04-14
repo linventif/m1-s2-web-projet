@@ -29,7 +29,7 @@ public class WorkoutService {
             workout.getRating(),
             workout.getSport(),
             workout.getWeather(),
-            workout.getExercises(),
+            workout.getWorkoutExercises(),
             workout.getUser());
     if (workout.getAddress() != null
         && !workout.getAddress().isEmpty()

@@ -26,8 +26,10 @@ public class WorkoutDashboardDisplay {
   public double getDurationSec() {
     double totalDurationSec = 0.0;
 
-    if (workout != null && workout.getExercises() != null && !workout.getExercises().isEmpty()) {
-      for (WorkoutExercise exercise : workout.getExercises()) {
+    if (workout != null
+        && workout.getWorkoutExercises() != null
+        && !workout.getWorkoutExercises().isEmpty()) {
+      for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
         if (exercise != null && exercise.getDurationSec() != null) {
           totalDurationSec += exercise.getDurationSec();
         }
@@ -46,12 +48,14 @@ public class WorkoutDashboardDisplay {
   }
 
   public double getDistanceKm() {
-    if (workout == null || workout.getExercises() == null || workout.getExercises().isEmpty()) {
+    if (workout == null
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
       return 0.0;
     }
 
     double totalDistanceM = 0.0;
-    for (WorkoutExercise exercise : workout.getExercises()) {
+    for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
       if (exercise != null && exercise.getDistanceM() != null) {
         totalDistanceM += exercise.getDistanceM();
       }
@@ -75,12 +79,14 @@ public class WorkoutDashboardDisplay {
   }
 
   public int getTotalSets() {
-    if (workout == null || workout.getExercises() == null || workout.getExercises().isEmpty()) {
+    if (workout == null
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
       return 0;
     }
 
     int totalSets = 0;
-    for (WorkoutExercise exercise : workout.getExercises()) {
+    for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
       if (exercise != null && exercise.getSets() != null) {
         totalSets += exercise.getSets();
       }
@@ -89,12 +95,14 @@ public class WorkoutDashboardDisplay {
   }
 
   public int getTotalReps() {
-    if (workout == null || workout.getExercises() == null || workout.getExercises().isEmpty()) {
+    if (workout == null
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
       return 0;
     }
 
     int totalReps = 0;
-    for (WorkoutExercise exercise : workout.getExercises()) {
+    for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
       if (exercise != null && exercise.getReps() != null) {
         totalReps += exercise.getReps();
       }
@@ -103,12 +111,14 @@ public class WorkoutDashboardDisplay {
   }
 
   public double getMaxWeightKg() {
-    if (workout == null || workout.getExercises() == null || workout.getExercises().isEmpty()) {
+    if (workout == null
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
       return 0.0;
     }
 
     double maxWeightKg = 0.0;
-    for (WorkoutExercise exercise : workout.getExercises()) {
+    for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
       if (exercise != null && exercise.getWeightKg() != null) {
         maxWeightKg = Math.max(maxWeightKg, exercise.getWeightKg());
       }
@@ -117,13 +127,15 @@ public class WorkoutDashboardDisplay {
   }
 
   public double getAverageBpm() {
-    if (workout == null || workout.getExercises() == null || workout.getExercises().isEmpty()) {
+    if (workout == null
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
       return 0.0;
     }
 
     double totalBpm = 0.0;
     int count = 0;
-    for (WorkoutExercise exercise : workout.getExercises()) {
+    for (WorkoutExercise exercise : workout.getWorkoutExercises()) {
       if (exercise != null && exercise.getAverageBpm() != null) {
         totalBpm += exercise.getAverageBpm();
         count++;

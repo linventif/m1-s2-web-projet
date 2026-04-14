@@ -25,6 +25,8 @@ import utc.miage.tp.badge.BadgeRepository;
 import utc.miage.tp.challenge.Challenge;
 import utc.miage.tp.challenge.ChallengeRepository;
 import utc.miage.tp.challenge.ChallengeType;
+import utc.miage.tp.exercise.Exercise;
+import utc.miage.tp.exercise.ExerciseRepository;
 import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipRepository;
 import utc.miage.tp.friendship.FriendshipStatus;
@@ -39,6 +41,8 @@ import utc.miage.tp.user.Sex;
 import utc.miage.tp.user.User;
 import utc.miage.tp.user.UserRepository;
 import utc.miage.tp.workout.Workout;
+import utc.miage.tp.workout.WorkoutExercise;
+import utc.miage.tp.workout.WorkoutExerciseRepository;
 import utc.miage.tp.workout.WorkoutRepository;
 
 @Controller
@@ -50,6 +54,8 @@ public class AdminController {
   private final UserRepository userRepository;
   private final SportRepository sportRepository;
   private final WorkoutRepository workoutRepository;
+  private final WorkoutExerciseRepository workoutExerciseRepository;
+  private final ExerciseRepository exerciseRepository;
   private final BadgeRepository badgeRepository;
   private final GoalRepository goalRepository;
   private final ChallengeRepository challengeRepository;
@@ -60,6 +66,8 @@ public class AdminController {
       UserRepository userRepository,
       SportRepository sportRepository,
       WorkoutRepository workoutRepository,
+      WorkoutExerciseRepository workoutExerciseRepository,
+      ExerciseRepository exerciseRepository,
       BadgeRepository badgeRepository,
       GoalRepository goalRepository,
       ChallengeRepository challengeRepository,
@@ -68,6 +76,8 @@ public class AdminController {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
     this.workoutRepository = workoutRepository;
+    this.workoutExerciseRepository = workoutExerciseRepository;
+    this.exerciseRepository = exerciseRepository;
     this.badgeRepository = badgeRepository;
     this.goalRepository = goalRepository;
     this.challengeRepository = challengeRepository;
@@ -80,6 +90,8 @@ public class AdminController {
     List<User> users = loadUsers();
     List<Sport> sports = loadSports();
     List<Workout> workouts = loadWorkouts();
+    List<WorkoutExercise> workoutExercises = loadWorkoutExercises();
+    List<Exercise> exercises = loadExercises();
     List<Badge> badges = loadBadges();
     List<Goal> goals = loadGoals();
     List<Challenge> challenges = loadChallenges();
@@ -334,7 +346,7 @@ public class AdminController {
   @Transactional
   public String createSport(
       @RequestParam String name,
-      @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
+      @RequestParam(name = "met") Double met,
       RedirectAttributes redirectAttributes) {
     try {
       String normalizedName = requireText(name, "Le nom du sport est obligatoire.");
@@ -347,7 +359,7 @@ public class AdminController {
 
       Sport sport = new Sport();
       sport.setName(normalizedName);
-      sport.setCaloryPerMinutes(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
+      sport.setMET(requirePositive(met, "La valeur doit etre > 0."));
 
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport cree avec succes.");
@@ -362,7 +374,7 @@ public class AdminController {
   public String updateSport(
       @PathVariable Long sportId,
       @RequestParam String name,
-      @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
+      @RequestParam(name = "met") Double met,
       RedirectAttributes redirectAttributes) {
     try {
       Sport sport = requireSport(sportId);
@@ -378,7 +390,7 @@ public class AdminController {
       }
 
       sport.setName(normalizedName);
-      sport.setCaloryPerMinutes(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
+      sport.setMET(requirePositive(met, "La valeur doit etre > 0."));
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport mis a jour.");
     } catch (Exception exception) {
@@ -576,21 +588,21 @@ public class AdminController {
   @PostMapping("/workouts/create")
   @Transactional
   public String createWorkout(
+      @RequestParam String name,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-      @RequestParam Double distance,
-      @RequestParam Double duration,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
+      @RequestParam List<WorkoutExercise> workoutExercises,
       @RequestParam Long sportId,
       @RequestParam Long userId,
       RedirectAttributes redirectAttributes) {
     try {
       Workout workout = new Workout();
+      workout.setName(normalizeNullable(name));
       workout.setDate(date);
-      workout.setDistance(requirePositive(distance, "La distance doit etre superieure a 0."));
-      workout.setDuration(requirePositive(duration, "La duree doit etre superieure a 0."));
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
+      workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
 
@@ -606,21 +618,21 @@ public class AdminController {
   @Transactional
   public String updateWorkout(
       @PathVariable Long workoutId,
+      @RequestParam String name,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-      @RequestParam Double distance,
-      @RequestParam Double duration,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
+      @RequestParam List<WorkoutExercise> workoutExercises,
       @RequestParam Long sportId,
       @RequestParam Long userId,
       RedirectAttributes redirectAttributes) {
     try {
       Workout workout = requireWorkout(workoutId);
+      workout.setName(normalizeNullable(name));
       workout.setDate(date);
-      workout.setDistance(requirePositive(distance, "La distance doit etre superieure a 0."));
-      workout.setDuration(requirePositive(duration, "La duree doit etre superieure a 0."));
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
+      workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
 
@@ -918,6 +930,12 @@ public class AdminController {
         .orElseThrow(() -> new IllegalArgumentException("Workout introuvable: " + workoutId));
   }
 
+  private WorkoutExercise requireWorkoutExercise(Long workoutId) {
+    return workoutExerciseRepository
+        .findById(workoutId)
+        .orElseThrow(() -> new IllegalArgumentException("Workout introuvable: " + workoutId));
+  }
+
   private Challenge requireChallenge(Long challengeId) {
     return challengeRepository
         .findById(challengeId)
@@ -1006,6 +1024,19 @@ public class AdminController {
     List<Workout> workouts = workoutRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
     workouts.removeIf(Objects::isNull);
     return workouts;
+  }
+
+  private List<WorkoutExercise> loadWorkoutExercises() {
+    List<WorkoutExercise> workoutExercises =
+        workoutExerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+    workoutExercises.removeIf(Objects::isNull);
+    return workoutExercises;
+  }
+
+  private List<Exercise> loadExercises() {
+    List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+    exercises.removeIf(Objects::isNull);
+    return exercises;
   }
 
   private List<Badge> loadBadges() {
