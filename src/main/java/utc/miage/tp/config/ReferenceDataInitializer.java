@@ -673,12 +673,11 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     Workout workoutKudo =
         createWorkout(
+            null,
             LocalDateTime.of(2026, 4, 1, 10, 0),
-            4.2,
-            32.0,
             "Toulouse",
-            4,
             clearsky,
+            new ArrayList<>(),
             sportCourseCanal,
             userJudy);
     workoutKudo.addKudo(userTaiLung);
