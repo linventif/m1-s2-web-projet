@@ -151,14 +151,13 @@ public class Workout {
   public List<User> getOthersWhoKudoed(User currentUser) {
     if (this.usersWhoKudoed == null) return List.of();
     return this.usersWhoKudoed.stream()
-      .filter(u -> !u.getId().equals(currentUser.getId()))
-      .toList();
+        .filter(u -> !u.getId().equals(currentUser.getId()))
+        .toList();
   }
 
   public boolean isKudoedBy(User user) {
     if (user == null || user.getId() == null) return false;
-    return this.usersWhoKudoed.stream()
-      .anyMatch(u -> u.getId().equals(user.getId()));
+    return this.usersWhoKudoed.stream().anyMatch(u -> u.getId().equals(user.getId()));
   }
 
   public int getKudosCount() {

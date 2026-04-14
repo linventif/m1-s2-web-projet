@@ -2,7 +2,6 @@ package utc.miage.tp.workout;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.user.User;
