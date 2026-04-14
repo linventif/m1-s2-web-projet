@@ -1,5 +1,6 @@
 package utc.miage.tp.challenge;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ public class ChallengeService {
             challenge.getStartDate(),
             challenge.getEndDate(),
             challenge.getCreator());
+    newChallenge.setBadges(
+        challenge.getBadges() == null ? new ArrayList<>() : new ArrayList<>(challenge.getBadges()));
 
     Challenge savedChallenge = challengeRepository.save(newChallenge);
 
