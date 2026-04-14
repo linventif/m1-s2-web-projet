@@ -26,4 +26,9 @@ public class SportService {
   public List<Sport> getAllStatuts() {
     return sportRepository.findAll();
   }
+
+  @Transactional(readOnly = true)
+  public List<Sport> findAll() {
+    return sportRepository.findAll();
+  }
 }

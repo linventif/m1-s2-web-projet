@@ -46,7 +46,7 @@ public class WorkoutService {
 
   @Transactional(readOnly = true)
   public List<Workout> getAll() {
-    return workoutRepository.findAll();
+    return workoutRepository.findAllByOrderByDateDesc();
   }
 
   @Transactional(readOnly = true)
@@ -70,6 +70,11 @@ public class WorkoutService {
       workout.addKudo(currentUser);
     }
 
+    workoutRepository.save(workout);
+  }
+
+  public void saveWorkout(Workout workout, User currentUser) {
+    workout.setUser(currentUser);
     workoutRepository.save(workout);
   }
 }
