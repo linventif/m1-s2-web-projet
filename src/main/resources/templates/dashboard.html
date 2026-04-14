@@ -17,10 +17,10 @@
         <!-- Main -->
         <main class="px-3 pb-8 pt-24 md:px-5">
           <div
-            class="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]"
+            class="mx-auto grid max-w-[1600px] grid-cols-1 items-start gap-6 xl:grid-cols-[280px_1fr_320px]"
           >
             <!-- Left rail -->
-            <aside class="space-y-5 xl:sticky xl:top-24 self-start">
+            <aside class="min-w-0 w-full space-y-5 self-start xl:sticky xl:top-24">
               <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
                 <div class="card-body">
                   <div class="flex items-center gap-4">
@@ -70,6 +70,114 @@
                         0
                       </p>
                       <p class="text-xs text-base-content/60">Amis</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- This week -->
+              <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+                <div class="card-body">
+                  <div class="flex items-center justify-between">
+                    <h2 class="card-title text-lg uppercase">This Week</h2>
+                    <a
+                      th:href="@{/users/statistique}"
+                      class="btn btn-warning btn-outline btn-sm rounded-full"
+                    >
+                      Statistique
+                    </a>
+                  </div>
+
+                  <div class="mt-2 text-center">
+                    <span class="text-5xl font-light" th:text="${totalDistanceThisWeek}">0</span>
+                    <span class="text-2xl font-light text-base-content/70">km</span>
+                  </div>
+
+                  <div class="mt-5 flex h-14 items-end justify-center gap-2">
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 0} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 1} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 2} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 3} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 4} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 5} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                    <div
+                      class="h-1 w-4 rounded-sm"
+                      th:classappend="${todayIndex == 6} ? ' bg-orange-500' : ' bg-base-300'"
+                    ></div>
+                  </div>
+
+                  <div class="mt-2 flex items-center justify-center gap-2 text-sm font-semibold">
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 0} ? ' text-orange-500' : ''"
+                      >M</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 1} ? ' text-orange-500' : ''"
+                      >T</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 2} ? ' text-orange-500' : ''"
+                      >W</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 3} ? ' text-orange-500' : ''"
+                      >T</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 4} ? ' text-orange-500' : ''"
+                      >F</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 5} ? ' text-orange-500' : ''"
+                      >S</span
+                    >
+                    <span
+                      class="w-4 text-center"
+                      th:classappend="${todayIndex == 6} ? ' text-orange-500' : ''"
+                      >S</span
+                    >
+                  </div>
+
+                  <div
+                    class="mt-5 grid grid-cols-2 items-center border-t border-base-300 pt-4 text-center"
+                  >
+                    <div class="border-r border-base-300">
+                      <div class="text-2xl font-light">
+                        <span th:text="${hoursPart}">0</span>h
+                        <span th:text="${minutesPart}">0</span>m
+                      </div>
+                      <p class="text-xs text-base-content/60">Temps</p>
+                    </div>
+
+                    <div>
+                      <div class="text-2xl font-light">
+                        <span th:text="${totalCaloriesThisWeek}">0</span> kcal
+                      </div>
+                      <p class="text-xs text-base-content/60">Calories</p>
                     </div>
                   </div>
                 </div>
@@ -126,7 +234,7 @@
             </aside>
 
             <!-- Center content -->
-            <section class="min-w-0 space-y-6">
+            <section class="min-w-0 w-full space-y-6">
               <div id="workouts-container" class="space-y-5">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-base-300 pb-5">
                     <div>
