@@ -1,131 +1,226 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{components/layout::head(title=${workout.id == null ? 'Nouvelle Activité' : 'Modifier Activité'})}">
+  <head
+    th:replace="~{components/layout::head(title=${workout.id == null ? 'Nouvelle Activité' : 'Modifier Activité'})}"
+  >
     <title>Activité</title>
-</head>
+  </head>
 
-<body class="min-h-screen bg-base-200 text-base-content">
+  <body class="min-h-screen bg-base-200 text-base-content">
     <div th:insert="~{components/layout::header}"></div>
 
     <main class="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 pb-6 pt-24 sm:px-6">
-        <section class="card border border-base-300 bg-base-100 shadow-xl">
-            <div class="card-body gap-6 p-6 sm:p-8">
-                <div class="flex flex-col gap-1">
-                    <h2 class="text-2xl font-bold" 
-                      th:text="${workout.id == null ? 'Créer une nouvelle activité' : 'Modifier l''activité'}">
-                    </h2>
-                    <p class="text-sm opacity-60">Enregistrez vos efforts pour suivre votre progression.</p>
+      <section class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body gap-6 p-6 sm:p-8">
+          <div class="flex flex-col gap-1">
+            <h2
+              class="text-2xl font-bold"
+              th:text="${workout.id == null ? 'Créer une nouvelle activité' : 'Modifier l''activité'}"
+            ></h2>
+            <p class="text-sm opacity-60">Enregistrez vos efforts pour suivre votre progression.</p>
+          </div>
+
+          <form
+            th:action="@{/workouts/save}"
+            th:object="${workout}"
+            method="post"
+            class="space-y-5"
+          >
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="form-control w-full">
+              <label class="label font-semibold">Sport</label>
+              <select class="select select-bordered w-full" th:field="*{sport}" required>
+                <option value="" disabled selected>Choisir un sport...</option>
+                <option th:each="s : ${sports}" th:value="${s.id}" th:text="${s.name}"></option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label font-semibold">Date</label>
+                <input
+                  type="datetime-local"
+                  th:field="*{date}"
+                  th:value="${#temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm')}"
+                  class="input input-bordered w-full"
+                  required
+                />
+              </div>
+
+              <div class="form-control">
+                <label class="label font-semibold">Ressenti (1 à 5)</label>
+                <input
+                  type="number"
+                  th:field="*{rating}"
+                  min="1"
+                  max="5"
+                  class="input input-bordered w-full"
+                  placeholder="Note"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label font-semibold">Distance (km)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  th:field="*{distance}"
+                  class="input input-bordered w-full"
+                  placeholder="Ex: 5.2"
+                  required
+                />
+              </div>
+
+              <div class="form-control">
+                <label class="label font-semibold">Durée (secondes)</label>
+                <input
+                  type="number"
+                  step="1"
+                  th:field="*{duration}"
+                  class="input input-bordered w-full"
+                  placeholder="Ex: 45"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-control">
+              <label class="label font-semibold">Lieu / Adresse</label>
+              <input
+                type="text"
+                th:field="*{address}"
+                class="input input-bordered w-full"
+                placeholder="Ex: Parc des sports, Toulouse"
+              />
+            </div>
+
+            <div class="mt-8 p-6 border border-base-300 rounded-2xl bg-base-50/50 shadow-inner">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg flex items-center gap-2 text-slate-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                    />
+                  </svg>
+                  Conditions Météo
+                </h3>
+                <button
+                  type="button"
+                  onclick="fetchWeather()"
+                  class="btn btn-primary btn-sm gap-2 shadow-md"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  Actualiser
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-end">
+                <div
+                  class="form-control flex flex-col items-center border-r border-base-300 last:border-0"
+                >
+                  <label class="label text-xs font-bold uppercase opacity-50">Ciel</label>
+                  <div class="h-16 flex items-center justify-center">
+                    <img
+                      id="weather-img"
+                      th:src="${workout.weather?.weatherIndicator != null ? '/images/weather/' + workout.weather.weatherIndicator + '.png' : '/images/weather/unknown.png'}"
+                      class="h-full object-contain"
+                      alt="Icône météo"
+                    />
+                  </div>
+                  <input
+                    type="hidden"
+                    th:field="*{weather.weatherIndicator}"
+                    id="weather-icon-hidden"
+                  />
                 </div>
 
-                <form th:action="@{/workouts/save}" th:object="${workout}" method="post" class="space-y-5">
-                    <input type="hidden" th:field="*{id}" />
+                <div class="form-control">
+                  <label class="label text-xs font-bold uppercase opacity-50">Temp. Moyenne</label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      th:field="*{weather.averageTemperature}"
+                      id="weather-temp"
+                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
+                      readonly
+                    />
+                    <span class="absolute right-3 top-1 text-xs opacity-40">°C</span>
+                  </div>
+                </div>
 
-                    <div class="form-control w-full">
-                        <label class="label font-semibold">Sport</label>
-                        <select class="select select-bordered w-full" th:field="*{sport}" required>
-                            <option value="" disabled selected>Choisir un sport...</option>
-                            <option th:each="s : ${sports}" th:value="${s.id}" th:text="${s.name}"></option>
-                        </select>
-                    </div>
+                <div class="form-control">
+                  <label class="label text-xs font-bold uppercase opacity-50">Vent</label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      th:field="*{weather.averageWindSpeed}"
+                      id="weather-wind"
+                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
+                      readonly
+                    />
+                    <span class="absolute right-3 top-1 text-xs opacity-40">km/h</span>
+                  </div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-control">
-                            <label class="label font-semibold">Date</label>
-                            <input type="datetime-local" 
-                              th:field="*{date}" 
-                              th:value="${#temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm')}" 
-                              class="input input-bordered w-full" required/>
-                        </div>
-                        
-                        <div class="form-control">
-                            <label class="label font-semibold">Ressenti (1 à 5)</label>
-                            <input type="number" th:field="*{rating}" min="1" max="5" class="input input-bordered w-full" placeholder="Note" />
-                        </div>
-                    </div>
+                <div class="form-control">
+                  <label class="label text-xs font-bold uppercase opacity-50">Pluie</label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      th:field="*{weather.averagePrecipitation}"
+                      id="weather-precip"
+                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
+                      readonly
+                    />
+                    <span class="absolute right-3 top-1 text-xs opacity-40">mm</span>
+                  </div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-control">
-                            <label class="label font-semibold">Distance (km)</label>
-                            <input type="number" step="0.01" th:field="*{distance}" class="input input-bordered w-full" placeholder="Ex: 5.2" required />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold">Durée (secondes)</label>
-                            <input type="number" step="1" th:field="*{duration}" class="input input-bordered w-full" placeholder="Ex: 45" required />
-                        </div>
-                    </div>
-
-                    <div class="form-control">
-                        <label class="label font-semibold">Lieu / Adresse</label>
-                        <input type="text" th:field="*{address}" class="input input-bordered w-full" placeholder="Ex: Parc des sports, Toulouse" />
-                    </div>
-
-                    <div class="mt-8 p-6 border border-base-300 rounded-2xl bg-base-50/50 shadow-inner">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-bold text-lg flex items-center gap-2 text-slate-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                            </svg>
-                            Conditions Météo
-                            </h3>
-                            <button type="button" onclick="fetchWeather()" class="btn btn-primary btn-sm gap-2 shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                            Actualiser
-                            </button>
-                        </div>
-
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-end">
-                            <div class="form-control flex flex-col items-center border-r border-base-300 last:border-0">
-                            <label class="label text-xs font-bold uppercase opacity-50">Ciel</label>
-                            <div class="h-16 flex items-center justify-center">
-                                <img id="weather-img" 
-                                    th:src="${workout.weather?.weatherIndicator != null ? '/images/weather/' + workout.weather.weatherIndicator + '.png' : '/images/weather/unknown.png'}" 
-                                    class="h-full object-contain" 
-                                    alt="Icône météo" />
-                            </div>
-                            <input type="hidden" th:field="*{weather.weatherIndicator}" id="weather-icon-hidden" />
-                            </div>
-
-                            <div class="form-control">
-                            <label class="label text-xs font-bold uppercase opacity-50">Temp. Moyenne</label>
-                            <div class="relative">
-                                <input type="text" th:field="*{weather.averageTemperature}" id="weather-temp" class="input input-bordered input-sm w-full bg-base-100 font-semibold" readonly />
-                                <span class="absolute right-3 top-1 text-xs opacity-40">°C</span>
-                            </div>
-                            </div>
-
-                            <div class="form-control">
-                            <label class="label text-xs font-bold uppercase opacity-50">Vent</label>
-                            <div class="relative">
-                                <input type="text" th:field="*{weather.averageWindSpeed}" id="weather-wind" class="input input-bordered input-sm w-full bg-base-100 font-semibold" readonly />
-                                <span class="absolute right-3 top-1 text-xs opacity-40">km/h</span>
-                            </div>
-                            </div>
-
-                            <div class="form-control">
-                            <label class="label text-xs font-bold uppercase opacity-50">Pluie</label>
-                            <div class="relative">
-                                <input type="text" th:field="*{weather.averagePrecipitation}" id="weather-precip" class="input input-bordered input-sm w-full bg-base-100 font-semibold" readonly />
-                                <span class="absolute right-3 top-1 text-xs opacity-40">mm</span>
-                            </div>
-                            </div>
-
-                            <input type="hidden" th:field="*{weather.maxTemperature}" id="weather-max" />
-                            <input type="hidden" th:field="*{weather.minTemperature}" id="weather-min" />
-                            <input type="hidden" th:field="*{weather.averageApparentTemperature}" id="weather-apparent" />
-                        </div>
-                    </div>
-
-                    <div class="card-actions justify-end mt-6 pt-6 border-t border-base-200">
-                        <a th:href="@{/home}" class="btn btn-ghost">Annuler</a>
-                        <button type="submit" class="btn btn-primary px-8">Enregistrer</button>
-                    </div>
-                </form>
+                <input type="hidden" th:field="*{weather.maxTemperature}" id="weather-max" />
+                <input type="hidden" th:field="*{weather.minTemperature}" id="weather-min" />
+                <input
+                  type="hidden"
+                  th:field="*{weather.averageApparentTemperature}"
+                  id="weather-apparent"
+                />
+              </div>
             </div>
-        </section>
+
+            <div class="card-actions justify-end mt-6 pt-6 border-t border-base-200">
+              <a th:href="@{/home}" class="btn btn-ghost">Annuler</a>
+              <button type="submit" class="btn btn-primary px-8">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </section>
     </main>
 
     <div th:insert="~{components/layout::footer}"></div>
     <script src="/js/workout_weather.js"></script>
-</body>
+  </body>
 </html>
