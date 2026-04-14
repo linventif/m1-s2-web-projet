@@ -9,10 +9,10 @@
 <relativePath/>
 <!-- lookup parent from repository -->
 	</parent>
-	<groupId>web.sportflow</groupId>
-<artifactId>web.sportflow</artifactId>
+	<groupId>web</groupId>
+<artifactId>sportflow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-<name>web.sportflow</name>
+<name>sportflow</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
