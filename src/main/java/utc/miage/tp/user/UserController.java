@@ -37,7 +37,6 @@ import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
 import utc.miage.tp.sport.Sport;
-import utc.miage.tp.sport.SportService;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutService;
 
@@ -53,7 +52,6 @@ public class UserController {
 
   private final UserService userService;
   private final WorkoutService workoutService;
-  private final SportService sportService;
   private final GoalService goalService;
   private final ChallengeService challengeService;
   private final BadgeService badgeService;
@@ -62,14 +60,12 @@ public class UserController {
   public UserController(
       UserService userService,
       WorkoutService workoutService,
-      SportService sportService,
       GoalService goalService,
       ChallengeService challengeService,
       BadgeService badgeService,
       FriendshipService friendshipService) {
     this.userService = userService;
     this.workoutService = workoutService;
-    this.sportService = sportService;
     this.goalService = goalService;
     this.challengeService = challengeService;
     this.badgeService = badgeService;
@@ -418,14 +414,92 @@ public class UserController {
 
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
+    double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
+    double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
+    double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
+
+    int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+    int totalMinutes = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalMinutes / 60;
+    int minutesPart = totalMinutes % 60;
+
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
     model.addAttribute("activeChallenges", challengeService.getAll());
     model.addAttribute("badges", badgeService.getAll());
-    model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
+
+    if (currentUser != null && currentUser.getId() != null) {
+      model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
+    } else {
+      model.addAttribute("friends", List.of());
+    }
+
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+
+    model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
+    model.addAttribute("todayIndex", todayIndex);
+    model.addAttribute("hoursPart", hoursPart);
+    model.addAttribute("minutesPart", minutesPart);
+    model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
+
     return "dashboard";
+  }
+
+  @GetMapping("/statistique")
+  public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
+    double distanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
+    double distanceThisMonth = workoutService.getTotalDistanceThisMonth(currentUser);
+    double distanceThisYear = workoutService.getTotalDistanceThisYear(currentUser);
+    double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
+    double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
+
+    int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+    int totalMinutes = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalMinutes / 60;
+    int minutesPart = totalMinutes % 60;
+
+    double averageMonthlyDistanceThisYear =
+        workoutService.getAverageMonthlyDistanceThisYear(currentUser);
+
+    double distanceGapVsAverage = workoutService.getDistanceGapVsAverageMonthly(currentUser);
+
+    int currentDayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+    int currentDayOfMonthIndex = java.time.LocalDate.now().getDayOfMonth() - 1;
+    int currentMonthIndex = java.time.LocalDate.now().getMonthValue() - 1;
+
+    model.addAttribute("currentDayIndex", currentDayIndex);
+    model.addAttribute("currentDayOfMonthIndex", currentDayOfMonthIndex);
+    model.addAttribute("currentMonthIndex", currentMonthIndex);
+
+    model.addAttribute("distanceThisWeek", Math.round(distanceThisWeek * 10.0) / 10.0);
+    model.addAttribute("distanceThisMonth", Math.round(distanceThisMonth * 10.0) / 10.0);
+    model.addAttribute("distanceThisYear", Math.round(distanceThisYear * 10.0) / 10.0);
+    model.addAttribute("todayIndex", todayIndex);
+    model.addAttribute("hoursPart", hoursPart);
+    model.addAttribute("minutesPart", minutesPart);
+    model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
+    model.addAttribute("monthlyBars", workoutService.getMonthlyBarViewsCurrentYear(currentUser));
+
+    model.addAttribute(
+        "averageMonthlyDistanceThisYear", Math.round(averageMonthlyDistanceThisYear * 10.0) / 10.0);
+
+    model.addAttribute("distanceGapVsAverage", Math.round(distanceGapVsAverage * 10.0) / 10.0);
+
+    model.addAttribute("monthDayLabels", workoutService.getMonthDayLabels());
+    model.addAttribute("currentMonthCurve", workoutService.getCurrentMonthCurve(currentUser));
+    model.addAttribute("yearAverageCurve", workoutService.getYearAverageCurve(currentUser));
+    model.addAttribute("weekLabels", workoutService.getWeekLabels());
+    model.addAttribute("weekDistances", workoutService.getWeekDistances(currentUser));
+
+    model.addAttribute("monthChartLabels", workoutService.getMonthLabelsForChart());
+    model.addAttribute(
+        "monthChartDistances", workoutService.getMonthDistancesForChart(currentUser));
+
+    model.addAttribute("yearChartLabels", workoutService.getYearLabelsForChart());
+    model.addAttribute("yearChartDistances", workoutService.getYearDistancesForChart(currentUser));
+
+    return "user-statistique";
   }
 
   private void populateUserCreationForm(Model model, User user) {
@@ -433,6 +507,7 @@ public class UserController {
   }
 
   private void populateProfileView(Model model, User user) {
+    model.addAttribute("user", user);
     Set<Long> unlockedBadgeIds =
         user.getBadges().stream()
             .map(Badge::getId)
