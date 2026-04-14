@@ -1,6 +1,7 @@
 package utc.miage.tp.workout;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.user.User;
@@ -51,5 +52,24 @@ public class WorkoutService {
   @Transactional(readOnly = true)
   public List<Workout> getAllStatutsForUser(User user) {
     return workoutRepository.findAll();
+  }
+
+  public Optional<Workout> findById(Long id) {
+    return workoutRepository.findById(id);
+  }
+
+  @Transactional
+  public void toggleKudo(Long workoutId, User currentUser) {
+    Workout workout =
+        workoutRepository
+            .findById(workoutId)
+            .orElseThrow(() -> new RuntimeException("Workout non trouvé"));
+    if (workout.isKudoedBy(currentUser)) {
+      workout.removeKudo(currentUser);
+    } else {
+      workout.addKudo(currentUser);
+    }
+
+    workoutRepository.save(workout);
   }
 }

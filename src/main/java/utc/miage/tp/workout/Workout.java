@@ -7,9 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
@@ -48,6 +53,13 @@ public class Workout {
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id")
   private User user;
+
+  @ManyToMany
+  @JoinTable(
+      name = "workout_kudos",
+      joinColumns = @JoinColumn(name = "workout_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private Set<User> usersWhoKudoed = new HashSet<>();
 
   public Workout() {}
 
@@ -122,6 +134,34 @@ public class Workout {
 
   public User getUser() {
     return user;
+  }
+
+  public Set<User> getUsersWhoKudoed() {
+    return usersWhoKudoed;
+  }
+
+  public void addKudo(User user) {
+    usersWhoKudoed.add(user);
+  }
+
+  public void removeKudo(User user) {
+    this.usersWhoKudoed.removeIf(u -> u.getId().equals(user.getId()));
+  }
+
+  public List<User> getOthersWhoKudoed(User currentUser) {
+    if (this.usersWhoKudoed == null) return List.of();
+    return this.usersWhoKudoed.stream()
+        .filter(u -> !u.getId().equals(currentUser.getId()))
+        .toList();
+  }
+
+  public boolean isKudoedBy(User user) {
+    if (user == null || user.getId() == null) return false;
+    return this.usersWhoKudoed.stream().anyMatch(u -> u.getId().equals(user.getId()));
+  }
+
+  public int getKudosCount() {
+    return usersWhoKudoed.size();
   }
 
   public Double getCalorieBurn() {
