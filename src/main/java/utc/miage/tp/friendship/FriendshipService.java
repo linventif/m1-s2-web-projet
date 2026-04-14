@@ -1,6 +1,7 @@
 package utc.miage.tp.friendship;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.user.User;
@@ -108,6 +109,14 @@ public class FriendshipService {
   @Transactional(readOnly = true)
   public List<Friendship> getAcceptedFriendships(Long currentUserId) {
     return friendshipRepository.findAcceptedForUser(currentUserId);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<Friendship> findRelationshipBetween(Long userAId, Long userBId) {
+    if (userAId == null || userBId == null) {
+      return Optional.empty();
+    }
+    return friendshipRepository.findRelationshipBetween(userAId, userBId);
   }
 
   @Transactional

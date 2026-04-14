@@ -119,6 +119,7 @@ public class UserController {
             ? null
             : userService.getUserById(currentUser.getId()).orElse(currentUser);
     populateProfileView(model, profileUser);
+    populateProfileFriendshipContext(currentUser, profileUser, model);
     model.addAttribute("canEditProfile", true);
     return "user-profile";
   }
@@ -138,6 +139,7 @@ public class UserController {
         .map(
             user -> {
               populateProfileView(model, user);
+              populateProfileFriendshipContext(currentUser, user, model);
               model.addAttribute("canEditProfile", false);
               return "user-profile";
             })
@@ -520,6 +522,71 @@ public class UserController {
     model.addAttribute("bmi", userService.calculateBMI(user));
     model.addAttribute("recommendation", userService.getWorkoutRecommendation(user));
     model.addAttribute("bmr", userService.calculateBMR(user));
+  }
+
+  private void populateProfileFriendshipContext(User currentUser, User profileUser, Model model) {
+    model.addAttribute("isOwnProfile", false);
+    model.addAttribute("friendshipStatusLabel", "Aucun lien");
+    model.addAttribute("friendshipBadgeClass", "badge-ghost");
+    model.addAttribute("canSendFriendRequest", false);
+    model.addAttribute("canAcceptFriendRequest", false);
+    model.addAttribute("canRefuseFriendRequest", false);
+    model.addAttribute("canUnfriend", false);
+    model.addAttribute("incomingFriendshipId", null);
+
+    if (profileUser == null || profileUser.getId() == null) {
+      return;
+    }
+    if (currentUser == null || currentUser.getId() == null) {
+      return;
+    }
+
+    Long currentUserId = currentUser.getId();
+    Long profileUserId = profileUser.getId();
+
+    if (currentUserId.equals(profileUserId)) {
+      model.addAttribute("isOwnProfile", true);
+      model.addAttribute("friendshipStatusLabel", "Votre profil");
+      model.addAttribute("friendshipBadgeClass", "badge-primary");
+      return;
+    }
+
+    Friendship relationship =
+        friendshipService.findRelationshipBetween(currentUserId, profileUserId).orElse(null);
+
+    if (relationship == null) {
+      model.addAttribute("canSendFriendRequest", true);
+      return;
+    }
+
+    switch (relationship.getStatus()) {
+      case ACCEPTED -> {
+        model.addAttribute("friendshipStatusLabel", "Amis");
+        model.addAttribute("friendshipBadgeClass", "badge-success");
+        model.addAttribute("canUnfriend", true);
+      }
+      case PENDING -> {
+        boolean requestSentByCurrentUser =
+            relationship.getRequester() != null
+                && currentUserId.equals(relationship.getRequester().getId());
+
+        if (requestSentByCurrentUser) {
+          model.addAttribute("friendshipStatusLabel", "Demande envoyee");
+          model.addAttribute("friendshipBadgeClass", "badge-warning");
+        } else {
+          model.addAttribute("friendshipStatusLabel", "Demande recue");
+          model.addAttribute("friendshipBadgeClass", "badge-info");
+          model.addAttribute("canAcceptFriendRequest", true);
+          model.addAttribute("canRefuseFriendRequest", true);
+          model.addAttribute("incomingFriendshipId", relationship.getId());
+        }
+      }
+      case REFUSED -> {
+        model.addAttribute("friendshipStatusLabel", "Demande refusee");
+        model.addAttribute("friendshipBadgeClass", "badge-error");
+        model.addAttribute("canSendFriendRequest", true);
+      }
+    }
   }
 
   private List<Sport> resolveProfileSports(User user) {
