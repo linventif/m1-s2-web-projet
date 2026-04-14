@@ -671,9 +671,28 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     WeatherStatsDTO cloudy = new WeatherStatsDTO("18", "19", "17", "16", "0.10", "12", "cloudy");
     WeatherStatsDTO rain = new WeatherStatsDTO("15", "16", "14", "13", "1.00", "8", "rain");
 
+    Workout workoutKudo =
+        createWorkout(
+            LocalDateTime.of(2026, 4, 1, 10, 0),
+            4.2,
+            32.0,
+            "Toulouse",
+            4,
+            clearsky,
+            sportCourseCanal,
+            userJudy);
+    workoutKudo.addKudo(userTaiLung);
+    workoutKudo.addKudo(userShifu);
+    workoutKudo.addKudo(userOogway);
+    workoutKudo.addKudo(userAlice);
+    workoutKudo.addKudo(userBenoit);
+    workoutKudo.addKudo(userOwen);
+    workoutKudo.addKudo(userHiccup);
+
     // Workouts
     workoutRepository.saveAll(
         List.of(
+            workoutKudo,
             createWorkout(
                 "Course du canal",
                 LocalDateTime.of(2026, 4, 1, 10, 0),
