@@ -1,0 +1,49 @@
+<div th:fragment="kudo(workout, currentUser)" class="flex items-center gap-2">
+    
+    <th:block th:with="othersWhoKudoed=${workout.getOthersWhoKudoed(currentUser)},
+                       isAlreadyKudoed=${workout.isKudoedBy(currentUser)}">
+        
+        <div th:if="${!othersWhoKudoed.isEmpty()}" class="avatar-group -space-x-5 rtl:space-x-reverse">
+            <div th:each="u, iter : ${othersWhoKudoed}" 
+                 th:if="${iter.index < 3}" 
+                 class="avatar border-2 border-base-100">
+                <div class="w-8 h-8 rounded-full bg-neutral text-neutral-content">
+                    <img th:if="${u.profileImagePath != null}" 
+                         th:src="${u.profileImagePath}" 
+                         th:alt="${u.firstname}" />
+                    <span th:unless="${u.profileImagePath != null}" 
+                          class="text-[10px]" 
+                          th:text="${#strings.substring(u.firstname,0,1) + #strings.substring(u.lastname,0,1)}"></span>
+                </div>
+            </div>
+            <div th:if="${othersWhoKudoed.size() > 3}" class="avatar placeholder border-2 border-base-100">
+                <div class="w-8 h-8 rounded-full bg-neutral text-neutral-content flex items-center justify-center">
+                    <span class="text-[11px] font-black leading-none" 
+                        th:text="${'+' + (othersWhoKudoed.size() - 3)}">
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" 
+                th:id="'kudo-btn-' + ${workout.id}"
+                th:onclick="|toggleKudo(${workout.id})|"
+                class="btn btn-ghost btn-sm px-2 gap-1 transition-all"
+                th:classappend="${isAlreadyKudoed} ? 'text-error' : 'text-base-content/50'">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 th:id="'kudo-icon-' + ${workout.id}"
+                 class="h-5 w-5 transition-all duration-200 active:scale-150" 
+                 th:classappend="${isAlreadyKudoed} ? 'fill-current' : 'fill-none'"
+                 viewBox="0 0 24 24" 
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+
+            <span th:id="'kudo-count-' + ${workout.id}" 
+                  class="font-bold text-sm" 
+                  th:text="${workout.usersWhoKudoed.size()}">0</span>
+        </button>
+    </th:block>
+</div>

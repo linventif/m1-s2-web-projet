@@ -199,6 +199,9 @@
                                     </div>
                                     <a th:href="@{/users/workout}" class="link link-hover font-semibold text-orange-600">Voir plus de détails</a>
                                 </div>
+                                <div class="card-actions justify-end">
+                                    <div th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"></div>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -315,7 +318,7 @@
         </main>
     </div>
 </div>
-
+<script src="/js/kudo_toggle.js"></script>
 </body>
 
 </html>

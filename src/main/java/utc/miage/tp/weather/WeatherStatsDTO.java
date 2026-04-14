@@ -12,8 +12,7 @@ public class WeatherStatsDTO {
   String averageWindSpeed;
   String weatherIndicator;
 
-  public WeatherStatsDTO() {
-  }
+  public WeatherStatsDTO() {}
 
   public WeatherStatsDTO(
       String averageTemperature,
