@@ -128,17 +128,32 @@
             <!-- Center content -->
             <section class="min-w-0 space-y-6">
               <div id="workouts-container" class="space-y-5">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-base-300 pb-5">
-                    <div>
-                        <h2 class="text-2xl font-black tracking-tight">Fil d'activités</h2>
-                        <p class="text-sm opacity-60">Retrouvez vos dernières séances et celles de vos amis</p>
-                    </div>
-                    <a th:href="@{/workouts/new}" class="btn btn-link group">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transition-transform group-hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Nouvelle activité
-                    </a>
+                <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-base-300 pb-5"
+                >
+                  <div>
+                    <h2 class="text-2xl font-black tracking-tight">Fil d'activités</h2>
+                    <p class="text-sm opacity-60">
+                      Retrouvez vos dernières séances et celles de vos amis
+                    </p>
+                  </div>
+                  <a th:href="@{/workouts/new}" class="btn btn-link group">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 mr-2 transition-transform group-hover:scale-125"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Nouvelle activité
+                  </a>
                 </div>
                 <div
                   id="workout-empty-state"
