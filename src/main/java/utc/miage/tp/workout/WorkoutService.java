@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utc.miage.tp.user.User;
@@ -376,5 +377,22 @@ public class WorkoutService {
 
   private LocalDate minDate(LocalDate a, LocalDate b) {
     return a.isBefore(b) ? a : b;
+  public Optional<Workout> findById(Long id) {
+    return workoutRepository.findById(id);
+  }
+
+  @Transactional
+  public void toggleKudo(Long workoutId, User currentUser) {
+    Workout workout =
+        workoutRepository
+            .findById(workoutId)
+            .orElseThrow(() -> new RuntimeException("Workout non trouvé"));
+    if (workout.isKudoedBy(currentUser)) {
+      workout.removeKudo(currentUser);
+    } else {
+      workout.addKudo(currentUser);
+    }
+
+    workoutRepository.save(workout);
   }
 }
