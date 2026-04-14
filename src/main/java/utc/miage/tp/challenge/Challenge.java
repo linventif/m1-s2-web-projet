@@ -8,9 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import utc.miage.tp.badge.Badge;
 import utc.miage.tp.user.User;
 
 @Entity
@@ -43,6 +48,13 @@ public class Challenge {
   @ManyToOne(optional = false)
   @JoinColumn(name = "creator_id")
   private User creator;
+
+  @ManyToMany
+  @JoinTable(
+      name = "challenge_badge",
+      joinColumns = @JoinColumn(name = "challenge_id"),
+      inverseJoinColumns = @JoinColumn(name = "badge_id"))
+  private List<Badge> badges = new ArrayList<>();
 
   public Challenge() {}
 
@@ -95,6 +107,10 @@ public class Challenge {
     return creator;
   }
 
+  public List<Badge> getBadges() {
+    return badges;
+  }
+
   public boolean isActive() {
     LocalDate today = LocalDate.now();
     return !today.isBefore(startDate) && !today.isAfter(endDate);
@@ -126,5 +142,13 @@ public class Challenge {
 
   public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
+  }
+
+  public void setCreator(User creator) {
+    this.creator = creator;
+  }
+
+  public void setBadges(List<Badge> badges) {
+    this.badges = badges;
   }
 }

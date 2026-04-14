@@ -1,0 +1,137 @@
+<!doctype html>
+<html
+  lang="fr"
+  data-theme="emerald"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{components/layout::head(title='Admin - Sports')}">
+    <title>Admin - Sports</title>
+  </head>
+
+  <body class="strava-shell min-h-screen text-base-content">
+    <div class="drawer">
+      <input id="mobile-nav" type="checkbox" class="drawer-toggle" />
+
+      <div class="drawer-content min-h-screen">
+        <div th:insert="~{components/layout::header}"></div>
+
+        <main class="px-3 pb-8 pt-24 md:px-5">
+          <div class="mx-auto max-w-[1600px] space-y-6">
+            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+              <div class="card-body space-y-4">
+                <h1 class="text-3xl font-black">Administration - Sports</h1>
+                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a
+                    th:href="@{/admin/sports}"
+                    class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
+                    >Sports</a
+                  >
+                  <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
+                    >Workouts</a
+                  >
+                  <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
+                    >Badges</a
+                  >
+                  <a th:href="@{/admin/goals}" class="btn btn-outline btn-sm rounded-full"
+                    >Objectifs</a
+                  >
+                  <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
+                    >Challenges</a
+                  >
+                  <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
+                    >Friendships</a
+                  >
+                </div>
+
+                <div th:if="${message}" class="alert alert-success">
+                  <span th:text="${message}"></span>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-error">
+                  <span th:text="${errorMessage}"></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+              <div class="card-body space-y-4">
+                <h2 class="card-title text-2xl">Sports</h2>
+
+                <form
+                  th:action="@{/admin/sports/create}"
+                  method="post"
+                  class="rounded-2xl bg-base-200 p-4"
+                >
+                  <h3 class="mb-3 text-lg font-bold">Creer un sport</h3>
+                  <div class="grid gap-3 md:grid-cols-3">
+                    <input
+                      name="name"
+                      class="input input-bordered"
+                      placeholder="Nom du sport"
+                      required
+                    />
+                    <input
+                      name="caloriesPerMinute"
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      class="input input-bordered"
+                      placeholder="Calories / min"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                </form>
+
+                <div class="space-y-3" th:if="${#lists.isEmpty(sports)}">
+                  <div class="alert"><span>Aucun sport.</span></div>
+                </div>
+                <div class="space-y-3" th:unless="${#lists.isEmpty(sports)}">
+                  <details
+                    th:each="sport : ${sports.?[#this != null]}"
+                    class="collapse collapse-arrow border border-base-300 bg-base-100"
+                  >
+                    <summary class="collapse-title font-semibold">
+                      #<span th:text="${sport.id}">1</span> -
+                      <span th:text="${sport.name}">Course</span>
+                    </summary>
+                    <div class="collapse-content space-y-3">
+                      <form
+                        th:action="@{/admin/sports/{id}/update(id=${sport.id})}"
+                        method="post"
+                        class="grid gap-3 md:grid-cols-3"
+                      >
+                        <input
+                          name="name"
+                          class="input input-bordered"
+                          th:value="${sport.name}"
+                          required
+                        />
+                        <input
+                          name="caloriesPerMinute"
+                          type="number"
+                          step="0.1"
+                          min="0.1"
+                          class="input input-bordered"
+                          th:value="${sport.caloryPerMinutes}"
+                          required
+                        />
+                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                      </form>
+                      <form th:action="@{/admin/sports/{id}/delete(id=${sport.id})}" method="post">
+                        <button type="submit" class="btn btn-error btn-outline">Supprimer</button>
+                      </form>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <div th:replace="~{components/layout::footer}"></div>
+      </div>
+    </div>
+  </body>
+</html>

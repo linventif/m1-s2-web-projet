@@ -240,4 +240,8 @@ public class Workout {
     double durationMin = durationSec / 60.0;
     return durationMin * sport.getMET() * 3.5 * user.getWeight() / 200.0;
   }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 }
