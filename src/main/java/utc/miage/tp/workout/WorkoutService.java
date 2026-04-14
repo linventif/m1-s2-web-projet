@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import utc.miage.tp.user.User;
 import utc.miage.tp.weather.WeatherService;
 import utc.miage.tp.weather.WeatherStatsDTO;
@@ -380,6 +378,7 @@ public class WorkoutService {
   private LocalDate minDate(LocalDate a, LocalDate b) {
     return a.isBefore(b) ? a : b;
   }
+
   public Optional<Workout> findById(Long id) {
     return workoutRepository.findById(id);
   }
