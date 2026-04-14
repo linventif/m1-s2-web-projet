@@ -1,8 +1,10 @@
 package utc.miage.tp.workout;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,8 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +24,7 @@ import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
 import utc.miage.tp.weather.WeatherStatsDTO;
+import utc.miage.tp.workout.comment.Comment;
 
 @Entity
 @Table(name = "workout")
@@ -60,6 +66,10 @@ public class Workout {
       joinColumns = @JoinColumn(name = "workout_id"),
       inverseJoinColumns = @JoinColumn(name = "user_id"))
   private Set<User> usersWhoKudoed = new HashSet<>();
+
+  @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OrderBy("createdAt ASC")
+  private List<Comment> comments = new ArrayList<>();
 
   public Workout() {}
 
@@ -171,6 +181,10 @@ public class Workout {
     return (duration / 60.0) * sport.getCaloryPerMinutes();
   }
 
+  public List<Comment> getComments() {
+    return comments;
+  }
+
   public void setId(Long id) {
     this.id = id;
   }
@@ -205,5 +219,10 @@ public class Workout {
 
   public void setUser(User user) {
     this.user = user;
+  }
+
+  public void addComment(Comment comment) {
+    this.comments.add(comment);
+    comment.setWorkout(this);
   }
 }

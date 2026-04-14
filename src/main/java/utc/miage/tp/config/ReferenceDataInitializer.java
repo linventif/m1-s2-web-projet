@@ -36,6 +36,7 @@ import utc.miage.tp.user.UserRepository;
 import utc.miage.tp.weather.WeatherStatsDTO;
 import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutRepository;
+import utc.miage.tp.workout.comment.Comment;
 
 @Component
 public class ReferenceDataInitializer implements CommandLineRunner {
@@ -583,6 +584,18 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutKudo.addKudo(userBenoit);
     workoutKudo.addKudo(userOwen);
     workoutKudo.addKudo(userHiccup);
+    Comment comment1 = new Comment();
+    comment1.setAuthor(userAlice);
+    comment1.setContent("Super seance, bravo !");
+    workoutKudo.addComment(comment1);
+    Comment comment2 = new Comment();
+    comment2.setAuthor(userBenoit);
+    comment2.setContent("Impressionnant, continue comme ca !");
+    workoutKudo.addComment(comment2);
+    Comment comment3 = new Comment();
+    comment3.setAuthor(userOwen);
+    comment3.setContent("Tu vas tout dechirer avec ce rythme !");
+    workoutKudo.addComment(comment3);
 
     // Workouts
     workoutRepository.saveAll(
