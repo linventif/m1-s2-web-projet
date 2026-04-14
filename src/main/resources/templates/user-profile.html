@@ -57,18 +57,27 @@
                 Aucun lien
               </span>
 
-              <form method="post" th:action="@{/users/friends/request}" th:if="${canSendFriendRequest}">
+              <form
+                method="post"
+                th:action="@{/users/friends/request}"
+                th:if="${canSendFriendRequest}"
+              >
                 <input type="hidden" name="targetUserId" th:value="${user.id}" />
-                <input type="hidden" name="returnTo" th:value="@{/user/{id}/profile(id=${user.id})}" />
+                <input
+                  type="hidden"
+                  name="returnTo"
+                  th:value="@{/user/{id}/profile(id=${user.id})}"
+                />
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <button class="btn btn-outline btn-sm" type="submit">Demander en ami</button>
               </form>
 
-              <div
-                class="flex gap-2"
-                th:if="${canAcceptFriendRequest or canRefuseFriendRequest}"
-              >
-                <form method="post" th:action="@{/users/friends/accept}" th:if="${canAcceptFriendRequest}">
+              <div class="flex gap-2" th:if="${canAcceptFriendRequest or canRefuseFriendRequest}">
+                <form
+                  method="post"
+                  th:action="@{/users/friends/accept}"
+                  th:if="${canAcceptFriendRequest}"
+                >
                   <input type="hidden" name="friendshipId" th:value="${incomingFriendshipId}" />
                   <input
                     type="hidden"
@@ -78,7 +87,11 @@
                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                   <button class="btn btn-success btn-sm" type="submit">Accepter</button>
                 </form>
-                <form method="post" th:action="@{/users/friends/refuse}" th:if="${canRefuseFriendRequest}">
+                <form
+                  method="post"
+                  th:action="@{/users/friends/refuse}"
+                  th:if="${canRefuseFriendRequest}"
+                >
                   <input type="hidden" name="friendshipId" th:value="${incomingFriendshipId}" />
                   <input
                     type="hidden"
@@ -92,7 +105,11 @@
 
               <form method="post" th:action="@{/users/friends/unfriend}" th:if="${canUnfriend}">
                 <input type="hidden" name="friendId" th:value="${user.id}" />
-                <input type="hidden" name="returnTo" th:value="@{/user/{id}/profile(id=${user.id})}" />
+                <input
+                  type="hidden"
+                  name="returnTo"
+                  th:value="@{/user/{id}/profile(id=${user.id})}"
+                />
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <button class="btn btn-warning btn-sm" type="submit">Retirer des amis</button>
               </form>
