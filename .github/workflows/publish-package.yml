@@ -1,0 +1,49 @@
+name: Publish JAR Package
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build and Publish Maven Package
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      - name: Build and publish package
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          mvn -B -DskipTests clean deploy \
+            -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
+
+      - name: Upload built JAR as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: |
+            target/*.jar
+            !target/*.jar.original
+          if-no-files-found: error
