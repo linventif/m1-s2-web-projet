@@ -33,8 +33,7 @@ public class Comment {
   @JoinColumn(name = "user_id")
   private User author;
 
-  public Comment() {
-  }
+  public Comment() {}
 
   public Comment(String content, Workout workout, User user) {
     this.content = content;
