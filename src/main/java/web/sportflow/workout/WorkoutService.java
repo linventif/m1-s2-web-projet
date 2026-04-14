@@ -397,7 +397,7 @@ public class WorkoutService {
 
     workoutRepository.save(workout);
   }
-  
+
   public void saveWorkout(Workout workout, User currentUser) {
     workout.setUser(currentUser);
     workoutRepository.save(workout);

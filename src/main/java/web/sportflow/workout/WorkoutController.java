@@ -70,7 +70,23 @@ public class WorkoutController {
   }
 
   @PostMapping("/save")
-  public String saveWorkout(Workout workout, @AuthenticationPrincipal User currentUser) {
+  public String saveWorkout(WorkoutDto workoutDto, @AuthenticationPrincipal User currentUser) {
+    Workout workout;
+    if (workoutDto.getId() != null) {
+      Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
+      if (!existingWorkout.getUser().getEmail().equals(currentUser.getEmail())) {
+        return "redirect:/dashboard";
+      }
+      workout = existingWorkout;
+    } else {
+      workout = new Workout();
+    }
+    workout.setSport(workoutDto.getSport());
+    workout.setDate(workoutDto.getDate());
+    workout.setDuration(workoutDto.getDuration());
+    workout.setWeather(workoutDto.getWeather());
+    workout.setDistance(workoutDto.getDistance());
+    workout.setAddress(workoutDto.getAddress());
     workoutService.saveWorkout(workout, currentUser);
     return "redirect:/dashboard";
   }
