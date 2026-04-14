@@ -1,9 +1,11 @@
 package utc.miage.tp.workout;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -15,10 +17,12 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.hibernate.annotations.ColumnDefault;
 import utc.miage.tp.sport.Sport;
 import utc.miage.tp.user.User;
@@ -50,7 +54,8 @@ public class Workout {
   @Column(name = "rating", nullable = true)
   private Integer rating; // note de 1 à 5 par exemple
 
-  @Embedded private WeatherStatsDTO weather;
+  @Embedded
+  private WeatherStatsDTO weather;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "sport_id")
@@ -65,12 +70,13 @@ public class Workout {
 
   @ManyToMany
   @JoinTable(
-      name = "workout_kudos",
-      joinColumns = @JoinColumn(name = "workout_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id"))
+    name = "workout_kudos",
+    joinColumns = @JoinColumn(name = "workout_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
   private Set<User> usersWhoKudoed = new HashSet<>();
 
-  public Workout() {}
+  public Workout() {
+  }
 
   public Workout(String address, WeatherStatsDTO weather, Sport sport, User user) {
 
@@ -82,12 +88,12 @@ public class Workout {
   }
 
   public Workout(
-      String name,
-      LocalDateTime date,
-      String address,
-      WeatherStatsDTO weather,
-      Sport sport,
-      User user) {
+    String name,
+    LocalDateTime date,
+    String address,
+    WeatherStatsDTO weather,
+    Sport sport,
+    User user) {
     if (name == null) this.name = "Workout from : " + date;
     else this.name = name;
     this.date = date;
@@ -98,13 +104,13 @@ public class Workout {
   }
 
   public Workout(
-      String name,
-      LocalDateTime date,
-      String address,
-      WeatherStatsDTO weather,
-      List<WorkoutExercise> exercises,
-      Sport sport,
-      User user) {
+    String name,
+    LocalDateTime date,
+    String address,
+    WeatherStatsDTO weather,
+    List<WorkoutExercise> exercises,
+    Sport sport,
+    User user) {
     if (name == null) this.name = "Workout from : " + date;
     else this.name = name;
     this.date = date;
@@ -116,15 +122,15 @@ public class Workout {
   }
 
   public Workout(
-      String name,
-      LocalDateTime date,
-      String address,
-      Double durationSec,
-      Integer rating,
-      Sport sport,
-      WeatherStatsDTO weather,
-      List<WorkoutExercise> exercises,
-      User user) {
+    String name,
+    LocalDateTime date,
+    String address,
+    Double durationSec,
+    Integer rating,
+    Sport sport,
+    WeatherStatsDTO weather,
+    List<WorkoutExercise> exercises,
+    User user) {
     this.name = name;
     this.date = date;
     this.address = address;
@@ -169,11 +175,9 @@ public class Workout {
   }
 
   public Double getDurationMin() {
-    if (durationSec == null) {
-      return null;
-    }
+    return durationSec / 60;
   }
-  
+
   public Set<User> getUsersWhoKudoed() {
     return usersWhoKudoed;
   }
@@ -189,8 +193,8 @@ public class Workout {
   public List<User> getOthersWhoKudoed(User currentUser) {
     if (this.usersWhoKudoed == null) return List.of();
     return this.usersWhoKudoed.stream()
-        .filter(u -> !u.getId().equals(currentUser.getId()))
-        .toList();
+      .filter(u -> !u.getId().equals(currentUser.getId()))
+      .toList();
   }
 
   public boolean isKudoedBy(User user) {
@@ -203,7 +207,7 @@ public class Workout {
   }
 
   public Double getCalorieBurn() {
-    if (sport == null || sport.getCaloryPerMinutes() == null || duration == null) {
+    if (sport == null || sport.getMET() == null) {
       return 0.0;
     }
     return durationSec / 60;
@@ -271,19 +275,19 @@ public class Workout {
     if (exercises != null && !exercises.isEmpty()) {
       for (WorkoutExercise ex : exercises) {
         if (ex == null
-            || ex.getDurationSec() == null
-            || ex.getDurationSec() <= 0
-            || (user.getWeight() == 0.0 && (ex.getWeightKg() == null || ex.getWeightKg() == 0.0))) {
+          || ex.getDurationSec() == null
+          || ex.getDurationSec() <= 0
+          || (user.getWeight() == 0.0 && (ex.getWeightKg() == null || ex.getWeightKg() == 0.0))) {
           continue;
         }
 
         totalCalories +=
-            ex.getDurationSec()
-                / 60.0
-                * sport.getMET()
-                * 3.5
-                * (user.getWeight() + (ex.getWeightKg() == null ? 0.0 : ex.getWeightKg()))
-                / 200.0;
+          ex.getDurationSec()
+            / 60.0
+            * sport.getMET()
+            * 3.5
+            * (user.getWeight() + (ex.getWeightKg() == null ? 0.0 : ex.getWeightKg()))
+            / 200.0;
       }
 
       return totalCalories;
