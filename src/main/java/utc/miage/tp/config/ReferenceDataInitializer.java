@@ -18,13 +18,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import utc.miage.tp.exercise.Exercise;
-import utc.miage.tp.exercise.ExerciseRepository;
 import utc.miage.tp.badge.Badge;
 import utc.miage.tp.badge.BadgeRepository;
 import utc.miage.tp.challenge.Challenge;
 import utc.miage.tp.challenge.ChallengeRepository;
 import utc.miage.tp.challenge.ChallengeType;
+import utc.miage.tp.exercise.Exercise;
+import utc.miage.tp.exercise.ExerciseRepository;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.goal.Goal;
 import utc.miage.tp.goal.GoalRepository;
@@ -1031,7 +1031,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       exercise.getSports().add(sport);
     }
   }
-  
+
   private Goal createGoal(
       String label,
       GoalType type,
