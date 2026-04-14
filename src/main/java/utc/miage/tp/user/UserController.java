@@ -414,39 +414,39 @@ public class UserController {
     return "user-goals";
   }
 
-@GetMapping("/dashboard")
-public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
-  double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
-  double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
-  double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
+  @GetMapping("/dashboard")
+  public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
+    double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
+    double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
+    double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
 
-  int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-  int totalMinutes = (int) Math.round(totalDurationThisWeek);
-  int hoursPart = totalMinutes / 60;
-  int minutesPart = totalMinutes % 60;
+    int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+    int totalMinutes = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalMinutes / 60;
+    int minutesPart = totalMinutes % 60;
 
-  model.addAttribute("goals", goalService.getAll());
-  model.addAttribute("workouts", workoutService.getAll());
-  model.addAttribute("activeChallenges", challengeService.getAll());
-  model.addAttribute("badges", badgeService.getAll());
+    model.addAttribute("goals", goalService.getAll());
+    model.addAttribute("workouts", workoutService.getAll());
+    model.addAttribute("activeChallenges", challengeService.getAll());
+    model.addAttribute("badges", badgeService.getAll());
 
-  if (currentUser != null && currentUser.getId() != null) {
-    model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
-  } else {
-    model.addAttribute("friends", List.of());
+    if (currentUser != null && currentUser.getId() != null) {
+      model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
+    } else {
+      model.addAttribute("friends", List.of());
+    }
+
+    model.addAttribute("currentMonthLabel", "Avril 2026");
+    model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+
+    model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
+    model.addAttribute("todayIndex", todayIndex);
+    model.addAttribute("hoursPart", hoursPart);
+    model.addAttribute("minutesPart", minutesPart);
+    model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
+
+    return "dashboard";
   }
-
-  model.addAttribute("currentMonthLabel", "Avril 2026");
-  model.addAttribute("mainGoalLabel", "Objectif : 50 km");
-
-  model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
-  model.addAttribute("todayIndex", todayIndex);
-  model.addAttribute("hoursPart", hoursPart);
-  model.addAttribute("minutesPart", minutesPart);
-  model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
-
-  return "dashboard";
-}
 
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
@@ -467,23 +467,11 @@ public String showDashboard(@AuthenticationPrincipal User currentUser, Model mod
     double distanceGapVsAverage = workoutService.getDistanceGapVsAverageMonthly(currentUser);
 
     int currentDayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int dayOfMonth = java.time.LocalDate.now().getDayOfMonth();
-    int currentWeekOfMonth;
-
-    if (dayOfMonth <= 7) {
-      currentWeekOfMonth = 0;
-    } else if (dayOfMonth <= 14) {
-      currentWeekOfMonth = 1;
-    } else if (dayOfMonth <= 21) {
-      currentWeekOfMonth = 2;
-    } else {
-      currentWeekOfMonth = 3;
-    }
-
+    int currentDayOfMonthIndex = java.time.LocalDate.now().getDayOfMonth() - 1;
     int currentMonthIndex = java.time.LocalDate.now().getMonthValue() - 1;
 
     model.addAttribute("currentDayIndex", currentDayIndex);
-    model.addAttribute("currentWeekOfMonth", currentWeekOfMonth);
+    model.addAttribute("currentDayOfMonthIndex", currentDayOfMonthIndex);
     model.addAttribute("currentMonthIndex", currentMonthIndex);
 
     model.addAttribute("distanceThisWeek", Math.round(distanceThisWeek * 10.0) / 10.0);

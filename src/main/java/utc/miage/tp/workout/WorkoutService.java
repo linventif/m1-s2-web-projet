@@ -4,14 +4,12 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import utc.miage.tp.user.User;
-import utc.miage.tp.workout.statistique.MonthlyBarView;
 import utc.miage.tp.weather.WeatherService;
 import utc.miage.tp.weather.WeatherStatsDTO;
+import utc.miage.tp.workout.statistique.MonthlyBarView;
 
 @Service
 public class WorkoutService {
@@ -49,17 +47,14 @@ public class WorkoutService {
     return workoutRepository.save(savedWorkout);
   }
 
-   
   public List<Workout> getAll() {
     return workoutRepository.findAll();
   }
 
-   
   public List<Workout> getAllStatutsForUser() {
     return workoutRepository.findAll();
   }
 
-   
   public double getTotalDistanceThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -73,7 +68,6 @@ public class WorkoutService {
         .sum();
   }
 
-   
   public double getTotalDistanceThisMonth(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -87,7 +81,6 @@ public class WorkoutService {
         .sum();
   }
 
-   
   public double getTotalDistanceThisYear(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfYear = today.withDayOfYear(1);
@@ -99,9 +92,8 @@ public class WorkoutService {
         .filter(workout -> workout.getDistance() != null)
         .mapToDouble(Workout::getDistance)
         .sum();
-}
+  }
 
-   
   public double getTotalDurationThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -115,7 +107,6 @@ public class WorkoutService {
         .sum();
   }
 
-   
   public double getTotalCaloriesThisWeek(User user) {
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
@@ -124,36 +115,38 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-    .mapToDouble(workout -> {
-      Double calories = workout.getCalorieBurn();
-      return calories != null ? calories : 0.0;
-    })        .sum();
+        .mapToDouble(
+            workout -> {
+              Double calories = workout.getCalorieBurn();
+              return calories != null ? calories : 0.0;
+            })
+        .sum();
   }
 
   // Evolution month button
-   
-    public List<Double> getMonthlyDistancesCurrentYear(User user) {
-      int currentYear = LocalDate.now().getYear();
-      List<Double> monthlyDistances = new ArrayList<>();
 
-      for (int month = 1; month <= 12; month++) {
-        LocalDate startOfMonth = LocalDate.of(currentYear, month, 1);
-        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+  public List<Double> getMonthlyDistancesCurrentYear(User user) {
+    int currentYear = LocalDate.now().getYear();
+    List<Double> monthlyDistances = new ArrayList<>();
 
-        double totalDistance =
-            workoutRepository
-                .findByUserAndDateBetween(
-                    user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
-                .stream()
-                .filter(workout -> workout.getDistance() != null)
-                .mapToDouble(Workout::getDistance)
-                .sum();
+    for (int month = 1; month <= 12; month++) {
+      LocalDate startOfMonth = LocalDate.of(currentYear, month, 1);
+      LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
-        monthlyDistances.add(Math.round(totalDistance * 10.0) / 10.0);
-      }
+      double totalDistance =
+          workoutRepository
+              .findByUserAndDateBetween(
+                  user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
+              .stream()
+              .filter(workout -> workout.getDistance() != null)
+              .mapToDouble(Workout::getDistance)
+              .sum();
 
-      return monthlyDistances;
+      monthlyDistances.add(Math.round(totalDistance * 10.0) / 10.0);
     }
+
+    return monthlyDistances;
+  }
 
   @Transactional(readOnly = true)
   public List<MonthlyBarView> getMonthlyBarViewsCurrentYear(User user) {
@@ -185,7 +178,6 @@ public class WorkoutService {
     return bars;
   }
 
-   
   public double getAverageMonthlyDistanceThisYear(User user) {
     int currentYear = LocalDate.now().getYear();
     LocalDate today = LocalDate.now();
@@ -219,13 +211,11 @@ public class WorkoutService {
     return total / currentMonth;
   }
 
-
   public double getDistanceGapVsAverageMonthly(User user) {
     double thisMonth = getTotalDistanceThisMonth(user);
     double average = getAverageMonthlyDistanceThisYear(user);
     return thisMonth - average;
   }
-
 
   public int getMonthlyProgressPercent(User user, double monthlyGoalKm) {
     if (monthlyGoalKm <= 0) {
@@ -237,12 +227,10 @@ public class WorkoutService {
     return Math.min(percent, 100);
   }
 
-   
   public List<String> getMonthDayLabels() {
     return List.of("S1", "S2", "S3", "S4");
   }
 
-   
   public List<Double> getCurrentMonthCurve(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -262,7 +250,6 @@ public class WorkoutService {
     return curve.stream().map(v -> Math.round(v * 10.0) / 10.0).toList();
   }
 
-   
   public List<Double> getYearAverageCurve(User user) {
     int currentYear = LocalDate.now().getYear();
     int currentMonth = LocalDate.now().getMonthValue();
@@ -298,12 +285,10 @@ public class WorkoutService {
         Math.round((sumS4 / currentMonth) * 10.0) / 10.0);
   }
 
-   
   public List<String> getWeekLabels() {
     return List.of("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim");
   }
 
-   
   public List<Double> getWeekDistances(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
@@ -328,7 +313,6 @@ public class WorkoutService {
     return distances;
   }
 
-   
   public List<String> getMonthLabelsForChart() {
     LocalDate today = LocalDate.now();
     int daysInMonth = today.lengthOfMonth();
@@ -341,7 +325,6 @@ public class WorkoutService {
     return labels;
   }
 
-   
   public List<Double> getMonthDistancesForChart(User user) {
     LocalDate today = LocalDate.now();
     LocalDate startOfMonth = today.withDayOfMonth(1);
@@ -367,9 +350,9 @@ public class WorkoutService {
     return distances;
   }
 
-   
   public List<String> getYearLabelsForChart() {
-    return List.of("Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc");
+    return List.of(
+        "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc");
   }
 
   @Transactional(readOnly = true)
@@ -384,7 +367,7 @@ public class WorkoutService {
 
     return workoutRepository
         .findByUserAndDateBetween(
-            user, startDate.atStartOfDay(), endDate.plusDays (1).atStartOfDay())
+            user, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay())
         .stream()
         .filter(workout -> workout.getDistance() != null)
         .mapToDouble(Workout::getDistance)
@@ -394,5 +377,4 @@ public class WorkoutService {
   private LocalDate minDate(LocalDate a, LocalDate b) {
     return a.isBefore(b) ? a : b;
   }
-
 }
