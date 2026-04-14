@@ -38,6 +38,8 @@ import utc.miage.tp.friendship.Friendship;
 import utc.miage.tp.friendship.FriendshipService;
 import utc.miage.tp.friendship.FriendshipStatus;
 import utc.miage.tp.goal.GoalService;
+import utc.miage.tp.sport.Sport;
+import utc.miage.tp.workout.Workout;
 import utc.miage.tp.workout.WorkoutService;
 
 @Controller
@@ -412,17 +414,39 @@ public class UserController {
     return "user-goals";
   }
 
-  @GetMapping("/dashboard")
-  public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
-    model.addAttribute("goals", goalService.getAll());
-    model.addAttribute("workouts", workoutService.getAll());
-    model.addAttribute("activeChallenges", challengeService.getAll());
-    model.addAttribute("badges", badgeService.getAll());
+@GetMapping("/dashboard")
+public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
+  double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
+  double totalDurationThisWeek = workoutService.getTotalDurationThisWeek(currentUser);
+  double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
+
+  int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
+  int totalMinutes = (int) Math.round(totalDurationThisWeek);
+  int hoursPart = totalMinutes / 60;
+  int minutesPart = totalMinutes % 60;
+
+  model.addAttribute("goals", goalService.getAll());
+  model.addAttribute("workouts", workoutService.getAll());
+  model.addAttribute("activeChallenges", challengeService.getAll());
+  model.addAttribute("badges", badgeService.getAll());
+
+  if (currentUser != null && currentUser.getId() != null) {
     model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
-    model.addAttribute("currentMonthLabel", "Avril 2026");
-    model.addAttribute("mainGoalLabel", "Objectif : 50 km");
-    return "dashboard";
+  } else {
+    model.addAttribute("friends", List.of());
   }
+
+  model.addAttribute("currentMonthLabel", "Avril 2026");
+  model.addAttribute("mainGoalLabel", "Objectif : 50 km");
+
+  model.addAttribute("totalDistanceThisWeek", Math.round(totalDistanceThisWeek * 10.0) / 10.0);
+  model.addAttribute("todayIndex", todayIndex);
+  model.addAttribute("hoursPart", hoursPart);
+  model.addAttribute("minutesPart", minutesPart);
+  model.addAttribute("totalCaloriesThisWeek", Math.round(totalCaloriesThisWeek));
+
+  return "dashboard";
+}
 
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
@@ -512,9 +536,6 @@ public class UserController {
     model.addAttribute("bmr", userService.calculateBMR(user));
   }
 
-  private void populateProfileEditForm(Model model, User user) {
-    model.addAttribute("user", user);
-    model.addAttribute("sexValues", Sex.values());
   private List<Sport> resolveProfileSports(User user) {
     if (user == null || user.getId() == null) {
       return List.of();
