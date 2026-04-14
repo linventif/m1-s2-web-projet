@@ -358,6 +358,11 @@
                         th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
                       ></div>
                     </div>
+                    <div>
+                      <div
+                        th:replace="~{components/comment-section :: comment-section(workout=${workout})}"
+                      ></div>
+                    </div>
                   </div>
                 </article>
               </div>
@@ -541,5 +546,6 @@
     </div>
 
     <script src="/js/kudo_toggle.js"></script>
+    <script src="/js/comment.js"></script>
   </body>
 </html>
