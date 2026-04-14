@@ -23,7 +23,13 @@ public class SecurityBeansConfig {
                         "/js/**",
                         "/images/**",
                         "/error",
-                        "/api/**")
+                        "/api/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v2/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**")
                     .permitAll()
 
                     // 2. Les routes ADMIN (STRICTEMENT réservées à l'ADMIN)

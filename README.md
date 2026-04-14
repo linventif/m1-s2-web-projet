@@ -6,7 +6,8 @@
 
 ## Links
 
-- [JavaDoc](https://linventif.github.io/m1-s2-web-projet/)
+- [JavaDoc](https://linventif.github.io/m1-s2-web-projet/java-docs/)
+- [Swagger UI](https://linventif.github.io/m1-s2-web-projet/swagger/)
 - [SonarQube](https://sorar.linv.dev) (user: `indu`, password: `le nom du prof`)
 - [GitHub Project](https://github.com/users/linventif/projects/7/views/1)
 - [GitHub Repository](https://github.com/linventif/m1-s2-web-projet)

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <th:block th:fragment="sportList(sports)">
+    <div class="space-y-3">
+      <h3 class="text-xl font-bold">Sports pratiqués</h3>
+      <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(sports)}">
+        <span>Aucun sport pratiqué pour le moment.</span>
+      </div>
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2" th:if="${!#lists.isEmpty(sports)}">
+        <div
+          class="rounded-xl border border-base-300 bg-base-200/70 px-3 py-2"
+          th:each="sport : ${sports}"
+        >
+          <span class="font-medium" th:text="${sport.name}">Sport</span>
+        </div>
+      </div>
+    </div>
+  </th:block>
+</html>
