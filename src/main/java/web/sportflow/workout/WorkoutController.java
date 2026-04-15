@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -292,5 +293,25 @@ public class WorkoutController {
     return workout.getUser().getBadges().stream()
         .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
         .toList();
+  }
+
+  private boolean isWorkoutOwner(Workout workout, User currentUser) {
+    return workout != null
+        && workout.getUser() != null
+        && workout.getUser().getId() != null
+        && currentUser != null
+        && currentUser.getId() != null
+        && Objects.equals(workout.getUser().getId(), currentUser.getId());
+  }
+
+  private Double normalizeRating(Double rating) {
+    if (rating == null) {
+      return null;
+    }
+    double rounded = Math.round(rating * 2.0) / 2.0;
+    if (rounded < 0.5 || rounded > 5.0) {
+      return null;
+    }
+    return rounded;
   }
 }

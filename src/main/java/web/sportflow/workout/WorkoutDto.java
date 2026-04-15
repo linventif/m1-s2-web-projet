@@ -17,7 +17,6 @@ public class WorkoutDto {
   private Double duration;
   private Double distance;
   private String address;
-  private Integer rating;
 
   // L'objet météo pour mapper le formulaire
   private WeatherStatsDTO weather;
@@ -36,7 +35,6 @@ public class WorkoutDto {
       Double duration,
       Double distance,
       String address,
-      Integer rating,
       WeatherStatsDTO weather) {
     this.id = id;
     this.name = name;
@@ -46,7 +44,6 @@ public class WorkoutDto {
     this.duration = duration;
     this.distance = distance;
     this.address = address;
-    this.rating = rating;
     this.weather = weather;
   }
 
@@ -112,14 +109,6 @@ public class WorkoutDto {
 
   public void setAddress(String address) {
     this.address = address;
-  }
-
-  public Integer getRating() {
-    return rating;
-  }
-
-  public void setRating(Integer rating) {
-    this.rating = rating;
   }
 
   public WeatherStatsDTO getWeather() {
