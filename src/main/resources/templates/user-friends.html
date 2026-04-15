@@ -72,7 +72,6 @@
                   <table class="table table-zebra">
                     <thead>
                       <tr>
-                        <th>ID</th>
                         <th>Photo</th>
                         <th>Nom</th>
                         <th>Statut</th>
@@ -81,7 +80,6 @@
                     </thead>
                     <tbody>
                       <tr th:each="user : ${userPage.content}" th:if="${user.id != currentUserId}">
-                        <td th:text="${user.id}"></td>
                         <td>
                           <div class="avatar">
                             <div

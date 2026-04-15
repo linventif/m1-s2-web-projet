@@ -62,32 +62,10 @@
             class="btn btn-ghost rounded-full px-4"
             >Admin</a
           >
-          <a th:href="@{/users/goals}" class="btn btn-ghost rounded-full px-4">Objectifs</a>
           <a th:href="@{/users/workout}" class="btn btn-ghost rounded-full px-4">Activités</a>
           <a th:href="@{/users/friends}" class="btn btn-ghost rounded-full px-4">Communauté</a>
-          <a th:href="@{/users/users}" class="btn btn-ghost rounded-full px-4">Utilisateurs</a>
           <a th:href="@{/users/profile}" class="btn btn-ghost rounded-full px-4">Profil</a>
         </nav>
-      </div>
-
-      <div class="hidden flex-none xl:block">
-        <label class="input input-bordered flex items-center gap-2 rounded-full bg-base-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 opacity-60"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input type="text" class="grow" placeholder="Rechercher une activité" />
-        </label>
       </div>
 
       <div class="flex flex-none items-center gap-2 sm:gap-3">
@@ -158,9 +136,7 @@
               </div>
             </li>
             <li><a th:href="@{/users/profile}">Mon profil</a></li>
-            <li><a th:href="@{/users/goals}">Mes objectifs</a></li>
             <li><a th:href="@{/users/friends}">Mes amis</a></li>
-            <li><a th:href="@{/users/users}">Utilisateurs</a></li>
             <li><a th:href="@{/users/workout}">Mes activités</a></li>
             <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">Panneau admin</a></li>
             <li>
@@ -223,10 +199,8 @@
             class="btn btn-ghost btn-sm rounded-full"
             >Admin</a
           >
-          <a th:href="@{/users/goals}" class="btn btn-ghost btn-sm rounded-full">Objectifs</a>
           <a th:href="@{/users/workout}" class="btn btn-ghost btn-sm rounded-full">Activités</a>
           <a th:href="@{/users/friends}" class="btn btn-ghost btn-sm rounded-full">Amis</a>
-          <a th:href="@{/users/users}" class="btn btn-ghost btn-sm rounded-full">Utilisateurs</a>
           <a th:href="@{/users/profile}" class="btn btn-ghost btn-sm rounded-full">Profil</a>
         </nav>
 

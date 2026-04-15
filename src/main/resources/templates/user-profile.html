@@ -191,6 +191,54 @@
         </aside>
       </section>
 
+      <section
+        id="goals"
+        class="rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xl"
+        th:if="${showOwnGoals}"
+      >
+        <div class="mb-5 flex items-center justify-between">
+          <h2 class="text-xl font-bold">Mes objectifs</h2>
+          <span class="badge badge-outline" th:text="${#lists.size(profileGoals)}">0</span>
+        </div>
+
+        <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(profileGoals)}">
+          <span>Aucun objectif pour le moment.</span>
+        </div>
+
+        <div
+          class="grid grid-cols-1 gap-4 lg:grid-cols-2"
+          th:if="${!#lists.isEmpty(profileGoals)}"
+        >
+          <article
+            class="rounded-2xl border border-base-300 bg-base-200 p-4"
+            th:each="goal : ${profileGoals}"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="font-semibold" th:text="${goal.label}">Objectif</h3>
+              <span class="badge badge-outline" th:text="${goal.type.labelFr}">Type</span>
+            </div>
+
+            <p class="mt-2 text-sm text-base-content/80">
+              <span th:text="${goal.currentValue}">0</span>
+              /
+              <span th:text="${goal.targetValue}">0</span>
+              <span th:text="${goal.unit}">km</span>
+            </p>
+
+            <progress
+              class="progress progress-primary mt-3 w-full"
+              max="100"
+              th:value="${goal.progressPercent}"
+            ></progress>
+            <p class="mt-1 text-xs text-base-content/70">
+              Progression :
+              <span th:text="${goal.progressPercent}">0</span>
+              %
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section class="rounded-3xl border border-base-300 bg-base-100 p-6 shadow-xl">
         <div class="mb-5 flex items-center justify-between">
           <h2 class="text-xl font-bold">Collection de badges</h2>

@@ -125,6 +125,7 @@ public class UserController {
     populateProfileView(model, profileUser);
     populateProfileFriendshipContext(currentUser, profileUser, model);
     model.addAttribute("canEditProfile", true);
+    model.addAttribute("showOwnGoals", true);
     return "user-profile";
   }
 
@@ -145,12 +146,13 @@ public class UserController {
               populateProfileView(model, user);
               populateProfileFriendshipContext(currentUser, user, model);
               model.addAttribute("canEditProfile", false);
+              model.addAttribute("showOwnGoals", false);
               return "user-profile";
             })
         .orElseGet(
             () -> {
               redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
-              return "redirect:/user/users";
+              return "redirect:/user/friends";
             });
   }
 
@@ -253,14 +255,8 @@ public class UserController {
   }
 
   @GetMapping("/users")
-  public String showAllUsers(@AuthenticationPrincipal User currentUser, Model model) {
-    List<User> users =
-        userService.getAll().stream()
-            .filter(user -> !user.getId().equals(currentUser.getId()))
-            .toList();
-    model.addAttribute("users", users);
-    populateFriendshipContext(currentUser, model);
-    return "user-users";
+  public String redirectUsersPage() {
+    return "redirect:/users/friends";
   }
 
   @PostMapping("/register")
@@ -423,14 +419,8 @@ public class UserController {
   }
 
   @GetMapping({"/goal", "/goals"})
-  public String showGoals(@AuthenticationPrincipal User currentUser, Model model) {
-    User goalUser =
-        currentUser == null
-            ? null
-            : userService.getUserById(currentUser.getId()).orElse(currentUser);
-    model.addAttribute("user", goalUser);
-    model.addAttribute("goals", goalUser == null ? List.of() : goalUser.getGoals());
-    return "user-goals";
+  public String redirectGoalsPage() {
+    return "redirect:/users/profile#goals";
   }
 
   @GetMapping("/dashboard")
@@ -549,6 +539,7 @@ public class UserController {
             .filter(id -> id != null)
             .collect(Collectors.toSet());
     model.addAttribute("user", user);
+    model.addAttribute("profileGoals", user.getGoals());
     model.addAttribute("profileSports", resolveProfileSports(user));
     model.addAttribute("allBadges", badgeService.getAll());
     model.addAttribute("unlockedBadgeIds", unlockedBadgeIds);
