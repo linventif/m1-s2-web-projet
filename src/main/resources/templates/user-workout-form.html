@@ -40,32 +40,12 @@
               <div class="form-control">
                 <label class="label font-semibold">Date</label>
                 <input
-                  id="workout-date-input"
                   type="datetime-local"
                   th:field="*{date}"
-                  th:value="${#temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm')}"
+                  th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : #temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"
                   class="input input-bordered w-full"
                   required
                 />
-                <div class="mt-2 flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-xs btn-outline"
-                    th:if="${workout.id == null}"
-                    onclick="setWorkoutDateNow()"
-                  >
-                    Aujourd'hui
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-xs btn-ghost"
-                    aria-label="Ouvrir le calendrier"
-                    title="Ouvrir le calendrier"
-                    onclick="openWorkoutDatePicker()"
-                  >
-                    📅
-                  </button>
-                </div>
               </div>
 
               <div class="form-control">
@@ -287,44 +267,5 @@
 
     <div th:insert="~{components/layout::footer}"></div>
     <script src="/js/workout_weather.js"></script>
-    <script>
-      function formatDateTimeLocal(date) {
-        const twoDigits = (value) => String(value).padStart(2, "0");
-        return (
-          date.getFullYear() +
-          "-" +
-          twoDigits(date.getMonth() + 1) +
-          "-" +
-          twoDigits(date.getDate()) +
-          "T" +
-          twoDigits(date.getHours()) +
-          ":" +
-          twoDigits(date.getMinutes())
-        );
-      }
-
-      function setWorkoutDateNow() {
-        const input = document.getElementById("workout-date-input");
-        if (!input) {
-          return;
-        }
-        input.value = formatDateTimeLocal(new Date());
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        input.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-
-      function openWorkoutDatePicker() {
-        const input = document.getElementById("workout-date-input");
-        if (!input) {
-          return;
-        }
-        if (typeof input.showPicker === "function") {
-          input.showPicker();
-          return;
-        }
-        input.focus();
-        input.click();
-      }
-    </script>
   </body>
 </html>
