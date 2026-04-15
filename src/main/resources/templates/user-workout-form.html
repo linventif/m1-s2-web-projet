@@ -106,14 +106,101 @@
                         <label class="label py-1">
                           <span class="label-text font-semibold">Ressenti</span>
                         </label>
-                        <input
-                          type="number"
-                          th:field="*{rating}"
-                          min="1"
-                          max="5"
-                          class="input input-bordered w-full rounded-lg bg-base-100"
-                          placeholder="1 à 5"
-                        />
+                        <div
+                          class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3"
+                          th:with="currentRating=${workout.rating}"
+                        >
+                          <div class="rating rating-md rating-half">
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="rating-hidden"
+                              value=""
+                              th:checked="${currentRating == null}"
+                              aria-label="Aucun ressenti"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-1 bg-orange-400"
+                              value="0.5"
+                              th:checked="${currentRating != null and currentRating == 0.5}"
+                              aria-label="0.5 étoile"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-2 bg-orange-400"
+                              value="1.0"
+                              th:checked="${currentRating != null and currentRating == 1.0}"
+                              aria-label="1 étoile"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-1 bg-orange-400"
+                              value="1.5"
+                              th:checked="${currentRating != null and currentRating == 1.5}"
+                              aria-label="1.5 étoile"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-2 bg-orange-400"
+                              value="2.0"
+                              th:checked="${currentRating != null and currentRating == 2.0}"
+                              aria-label="2 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-1 bg-orange-400"
+                              value="2.5"
+                              th:checked="${currentRating != null and currentRating == 2.5}"
+                              aria-label="2.5 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-2 bg-orange-400"
+                              value="3.0"
+                              th:checked="${currentRating != null and currentRating == 3.0}"
+                              aria-label="3 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-1 bg-orange-400"
+                              value="3.5"
+                              th:checked="${currentRating != null and currentRating == 3.5}"
+                              aria-label="3.5 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-2 bg-orange-400"
+                              value="4.0"
+                              th:checked="${currentRating != null and currentRating == 4.0}"
+                              aria-label="4 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-1 bg-orange-400"
+                              value="4.5"
+                              th:checked="${currentRating != null and currentRating == 4.5}"
+                              aria-label="4.5 étoiles"
+                            />
+                            <input
+                              type="radio"
+                              name="rating"
+                              class="mask mask-star-2 mask-half-2 bg-orange-400"
+                              value="5.0"
+                              th:checked="${currentRating != null and currentRating == 5.0}"
+                              aria-label="5 étoiles"
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       <div class="form-control">
