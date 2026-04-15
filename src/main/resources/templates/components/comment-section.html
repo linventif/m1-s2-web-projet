@@ -36,6 +36,7 @@
       >
         <div
           th:each="comment : ${workout.comments}"
+          th:with="canDeleteComment=${#authentication.principal != null and ((comment.author != null and comment.author.id != null and #authentication.principal.id != null and comment.author.id == #authentication.principal.id) or #authorization.expression('hasRole(''ADMIN'')'))}"
           class="flex items-start gap-2 animate-fade-in mb-3"
         >
           <div class="avatar">
@@ -50,10 +51,22 @@
                 ><span th:text="${comment.author.firstname}">Firstname</span>
                 <span th:text="${comment.author.lastname}">Lastname</span></span
               >
-              <span
-                class="text-[10px] opacity-50"
-                th:text="${comment.createdAt != null ? #temporals.format(comment.createdAt, 'dd/MM HH:mm') : 'Maintenant'}"
-              ></span>
+              <div class="flex items-center gap-1">
+                <span
+                  class="text-[10px] opacity-50"
+                  th:text="${comment.createdAt != null ? #temporals.format(comment.createdAt, 'dd/MM HH:mm') : 'Maintenant'}"
+                ></span>
+                <button
+                  type="button"
+                  th:if="${canDeleteComment}"
+                  th:onclick="'deleteCommentAjax(' + ${workout.id} + ',' + ${comment.id} + ')'"
+                  class="btn btn-ghost btn-xs btn-square text-error"
+                  title="Supprimer le commentaire"
+                  aria-label="Supprimer le commentaire"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
             </div>
             <p class="text-xs text-base-content/80" th:text="${comment.content}"></p>
           </div>

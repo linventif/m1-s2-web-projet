@@ -38,7 +38,7 @@
                 <tbody>
                   <tr
                     th:each="workout : ${workouts}"
-                    th:with="isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}"
+                    th:with="isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}, isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}, canDeleteWorkout=${isOwner or isAdmin}"
                   >
                     <td>
                       <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
@@ -81,8 +81,9 @@
                       >
                     </td>
                     <td>
-                      <div class="flex items-center gap-2" th:if="${isOwner}">
+                      <div class="flex items-center gap-2" th:if="${canDeleteWorkout}">
                         <a
+                          th:if="${isOwner}"
                           th:href="@{/workouts/{id}/edit(id=${workout.id})}"
                           class="btn btn-xs btn-outline btn-square"
                           title="Modifier"
@@ -107,7 +108,7 @@
                           </button>
                         </form>
                       </div>
-                      <span class="text-base-content/50" th:if="${!isOwner}">-</span>
+                      <span class="text-base-content/50" th:if="${!canDeleteWorkout}">-</span>
                     </td>
                     <!-- <td th:text="${conference.idconf}"></td>
                             <td class="font-semibold" th:text="${conference.titleconf}"></td>
