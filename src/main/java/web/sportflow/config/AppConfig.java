@@ -14,8 +14,11 @@ import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
 
-  @Value("${app.avatar-upload-dir:avatar_upload}")
+  @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
+
+  @Value("${app.badge-upload-dir:upload_data/images/badge}")
+  private String badgeUploadDir;
 
   @Bean
   public RestTemplate restTemplate() {
@@ -34,9 +37,13 @@ public class AppConfig implements WebMvcConfigurer {
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    Path uploadPath = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+    Path avatarUploadPath = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+    Path badgeUploadPath = Paths.get(badgeUploadDir).toAbsolutePath().normalize();
     registry
         .addResourceHandler("/avatar_upload/**")
-        .addResourceLocations(uploadPath.toUri().toString());
+        .addResourceLocations(avatarUploadPath.toUri().toString());
+    registry
+        .addResourceHandler("/badge_upload/**")
+        .addResourceLocations(badgeUploadPath.toUri().toString());
   }
 }

@@ -238,7 +238,9 @@
             <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
               Répétitions
             </p>
-            <p class="mt-2 text-2xl font-black" th:text="${display.totalReps + ' reps'}">42 reps</p>
+            <p class="mt-2 text-2xl font-black" th:text="${display.totalReps + ' répétitions'}">
+              42 répétitions
+            </p>
           </div>
           <div
             th:if="${type.strengthRelevant and display.maxWeightKg > 0}"
@@ -270,7 +272,7 @@
         <details class="collapse rounded-2xl border border-base-300 bg-base-200/60 text-sm">
           <summary class="collapse-title flex flex-wrap items-center justify-between gap-3 p-4">
             <span class="flex flex-wrap items-center gap-2">
-              <span class="badge rounded-full border-none bg-white">Session</span>
+              <span class="badge rounded-full border-none bg-white">Séance</span>
               <span>
                 <strong th:text="${workout.sport.name}">Course</strong>
                 le <span th:text="${workout.date}">2026-04-08</span>

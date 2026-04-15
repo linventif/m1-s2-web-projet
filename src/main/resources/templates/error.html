@@ -4,8 +4,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Error - Something Went Wrong')}">
-    <title>Error - Something Went Wrong</title>
+  <head th:replace="~{components/layout::head(title='Erreur')}">
+    <title>Erreur</title>
   </head>
   <body class="bg-base-200 min-h-screen flex items-center justify-center font-sans">
     <div class="hero">
@@ -30,28 +30,28 @@
 
           <h1
             class="text-5xl font-bold text-base-content mb-2"
-            th:text="${status != null ? status : 'Error'}"
+            th:text="${httpStatus != null ? httpStatus : (status != null ? status : 'Erreur')}"
           >
             500
           </h1>
 
           <h2
             class="text-xl font-semibold text-secondary mb-4"
-            th:text="${error != null ? error : 'Something went wrong'}"
+            th:text="${reason != null ? reason : (error != null ? error : 'Une erreur est survenue')}"
           >
-            Internal Server Error
+            Erreur interne du serveur
           </h2>
 
           <div class="divider"></div>
 
           <p
             class="mb-8 text-base-content/70 italic break-words"
-            th:text="${message != null ? message : 'An unexpected error occurred. Please try again later.'}"
+            th:text="${message != null ? message : 'Une erreur inattendue est survenue. Veuillez réessayer plus tard.'}"
           >
-            Error details will appear here.
+            Les détails de l'erreur s'affichent ici.
           </p>
 
-          <a th:href="@{/}" class="btn btn-primary px-8"> Back to Home </a>
+          <a th:href="@{/}" class="btn btn-primary px-8">Retour à l'accueil</a>
         </div>
       </div>
     </div>

@@ -172,7 +172,7 @@ public class WorkoutDashboardDisplay {
       return getTotalSets() + " séries";
     }
     if (sportType.isMobilityRelevant()) {
-      return "Flow";
+      return "Mobilité";
     }
     if (getDurationSec() > 0) {
       return format("%.0f min", getDurationMinutes());
@@ -210,7 +210,7 @@ public class WorkoutDashboardDisplay {
       return format("%.0f kg", getMaxWeightKg());
     }
     if (sportType.isStrengthRelevant() && getTotalReps() > 0) {
-      return getTotalReps() + " reps";
+      return getTotalReps() + " répétitions";
     }
     if (getAverageBpm() > 0) {
       return format("%.0f bpm", getAverageBpm());

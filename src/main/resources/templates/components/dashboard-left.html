@@ -21,8 +21,10 @@
           </div>
           <div class="min-w-0">
             <h2 class="truncate text-lg font-black">
-              <span sec:authentication="principal.firstname">Prénom</span>
-              <span sec:authentication="principal.lastname">Nom</span>
+              <a th:href="@{/users/profile}" class="link link-hover">
+                <span sec:authentication="principal.firstname">Prénom</span>
+                <span sec:authentication="principal.lastname">Nom</span>
+              </a>
             </h2>
             <p class="truncate text-sm text-base-content/60" sec:authentication="name">
               user@email.com
@@ -37,7 +39,7 @@
           </div>
           <div class="rounded-2xl bg-base-200 p-3">
             <p class="text-lg font-black text-emerald-600" th:text="${#lists.size(goals)}">0</p>
-            <p class="text-xs text-base-content/60">Goals</p>
+            <p class="text-xs text-base-content/60">Objectifs</p>
           </div>
           <div class="rounded-2xl bg-base-200 p-3">
             <p class="text-lg font-black text-sky-600" th:text="${#lists.size(friends)}">0</p>
@@ -47,11 +49,11 @@
       </div>
     </div>
 
-    <!-- This week -->
+    <!-- Cette semaine -->
     <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
       <div class="card-body">
         <div class="flex items-center justify-between">
-          <h2 class="card-title text-lg uppercase">This Week</h2>
+          <h2 class="card-title text-lg uppercase">Cette semaine</h2>
           <a
             th:href="@{/users/statistique}"
             class="btn btn-warning btn-outline btn-sm rounded-full"
@@ -100,27 +102,27 @@
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 0} ? ' text-orange-500' : ''"
-            >M</span
+            >L</span
           >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 1} ? ' text-orange-500' : ''"
-            >T</span
+            >M</span
           >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 2} ? ' text-orange-500' : ''"
-            >W</span
+            >M</span
           >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 3} ? ' text-orange-500' : ''"
-            >T</span
+            >J</span
           >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 4} ? ' text-orange-500' : ''"
-            >F</span
+            >V</span
           >
           <span
             class="w-4 text-center"
@@ -130,7 +132,7 @@
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 6} ? ' text-orange-500' : ''"
-            >S</span
+            >D</span
           >
         </div>
 
@@ -187,7 +189,7 @@
                 ami@email.com
               </p>
               <p class="mt-1 text-xs text-base-content/50">
-                Niveau : <span th:text="${friend.level}">BEGINNER</span>
+                Niveau : <span th:text="${friend.level.labelFr}">Débutant</span>
               </p>
             </div>
           </div>

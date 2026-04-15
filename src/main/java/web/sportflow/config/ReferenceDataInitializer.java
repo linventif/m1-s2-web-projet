@@ -54,8 +54,11 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final FriendshipService friendshipService;
   private final ExerciseRepository exerciseRepository;
 
-  @Value("${app.avatar-upload-dir:avatar_upload}")
+  @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
+
+  @Value("${app.badge-upload-dir:upload_data/images/badge}")
+  private String badgeUploadDir;
 
   public ReferenceDataInitializer(
       UserRepository userRepository,
@@ -546,6 +549,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                         + sportYogaDynamique.getName()
                         + " sans interruption.",
                     "/images/badge/yoga.png")));
+    assignDemoBadgeIcons(demoBadges);
     Badge badgeRookie5k = demoBadges.get(0);
     Badge badgeMarathonHerbe = demoBadges.get(1);
     Badge badgeMarathonien = demoBadges.get(2);
@@ -1145,6 +1149,66 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     } catch (IOException exception) {
       throw new IllegalStateException("Impossible de copier les avatars de demo.", exception);
     }
+  }
+
+  private void assignDemoBadgeIcons(List<Badge> badges) {
+    try {
+      Path uploadDir = Paths.get(badgeUploadDir).toAbsolutePath().normalize();
+      Files.createDirectories(uploadDir);
+      for (Badge badge : badges) {
+        if (badge == null) {
+          continue;
+        }
+        String sourceFileName = extractFileName(badge.getIconPath());
+        if (sourceFileName.isBlank()) {
+          continue;
+        }
+        String extension = extractExtension(sourceFileName);
+        if (extension.isBlank()) {
+          continue;
+        }
+
+        Path targetPath = uploadDir.resolve(sourceFileName).normalize();
+        if (!targetPath.startsWith(uploadDir)) {
+          continue;
+        }
+
+        ClassPathResource resource = new ClassPathResource("static/images/badge/" + sourceFileName);
+        if (!resource.exists()) {
+          continue;
+        }
+
+        try (InputStream inputStream = resource.getInputStream()) {
+          Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+          badge.setIconPath("/badge_upload/" + sourceFileName);
+        }
+      }
+      badgeRepository.saveAll(badges);
+    } catch (IOException exception) {
+      throw new IllegalStateException("Impossible de copier les badges de demo.", exception);
+    }
+  }
+
+  private String extractFileName(String pathValue) {
+    if (pathValue == null || pathValue.isBlank()) {
+      return "";
+    }
+    String normalizedPath = pathValue.trim().replace('\\', '/');
+    int queryIndex = normalizedPath.indexOf('?');
+    if (queryIndex >= 0) {
+      normalizedPath = normalizedPath.substring(0, queryIndex);
+    }
+    int fragmentIndex = normalizedPath.indexOf('#');
+    if (fragmentIndex >= 0) {
+      normalizedPath = normalizedPath.substring(0, fragmentIndex);
+    }
+    int lastSlashIndex = normalizedPath.lastIndexOf('/');
+    String fileName =
+        lastSlashIndex >= 0 ? normalizedPath.substring(lastSlashIndex + 1) : normalizedPath;
+    if (fileName.isBlank() || fileName.contains("..")) {
+      return "";
+    }
+    return fileName;
   }
 
   private String extractExtension(String filename) {

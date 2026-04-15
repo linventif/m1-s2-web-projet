@@ -12,11 +12,11 @@
       <section class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body gap-6 p-6 sm:p-8">
           <div class="alert alert-success" th:if="${message}">
-            <span th:text="${message}">Action completed.</span>
+            <span th:text="${message}">Action effectuée.</span>
           </div>
 
           <div class="alert alert-error" th:if="${errorMessage}">
-            <span th:text="${errorMessage}">Action failed.</span>
+            <span th:text="${errorMessage}">Échec de l'action.</span>
           </div>
 
           <div>
