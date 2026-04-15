@@ -17,6 +17,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +42,9 @@ public class Workout {
   @Column(name = "name", nullable = false)
   private String name;
 
+  @Column(name = "description", length = 1000)
+  private String description;
+
   @Column(name = "date", nullable = false)
   @ColumnDefault("current_date")
   private LocalDateTime date;
@@ -53,6 +57,8 @@ public class Workout {
 
   @Column(name = "rating", nullable = true)
   private Double rating; // note de 0.5 a 5.0
+
+  @Transient private Double calories;
 
   @Embedded private WeatherStatsDTO weather;
 
@@ -125,6 +131,7 @@ public class Workout {
 
   public Workout(
       String name,
+      String description,
       LocalDateTime date,
       String address,
       Double durationSec,
@@ -134,6 +141,7 @@ public class Workout {
       List<WorkoutExercise> exercises,
       User user) {
     this.name = name;
+    this.description = description;
     this.date = date;
     this.address = address;
     this.durationSec = durationSec;
@@ -158,6 +166,14 @@ public class Workout {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public LocalDateTime getDate() {
@@ -215,7 +231,7 @@ public class Workout {
     if (sport == null || sport.getMET() == null || durationSec == null) {
       return 0.0;
     }
-    return durationSec / 60;
+    return this.getCalories();
   }
 
   public List<Comment> getComments() {

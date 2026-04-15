@@ -67,6 +67,12 @@
                 >
                   <h3 class="mb-3 text-lg font-bold">Créer une activité</h3>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    <input name="name" class="input input-bordered" placeholder="Nom" required />
+                    <input
+                      name="description"
+                      class="input input-bordered md:col-span-2"
+                      placeholder="Description (optionnel)"
+                    />
                     <input
                       name="date"
                       type="datetime-local"
@@ -109,15 +115,15 @@
                     <select name="sportId" class="select select-bordered" required>
                       <option value="" disabled selected>Choisir un sport</option>
                       <option
-                        th:each="sport : ${sports.?[#this != null]}"
+                        th:each="sport : ${sports}"
                         th:value="${sport.id}"
-                        th:text="${sport.name}"
+                        th:text="${sport.displayName}"
                       ></option>
                     </select>
                     <select name="userId" class="select select-bordered" required>
                       <option value="" disabled selected>Choisir un utilisateur</option>
                       <option
-                        th:each="user : ${users.?[#this != null]}"
+                        th:each="user : ${users}"
                         th:value="${user.id}"
                         th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                       ></option>
@@ -131,13 +137,13 @@
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(workouts)}">
                   <details
-                    th:each="workout : ${workouts.?[#this != null]}"
+                    th:each="workout : ${workouts}"
                     class="collapse collapse-arrow border border-base-300 bg-base-100"
                   >
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${workout.id}">1</span> -
                       <span
-                        th:text="${workout.sport != null ? workout.sport.name : 'Sport inconnu'}"
+                        th:text="${workout.sport != null ? workout.sport.displayName : 'Sport inconnu'}"
                         >Sport</span
                       >
                       /
@@ -153,6 +159,18 @@
                         method="post"
                         class="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
                       >
+                        <input
+                          name="name"
+                          class="input input-bordered"
+                          th:value="${workout.name}"
+                          required
+                        />
+                        <input
+                          name="description"
+                          class="input input-bordered md:col-span-2"
+                          th:value="${workout.description}"
+                          placeholder="Description (optionnel)"
+                        />
                         <input
                           name="date"
                           type="datetime-local"
@@ -194,15 +212,15 @@
                         />
                         <select name="sportId" class="select select-bordered" required>
                           <option
-                            th:each="sport : ${sports.?[#this != null]}"
+                            th:each="sport : ${sports}"
                             th:value="${sport.id}"
-                            th:text="${sport.name}"
+                            th:text="${sport.displayName}"
                             th:selected="${workout.sport != null and sport != null and sport.id != null and workout.sport.id == sport.id}"
                           ></option>
                         </select>
                         <select name="userId" class="select select-bordered" required>
                           <option
-                            th:each="user : ${users.?[#this != null]}"
+                            th:each="user : ${users}"
                             th:value="${user.id}"
                             th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                             th:selected="${workout.user != null and user != null and user.id != null and workout.user.id == user.id}"

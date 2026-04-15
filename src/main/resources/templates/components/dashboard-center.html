@@ -47,8 +47,8 @@
 
     <article
       th:each="display : ${workoutDisplays}"
-      th:with="workout=${display.workout}, type=${display.sportType}, isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}, isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}, canDeleteWorkout=${isOwner or isAdmin}"
-      th:attr="data-sport=${workout.sport.name}"
+      th:with="workout=${display.workout}, sportName=${display.sportName}, isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}, isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}, canDeleteWorkout=${isOwner or isAdmin}"
+      th:attr="data-sport=${workout.sport.displayName}"
       class="workout-card card overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
     >
       <div class="card-body gap-5">
@@ -65,7 +65,7 @@
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-xl font-black" th:text="${workout.sport.name}">Course</h3>
+                <h3 class="text-xl font-black" th:text="${workout.sport.displayName}">Course</h3>
                 <span
                   class="badge rounded-full border-none bg-orange-100 text-orange-700"
                   th:text="${workout.date}"
@@ -75,6 +75,13 @@
               <p class="mt-2 text-sm text-base-content/65">
                 Séance publiée par
                 <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
+              </p>
+              <p
+                th:if="${workout.description != null}"
+                class="mt-2 max-w-2xl text-sm text-base-content/70"
+                th:text="${workout.description}"
+              >
+                Description
               </p>
               <div
                 th:if="${workout.address != null}"
@@ -181,7 +188,7 @@
             <div>
               <p
                 class="text-xs uppercase tracking-[0.35em] text-white/80"
-                th:text="${'Résumé ' + type.label}"
+                th:text="${'Résumé ' + display.sportNameLabel}"
               >
                 Résumé sortie
               </p>
@@ -207,7 +214,7 @@
             <span class="flex flex-wrap items-center gap-2">
               <span class="badge rounded-full border-none bg-white">Séance</span>
               <span>
-                <strong th:text="${workout.sport.name}">Course</strong>
+                <strong th:text="${workout.sport.displayName}">Course</strong>
                 le <span th:text="${workout.date}">2026-04-08</span>
               </span>
             </span>
@@ -220,7 +227,9 @@
                   <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
                     Synthèse
                   </p>
-                  <h4 class="mt-2 text-lg font-black" th:text="${type.label}">Course</h4>
+                  <h4 class="mt-2 text-lg font-black" th:text="${display.sportNameLabel}">
+                    Course
+                  </h4>
                   <p class="mt-2 text-sm text-base-content/65">
                     <span th:text="${display.primaryMetricLabel}">Distance</span> :
                     <strong th:text="${display.primaryMetricValue}">12.50 km</strong>

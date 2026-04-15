@@ -140,14 +140,14 @@
                     />
                     <select name="sportIds" multiple class="select select-bordered h-32">
                       <option
-                        th:each="sport : ${sports.?[#this != null]}"
+                        th:each="sport : ${sports}"
                         th:value="${sport.id}"
-                        th:text="${sport.name}"
+                        th:text="${sport.displayName}"
                       ></option>
                     </select>
                     <select name="badgeIds" multiple class="select select-bordered h-32">
                       <option
-                        th:each="badge : ${badges.?[#this != null]}"
+                        th:each="badge : ${badges}"
                         th:value="${badge.id}"
                         th:text="${badge.name}"
                       ></option>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(users)}">
                   <details
-                    th:each="user : ${users.?[#this != null]}"
+                    th:each="user : ${users}"
                     class="collapse collapse-arrow border border-base-300 bg-base-100"
                   >
                     <summary class="collapse-title font-semibold">
@@ -253,18 +253,18 @@
                           />
                           <select name="sportIds" multiple class="select select-bordered h-32">
                             <option
-                              th:each="sport : ${sports.?[#this != null]}"
+                              th:each="sport : ${sports}"
                               th:value="${sport.id}"
-                              th:text="${sport.name}"
-                              th:selected="${#sport != null and user.sports != null and user.sports.?[#this != null and #this.id == #sport.id].size() > 0}"
+                              th:text="${sport.displayName}"
+                              th:selected="${user.sports != null and user.sports.contains(sport)}"
                             ></option>
                           </select>
                           <select name="badgeIds" multiple class="select select-bordered h-32">
                             <option
-                              th:each="badge : ${badges.?[#this != null]}"
+                              th:each="badge : ${badges}"
                               th:value="${badge.id}"
                               th:text="${badge.name}"
-                              th:selected="${#badge != null and user.badges != null and user.badges.?[#this != null and #this.id == #badge.id].size() > 0}"
+                              th:selected="${user.badges != null and user.badges.contains(badge)}"
                             ></option>
                           </select>
                         </div>

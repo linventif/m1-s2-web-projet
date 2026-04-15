@@ -34,6 +34,7 @@ public class WorkoutService {
     Workout newWorkout =
         new Workout(
             workout.getName(),
+            workout.getDescription(),
             workout.getDate(),
             workout.getAddress(),
             workout.getDurationSec(),
@@ -440,6 +441,7 @@ public class WorkoutService {
 
   public void saveWorkout(Workout workout, User currentUser) {
     workout.setUser(currentUser);
+    workout.getCalorieBurn();
     workoutRepository.save(workout);
   }
 

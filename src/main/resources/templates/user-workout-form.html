@@ -67,6 +67,17 @@
                       />
                     </div>
 
+                    <div class="form-control">
+                      <label class="label py-1">
+                        <span class="label-text font-semibold">Description</span>
+                      </label>
+                      <textarea
+                        th:field="*{description}"
+                        class="textarea textarea-bordered min-h-24 w-full rounded-lg bg-base-100"
+                        placeholder="Sensations, objectif de la séance, contexte..."
+                      ></textarea>
+                    </div>
+
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div class="form-control">
                         <label class="label py-1">
@@ -82,8 +93,8 @@
                           <option
                             th:each="s : ${sports}"
                             th:value="${s.id}"
-                            th:text="${s.name}"
-                            th:attr="data-type=${s.type},data-distance=${s.type.distanceRelevant},data-strength=${s.type.strengthRelevant},data-mobility=${s.type.mobilityRelevant}"
+                            th:text="${s.displayName}"
+                            th:attr="data-sport-name=${s.name.name()},data-distance=${s.distanceRelevant},data-strength=${s.strengthRelevant},data-mobility=${s.mobilityRelevant}"
                           ></option>
                         </select>
                       </div>
@@ -409,7 +420,7 @@
                                 type="button"
                                 th:each="exercise : ${exercises}"
                                 class="exercise-choice block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-base-200"
-                                th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-types=${exerciseSportTypes[exercise.id]}"
+                                th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-names=${exerciseSportNames[exercise.id]}"
                                 th:text="${exercise.name}"
                               >
                                 Course continue
@@ -565,7 +576,7 @@
                       type="button"
                       th:each="exercise : ${exercises}"
                       class="exercise-choice block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-base-200"
-                      th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-types=${exerciseSportTypes[exercise.id]}"
+                      th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-names=${exerciseSportNames[exercise.id]}"
                       th:text="${exercise.name}"
                     >
                       Course continue
@@ -676,7 +687,7 @@
         const currentProfile = () => {
           const option = sportSelect?.selectedOptions?.[0];
           return {
-            type: option?.dataset.type || "",
+            sportName: option?.dataset.sportName || "",
             distance: option?.dataset.distance === "true",
             strength: option?.dataset.strength === "true",
             mobility: option?.dataset.mobility === "true",
@@ -692,8 +703,8 @@
         };
 
         const choiceMatchesSport = (choice, profile) => {
-          const sportTypes = choice.dataset.sportTypes || "";
-          return profile.type && sportTypes.split(",").includes(profile.type);
+          const sportNames = choice.dataset.sportNames || "";
+          return profile.sportName && sportNames.split(",").includes(profile.sportName);
         };
 
         const choiceMatchesSearch = (choice, query) => {

@@ -23,21 +23,22 @@ class SportServiceTest {
 
   @Test
   void createSport_createsAndPersistsCopiedSport() {
-    Sport input = new Sport("Swim", 9.5);
+    Sport input = new Sport(SportName.Natation, 9.5);
     when(sportRepository.save(any(Sport.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     Sport created = sportService.createSport(input);
 
     assertNotSame(input, created);
-    assertEquals("Swim", created.getName());
+    assertEquals(SportName.Natation, created.getName());
     assertEquals(9.5, created.getMET());
     verify(sportRepository, times(2)).save(any(Sport.class));
   }
 
   @Test
   void getAll_returnsRepositoryValues() {
-    List<Sport> expected = List.of(new Sport("Bike", 7.0), new Sport("Run", 10.0));
+    List<Sport> expected =
+        List.of(new Sport(SportName.Cyclisme, 7.0), new Sport(SportName.Course, 10.0));
     when(sportRepository.findAll()).thenReturn(expected);
 
     List<Sport> result = sportService.getAll();

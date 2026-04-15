@@ -8,6 +8,7 @@ import web.sportflow.weather.WeatherStatsDTO; // Import important
 public class WorkoutDto {
   private Long id;
   private String name;
+  private String description;
   private Sport sport;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -29,6 +30,7 @@ public class WorkoutDto {
   public WorkoutDto(
       Long id,
       String name,
+      String description,
       Sport sport,
       LocalDateTime date,
       Double rating,
@@ -38,6 +40,7 @@ public class WorkoutDto {
       WeatherStatsDTO weather) {
     this.id = id;
     this.name = name;
+    this.description = description;
     this.sport = sport;
     this.date = date;
     this.rating = rating;
@@ -61,6 +64,14 @@ public class WorkoutDto {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public Sport getSport() {
