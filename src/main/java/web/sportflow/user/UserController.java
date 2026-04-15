@@ -48,7 +48,7 @@ public class UserController {
   private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
       Set.of("png", "jpg", "jpeg", "webp", "gif");
 
-  @Value("${app.avatar-upload-dir:avatar_upload}")
+  @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
 
   private final UserService userService;

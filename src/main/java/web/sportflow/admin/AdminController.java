@@ -968,7 +968,19 @@ public class AdminController {
     if (normalized == null) {
       return DEFAULT_BADGE_ICON;
     }
-    return normalized;
+    if (normalized.startsWith("http://")
+        || normalized.startsWith("https://")
+        || normalized.startsWith("/")) {
+      return normalized;
+    }
+
+    String sanitized = normalized.replace('\\', '/');
+    int slashIndex = sanitized.lastIndexOf('/');
+    String fileName = slashIndex >= 0 ? sanitized.substring(slashIndex + 1) : sanitized;
+    if (fileName.isBlank()) {
+      return DEFAULT_BADGE_ICON;
+    }
+    return "/badge_upload/" + fileName;
   }
 
   private void syncGoalMembership(Goal goal, User owner) {
