@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.ChallengeService;
@@ -515,6 +517,11 @@ public class UserController {
 
     model.addAttribute("yearChartLabels", workoutService.getYearLabelsForChart());
     model.addAttribute("yearChartDistances", workoutService.getYearDistancesForChart(currentUser));
+
+    model.addAttribute("bmi", userService.calculateBMI(currentUser));
+    model.addAttribute("bmr", userService.calculateBMR(currentUser));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
+
 
     return "user-statistique";
   }
