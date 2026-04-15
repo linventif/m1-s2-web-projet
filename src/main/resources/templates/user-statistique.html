@@ -18,28 +18,39 @@
 
         <main class="px-3 pb-8 pt-24 md:px-5">
           <div class="mx-auto max-w-[1600px] space-y-6">
-            <!-- Top heading -->
-            <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+            <!-- Hero -->
+            <section
+              class="overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+            >
               <div class="card-body">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <p class="text-sm uppercase tracking-[0.3em] text-base-content/50">
-                      Analyse détaillée
-                    </p>
-                    <h1 class="mt-2 text-3xl font-black md:text-4xl">Mes Statistiques</h1>
-                    <p class="mt-2 max-w-2xl text-sm text-base-content/65">
-                      Retrouve un résumé complet de tes performances avec une vue semaine, mois,
-                      année, des comparaisons et des graphiques d’évolution.
-                    </p>
-                  </div>
+                <div
+                  class="rounded-[1.75rem] bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 p-6 text-white md:p-8"
+                >
+                  <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="max-w-3xl">
+                      <p class="text-xs uppercase tracking-[0.35em] text-white/80">
+                        Analyse détaillée
+                      </p>
+                      <h1 class="mt-3 text-3xl font-black md:text-5xl">Mes Statistiques</h1>
+                      <p class="mt-3 max-w-2xl text-sm leading-7 text-white/90 md:text-base">
+                        Retrouve une vue claire de tes performances avec les tendances semaine,
+                        mois, année, un suivi santé et des recommandations personnalisées.
+                      </p>
 
-                  <div class="flex flex-wrap gap-3">
-                    <a th:href="@{/users/dashboard}" class="btn btn-outline rounded-full">
-                      Retour au tableau de bord
-                    </a>
-                    <button class="btn btn-warning rounded-full text-white">
-                      Exporter plus tard
-                    </button>
+                      <div class="mt-5 flex flex-wrap gap-3">
+                        <a
+                          th:href="@{/users/dashboard}"
+                          class="btn rounded-full border-none bg-white text-orange-600 hover:bg-white/90"
+                        >
+                          Retour au tableau de bord
+                        </a>
+                        <button
+                          class="btn rounded-full border border-white/40 bg-white/10 text-white hover:bg-white/20"
+                        >
+                          Exporter plus tard
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -48,236 +59,367 @@
             <!-- Main grid -->
             <section class="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
               <!-- Left content -->
-              <div class="space-y-6">
-                <!-- Evolution chart -->
-                <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
-                  <div class="card-body">
-                    <div class="flex items-start justify-between gap-3">
-                      <div>
-                        <h2 class="card-title text-xl" id="evolutionTitle">Évolution - Mois</h2>
-                        <p class="text-sm text-base-content/60" id="evolutionSubtitle">
-                          Visualisation de l’activité sur le mois.
-                        </p>
-                      </div>
-                    </div>
-
-                    <!-- Filtres -->
-                    <div class="mt-5">
-                      <h3 class="text-lg font-semibold">Filtres d’analyse</h3>
-
-                      <div class="mt-4 flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          id="filterWeek"
-                          class="btn btn-sm rounded-full btn-outline"
+              <div class="min-w-0">
+                <div class="max-h-[calc(100vh-7rem)] overflow-y-auto pr-2 dashboard-scrollbar">
+                  <div class="space-y-6">
+                    <!-- Evolution chart -->
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
+                      <div class="card-body gap-5">
+                        <div
+                          class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"
                         >
-                          Semaine
-                        </button>
-
-                        <button
-                          type="button"
-                          id="filterMonth"
-                          class="btn btn-sm rounded-full btn-warning text-white"
-                        >
-                          Mois
-                        </button>
-
-                        <button
-                          type="button"
-                          id="filterYear"
-                          class="btn btn-sm rounded-full btn-outline"
-                        >
-                          Année
-                        </button>
-                      </div>
-
-                      <div class="mt-4 rounded-2xl bg-base-200 p-4 text-sm text-base-content/60">
-                        Ces boutons piloteront ensuite l’affichage du graphique selon la période
-                        choisie.
-                      </div>
-                    </div>
-
-                    <!-- Zone graphique -->
-                    <div class="mt-6 rounded-[1.5rem] border border-base-300 bg-base-200/50 p-5">
-                      <div class="rounded-2xl bg-base-100 p-4">
-                        <canvas id="evolutionChart" height="120"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Monthly comparison -->
-                <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
-                  <div class="card-body">
-                    <div class="flex items-center justify-between">
-                      <h2 class="card-title text-lg">Comparaison mensuelle</h2>
-                      <span class="badge rounded-full border-none bg-sky-100 text-sky-700">
-                        Ce mois-ci
-                      </span>
-                    </div>
-
-                    <div class="mt-4 rounded-[1.5rem] bg-base-200 p-5">
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <p class="text-xs uppercase tracking-wide text-base-content/50">
-                            Mois actuel
-                          </p>
-                          <p class="mt-2 text-3xl font-black text-sky-600">
-                            <span th:text="${distanceThisMonth}">0.0</span> km
-                          </p>
-                        </div>
-
-                        <div>
-                          <p class="text-xs uppercase tracking-wide text-base-content/50">
-                            Moyenne mensuelle annuelle
-                          </p>
-                          <p class="mt-2 text-3xl font-black text-emerald-600">
-                            <span th:text="${averageMonthlyDistanceThisYear}">0.0</span> km
-                          </p>
-                        </div>
-                      </div>
-
-                      <div class="mt-5">
-                        <div class="mb-3 flex items-center gap-4 text-xs">
-                          <div class="flex items-center gap-2">
-                            <span class="inline-block h-3 w-3 rounded-full bg-sky-500"></span>
-                            <span class="text-base-content/70">Mois actuel</span>
+                          <div>
+                            <h2 class="card-title text-2xl font-black" id="evolutionTitle">
+                              Évolution - Mois
+                            </h2>
+                            <p class="text-sm text-base-content/60" id="evolutionSubtitle">
+                              Visualisation de l’activité sur le période.
+                            </p>
                           </div>
-                          <div class="flex items-center gap-2">
-                            <span class="inline-block h-3 w-3 rounded-full bg-emerald-500"></span>
-                            <span class="text-base-content/70">Moyenne annuelle</span>
-                          </div>
-                        </div>
 
-                        <div class="rounded-2xl bg-base-100 p-3">
-                          <canvas id="monthlyComparisonChart" height="140"></canvas>
-                        </div>
-                      </div>
-
-                      <div class="mt-4 grid grid-cols-2 gap-3">
-                        <div class="rounded-2xl bg-base-100 p-4">
-                          <p class="text-xs uppercase tracking-wide text-base-content/50">Écart</p>
-                          <p
-                            class="mt-2 text-xl font-black"
-                            th:classappend="${distanceGapVsAverage >= 0} ? ' text-emerald-600' : ' text-error'"
-                          >
-                            <span
-                              th:text="${(distanceGapVsAverage >= 0 ? '+' : '') + distanceGapVsAverage}"
-                              >+0.0</span
+                          <div class="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              id="filterWeek"
+                              class="btn btn-sm rounded-full btn-outline"
                             >
-                            km
-                          </p>
+                              Semaine
+                            </button>
+
+                            <button
+                              type="button"
+                              id="filterMonth"
+                              class="btn btn-sm rounded-full btn-warning text-white"
+                            >
+                              Mois
+                            </button>
+
+                            <button
+                              type="button"
+                              id="filterYear"
+                              class="btn btn-sm rounded-full btn-outline"
+                            >
+                              Année
+                            </button>
+                          </div>
+                        </div>
+
+                        <div
+                          class="rounded-[1.5rem] bg-base-200/70 p-4 text-sm text-base-content/65"
+                        >
+                          La barre orange met en avant la période actuelle pour rendre la lecture
+                          plus intuitive.
+                        </div>
+
+                        <div class="rounded-[1.75rem] border border-base-300 bg-base-200/50 p-5">
+                          <div class="rounded-[1.5rem] bg-base-100 p-4">
+                            <div class="relative h-[340px] w-full">
+                              <canvas id="evolutionChart"></canvas>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                    </section>
 
-                      <p class="mt-4 text-sm text-base-content/60">
-                        Cette courbe compare la performance du mois actuel à ton rythme moyen sur
-                        l’année.
-                      </p>
-                    </div>
+                    <!-- Monthly comparison -->
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
+                      <div class="card-body gap-5">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <h2 class="card-title text-xl font-black">Comparaison mensuelle</h2>
+                            <p class="text-sm text-base-content/60">
+                              Comparaison entre ton mois actuel et ta moyenne annuelle.
+                            </p>
+                          </div>
+
+                          <span
+                            class="badge rounded-full border-none bg-sky-100 px-4 py-3 text-sky-700"
+                          >
+                            Ce mois-ci
+                          </span>
+                        </div>
+
+                        <div class="rounded-[1.75rem] bg-base-200 p-5">
+                          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="rounded-[1.5rem] bg-base-100 p-5">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Mois actuel
+                              </p>
+                              <p class="mt-3 text-4xl font-black text-sky-600">
+                                <span th:text="${distanceThisMonth}">0.0</span> km
+                              </p>
+                            </div>
+
+                            <div class="rounded-[1.5rem] bg-base-100 p-5">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Moyenne mensuelle annuelle
+                              </p>
+                              <p class="mt-3 text-4xl font-black text-emerald-600">
+                                <span th:text="${averageMonthlyDistanceThisYear}">0.0</span> km
+                              </p>
+                            </div>
+                          </div>
+
+                          <div class="mt-5 rounded-[1.5rem] bg-base-100 p-4">
+                            <div class="mb-3 flex flex-wrap items-center gap-4 text-xs">
+                              <div class="flex items-center gap-2">
+                                <span class="inline-block h-3 w-3 rounded-full bg-sky-500"></span>
+                                <span class="text-base-content/70">Mois actuel</span>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <span
+                                  class="inline-block h-3 w-3 rounded-full bg-emerald-500"
+                                ></span>
+                                <span class="text-base-content/70">Moyenne annuelle</span>
+                              </div>
+                            </div>
+
+                            <div class="relative h-[190px] w-full">
+                              <canvas id="monthlyComparisonChart"></canvas>
+                            </div>
+                          </div>
+
+                          <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="rounded-[1.5rem] bg-base-100 p-5">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Écart
+                              </p>
+                              <p
+                                class="mt-3 text-2xl font-black"
+                                th:classappend="${distanceGapVsAverage >= 0} ? ' text-emerald-600' : ' text-error'"
+                              >
+                                <span
+                                  th:text="${(distanceGapVsAverage >= 0 ? '+' : '') + distanceGapVsAverage}"
+                                  >+0.0</span
+                                >
+                                km
+                              </p>
+                            </div>
+
+                            <div class="rounded-[1.5rem] bg-base-100 p-5">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Tendance
+                              </p>
+                              <p
+                                class="mt-3 text-base font-semibold"
+                                th:classappend="${distanceGapVsAverage >= 0} ? ' text-emerald-600' : ' text-orange-500'"
+                                th:text="${distanceGapVsAverage >= 0 ? 'Tu es au-dessus de ton rythme moyen' : 'Tu peux encore accélérer ce mois-ci'}"
+                              >
+                                Tu es au-dessus de ton rythme moyen
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <!-- Suivi & recommandations -->
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
+                      <div class="card-body gap-5">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <h2 class="card-title text-xl font-black">Suivi & recommandations</h2>
+                            <p class="text-sm text-base-content/60">
+                              Une lecture rapide de ton profil, de ton objectif et des conseils
+                              utiles.
+                            </p>
+                          </div>
+
+                          <span
+                            class="badge rounded-full border-none bg-emerald-100 px-4 py-3 text-emerald-700"
+                          >
+                            Insight
+                          </span>
+                        </div>
+
+                        <!-- Santé -->
+                        <div class="rounded-[1.75rem] border border-base-300 bg-base-200/60 p-5">
+                          <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold">Santé</h3>
+                            <span class="badge badge-outline rounded-full px-4">Profil</span>
+                          </div>
+
+                          <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                BMI
+                              </p>
+                              <p class="mt-3 text-4xl font-black text-sky-600">
+                                <span
+                                  th:text="${bmi != null ? #numbers.formatDecimal(bmi,1,1) : '0.0'}"
+                                  >0.0</span
+                                >
+                              </p>
+                              <p class="mt-2 text-sm text-base-content/60">
+                                Indice de masse corporelle
+                              </p>
+                            </div>
+
+                            <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                BMR
+                              </p>
+                              <p class="mt-3 text-4xl font-black text-orange-500">
+                                <span
+                                  th:text="${bmr != null ? #numbers.formatDecimal(bmr,1,0) : '0'}"
+                                  >0</span
+                                >
+                                kcal
+                              </p>
+                              <p class="mt-2 text-sm text-base-content/60">
+                                Métabolisme de base estimé
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Objectif / recommendation -->
+                        <div class="rounded-[1.75rem] border border-base-300 bg-base-200/60 p-5">
+                          <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold">Recommandations</h3>
+                            <span class="badge badge-outline rounded-full px-4">Coach</span>
+                          </div>
+
+                          <div class="mt-4 space-y-4">
+                            <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Objectif actuel
+                              </p>
+
+                              <div th:if="${weeklyGoalKm != null and weeklyGoalKm > 0}">
+                                <p class="mt-3 text-base leading-8 text-base-content/85">
+                                  Cette semaine, tu as parcouru
+                                  <span
+                                    class="font-black text-sky-600"
+                                    th:text="${distanceThisWeek}"
+                                    >0.0</span
+                                  >
+                                  km sur un objectif de
+                                  <span
+                                    class="font-black text-emerald-600"
+                                    th:text="${weeklyGoalKm}"
+                                    >0.0</span
+                                  >
+                                  km.
+                                </p>
+
+                                <p
+                                  class="mt-3 text-sm font-semibold text-orange-500"
+                                  th:if="${remainingKm != null and remainingKm > 0}"
+                                >
+                                  Il te reste <span th:text="${remainingKm}">0.0</span> km pour
+                                  atteindre ton objectif.
+                                </p>
+
+                                <p
+                                  class="mt-3 text-sm font-semibold text-emerald-600"
+                                  th:if="${weeklyGoalReached != null and weeklyGoalReached}"
+                                >
+                                  Objectif atteint, bravo !
+                                </p>
+
+                                <progress
+                                  class="progress progress-success mt-4 w-full"
+                                  th:value="${distanceThisWeek > weeklyGoalKm ? weeklyGoalKm : distanceThisWeek}"
+                                  th:max="${weeklyGoalKm}"
+                                ></progress>
+                              </div>
+
+                              <div th:if="${weeklyGoalKm == null or weeklyGoalKm <= 0}">
+                                <p class="mt-3 text-base text-base-content/70">
+                                  Aucun objectif défini pour le moment.
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                Conseil principal
+                              </p>
+                              <p
+                                class="mt-3 text-base leading-8 text-base-content/85"
+                                th:text="${recommendation != null ? recommendation : 'Continue sur ton rythme actuel avec une séance régulière supplémentaire cette semaine.'}"
+                              >
+                                Continue sur ton rythme actuel avec une séance régulière
+                                supplémentaire cette semaine.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
                   </div>
                 </div>
               </div>
 
               <!-- Right column -->
               <aside class="space-y-6">
-                <!-- Summary -->
-                <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+                <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
                   <div class="card-body">
                     <div class="flex items-center justify-between">
-                      <h2 class="card-title text-lg">Résumé rapide</h2>
+                      <div>
+                        <h2 class="card-title text-xl font-black">Résumé rapide</h2>
+                        <p class="text-sm text-base-content/60">
+                          Tes indicateurs les plus importants en un coup d’œil.
+                        </p>
+                      </div>
                     </div>
 
-                    <div class="mt-4 space-y-3">
-                      <div class="rounded-2xl bg-base-200 p-4">
+                    <div class="mt-4 space-y-4">
+                      <div class="rounded-[1.5rem] bg-base-200 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/50">
                           Cette semaine
                         </p>
-                        <p class="mt-2 text-2xl font-black">
+                        <p class="mt-3 text-3xl font-black text-sky-600">
                           <span th:text="${distanceThisWeek}">0.0</span> km
                         </p>
                       </div>
 
-                      <div class="rounded-2xl bg-base-200 p-4">
+                      <div class="rounded-[1.5rem] bg-base-200 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/50">
                           Distance ce mois-ci
                         </p>
-                        <p class="mt-2 text-2xl font-black">
+                        <p class="mt-3 text-3xl font-black text-emerald-600">
                           <span th:text="${distanceThisMonth}">0.0</span> km
                         </p>
                       </div>
 
-                      <div class="rounded-2xl bg-base-200 p-4">
+                      <div class="rounded-[1.5rem] bg-base-200 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/50">
                           Distance cette année
                         </p>
-                        <p class="mt-2 text-2xl font-black">
+                        <p class="mt-3 text-3xl font-black text-orange-500">
                           <span th:text="${distanceThisYear}">0.0</span> km
                         </p>
                       </div>
 
-                      <div class="rounded-2xl bg-base-200 p-4">
+                      <div class="rounded-[1.5rem] bg-base-200 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/50">
                           Temps cette semaine
                         </p>
-                        <p class="mt-2 text-2xl font-black">
+                        <p class="mt-3 text-3xl font-black">
                           <span th:text="${hoursPart}">0</span>h
                           <span th:text="${minutesPart}">0</span>m
                         </p>
                       </div>
 
-                      <div class="rounded-2xl bg-base-200 p-4">
+                      <div class="rounded-[1.5rem] bg-base-200 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/50">
                           Calories cette semaine
                         </p>
-                        <p class="mt-2 text-2xl font-black">
+                        <p class="mt-3 text-3xl font-black">
                           <span th:text="${totalCaloriesThisWeek}">0</span> kcal
                         </p>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Objectifs & tendances -->
-                <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
-                  <div class="card-body">
-                    <div class="flex items-center justify-between">
-                      <h2 class="card-title text-lg">Objectifs & tendances</h2>
-                      <span class="badge rounded-full border-none bg-emerald-100 text-emerald-700">
-                        Analyse
-                      </span>
-                    </div>
-
-                    <div class="mt-4 space-y-4">
-                      <div class="rounded-2xl border border-base-300 bg-base-200/70 p-4">
-                        <p class="text-sm font-semibold">Objectif mensuel</p>
-                        <p class="mt-1 text-xs text-base-content/60">
-                          Cette carte pourra afficher plus tard la progression de l’objectif du
-                          mois.
-                        </p>
-                        <progress
-                          class="progress progress-success mt-4 w-full"
-                          value="0"
-                          max="100"
-                        ></progress>
-                      </div>
-
-                      <div class="rounded-2xl border border-base-300 bg-base-200/70 p-4">
-                        <p class="text-sm font-semibold">Meilleure période</p>
-                        <p class="mt-1 text-xs text-base-content/60">
-                          On pourra afficher ici le meilleur mois ou la meilleure semaine.
-                        </p>
-                      </div>
-
-                      <div class="rounded-2xl border border-base-300 bg-base-200/70 p-4">
-                        <p class="text-sm font-semibold">Recommandation</p>
-                        <p class="mt-1 text-xs text-base-content/60">
-                          Une suggestion simple selon ta cadence sportive et tes résultats.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </section>
               </aside>
             </section>
 
@@ -287,7 +429,6 @@
       </div>
     </div>
 
-    //ajout de Chart.js depuis CDN
     <script th:src="@{/js/chart.umd.min.js}"></script>
 
     <script th:inline="javascript">
@@ -361,8 +502,8 @@
       const weekLabels = /*[[${weekLabels}]]*/ ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
       const weekDistances = /*[[${weekDistances}]]*/ [0, 0, 0, 0, 0, 0, 0];
 
-      const monthLabels = /*[[${monthChartLabels}]]*/ ["S1", "S2", "S3", "S4"];
-      const monthDistances = /*[[${monthChartDistances}]]*/ [0, 0, 0, 0];
+      const monthLabels = /*[[${monthChartLabels}]]*/ ["1", "2", "3", "4", "5"];
+      const monthDistances = /*[[${monthChartDistances}]]*/ [0, 0, 0, 0, 0];
 
       const yearLabels = /*[[${yearChartLabels}]]*/ [
         "Jan",
@@ -381,27 +522,28 @@
       const yearDistances = /*[[${yearChartDistances}]]*/ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
       const currentDayIndex = /*[[${currentDayIndex}]]*/ 0;
-      const currentWeekOfMonth = /*[[${currentWeekOfMonth}]]*/ 0;
+      const currentDayOfMonthIndex = /*[[${currentDayOfMonthIndex}]]*/ 0;
       const currentMonthIndex = /*[[${currentMonthIndex}]]*/ 0;
 
       const evolutionCanvas = document.getElementById("evolutionChart");
-
       let evolutionChart = null;
-      let activeMode = "month";
 
       function activateButton(activeButton) {
         [filterWeek, filterMonth, filterYear].forEach((button) => {
+          if (!button) return;
           button.classList.remove("btn-warning", "text-white");
           button.classList.add("btn-outline");
         });
 
-        activeButton.classList.remove("btn-outline");
-        activeButton.classList.add("btn-warning", "text-white");
+        if (activeButton) {
+          activeButton.classList.remove("btn-outline");
+          activeButton.classList.add("btn-warning", "text-white");
+        }
       }
 
       function getHighlightIndex(mode) {
         if (mode === "week") return currentDayIndex;
-        if (mode === "month") return currentWeekOfMonth;
+        if (mode === "month") return currentDayOfMonthIndex;
         if (mode === "year") return currentMonthIndex;
         return -1;
       }
@@ -413,7 +555,8 @@
       }
 
       function updateEvolutionChart(labels, data, title, subtitle, mode) {
-        activeMode = mode;
+        if (!evolutionChart) return;
+
         const highlightIndex = getHighlightIndex(mode);
 
         evolutionTitle.textContent = title;
@@ -433,8 +576,8 @@
             datasets: [
               {
                 data: monthDistances,
-                backgroundColor: getBarColors(monthDistances.length, currentWeekOfMonth),
-                borderRadius: 12,
+                backgroundColor: getBarColors(monthDistances.length, currentDayOfMonthIndex),
+                borderRadius: 14,
                 borderSkipped: false,
               },
             ],

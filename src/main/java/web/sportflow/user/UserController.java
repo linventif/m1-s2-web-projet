@@ -524,6 +524,10 @@ public class UserController {
     model.addAttribute("yearChartLabels", workoutService.getYearLabelsForChart());
     model.addAttribute("yearChartDistances", workoutService.getYearDistancesForChart(currentUser));
 
+    model.addAttribute("bmi", userService.calculateBMI(currentUser));
+    model.addAttribute("bmr", userService.calculateBMR(currentUser));
+    model.addAttribute("recommendation", userService.getWorkoutRecommendation(currentUser));
+
     return "user-statistique";
   }
 
