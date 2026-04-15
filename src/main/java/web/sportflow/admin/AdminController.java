@@ -671,6 +671,7 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
     try {
@@ -684,6 +685,7 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.setParticipants(resolveUsers(participantIds));
       challenge.setBadges(resolveBadges(badgeIds));
 
       challengeRepository.save(challenge);
@@ -705,6 +707,7 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
     try {
@@ -718,6 +721,8 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.getParticipants().clear();
+      challenge.getParticipants().addAll(resolveUsers(participantIds));
       challenge.getBadges().clear();
       challenge.getBadges().addAll(resolveBadges(badgeIds));
 
@@ -971,6 +976,13 @@ public class AdminController {
     return badgeRepository.findAllById(badgeIds);
   }
 
+  private List<User> resolveUsers(List<Long> userIds) {
+    if (userIds == null || userIds.isEmpty()) {
+      return new ArrayList<>();
+    }
+    return userRepository.findAllById(userIds);
+  }
+
   private String normalizeIconPath(String iconPath) {
     String normalized = normalizeNullable(iconPath);
     if (normalized == null) {
@@ -1074,7 +1086,11 @@ public class AdminController {
   private List<Challenge> loadChallenges() {
     List<Challenge> challenges = challengeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     challenges.removeIf(Objects::isNull);
-    challenges.forEach(challenge -> challenge.getBadges().removeIf(Objects::isNull));
+    challenges.forEach(
+        challenge -> {
+          challenge.getBadges().removeIf(Objects::isNull);
+          challenge.getParticipants().removeIf(Objects::isNull);
+        });
     return challenges;
   }
 

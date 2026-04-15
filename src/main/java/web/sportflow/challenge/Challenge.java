@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import web.sportflow.badge.Badge;
 import web.sportflow.user.User;
 
@@ -55,6 +56,13 @@ public class Challenge {
       joinColumns = @JoinColumn(name = "challenge_id"),
       inverseJoinColumns = @JoinColumn(name = "badge_id"))
   private List<Badge> badges = new ArrayList<>();
+
+  @ManyToMany
+  @JoinTable(
+      name = "challenge_participant",
+      joinColumns = @JoinColumn(name = "challenge_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private List<User> participants = new ArrayList<>();
 
   public Challenge() {}
 
@@ -111,6 +119,33 @@ public class Challenge {
     return badges;
   }
 
+  public List<User> getParticipants() {
+    return participants;
+  }
+
+  public String getBadgeNames() {
+    if (badges == null || badges.isEmpty()) {
+      return "";
+    }
+    return badges.stream()
+        .filter(Objects::nonNull)
+        .map(Badge::getName)
+        .filter(Objects::nonNull)
+        .reduce((first, second) -> first + ", " + second)
+        .orElse("");
+  }
+
+  public String getParticipantNames() {
+    if (participants == null || participants.isEmpty()) {
+      return "";
+    }
+    return participants.stream()
+        .filter(Objects::nonNull)
+        .map(user -> user.getFirstname() + " " + user.getLastname())
+        .reduce((first, second) -> first + ", " + second)
+        .orElse("");
+  }
+
   public boolean isActive() {
     LocalDate today = LocalDate.now();
     return !today.isBefore(startDate) && !today.isAfter(endDate);
@@ -150,5 +185,9 @@ public class Challenge {
 
   public void setBadges(List<Badge> badges) {
     this.badges = badges;
+  }
+
+  public void setParticipants(List<User> participants) {
+    this.participants = participants;
   }
 }
