@@ -18,9 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -279,18 +277,17 @@ public class UserController {
 
   @GetMapping("/friends")
   public String manageFriends(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam(value = "q", required = false) String query,
-    @PageableDefault(size = 10, sort = "lastname") Pageable pageable,
-    Model model
-  ) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam(value = "q", required = false) String query,
+      @PageableDefault(size = 10, sort = "lastname") Pageable pageable,
+      Model model) {
     populateFriendshipContext(currentUser, model);
-    
+
     Page<User> userPage;
     if (query != null && !query.trim().isEmpty()) {
-        userPage = userService.searchUsers(query, pageable);
+      userPage = userService.searchUsers(query, pageable);
     } else {
-        userPage = userService.getAll(pageable);
+      userPage = userService.getAll(pageable);
     }
     model.addAttribute("userPage", userPage);
     model.addAttribute("query", query);

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,7 +34,7 @@ public class UserService implements UserDetailsService {
 
   public Page<User> getAll(Pageable pageable) {
     return userRepository.findAll(pageable);
-}
+  }
 
   @Transactional(readOnly = true)
   public Optional<User> getUserById(Long id) {
@@ -247,9 +246,6 @@ public class UserService implements UserDetailsService {
 
   public Page<User> searchUsers(String searchString, Pageable pageable) {
     return userRepository.findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
-        searchString, 
-        searchString, 
-        pageable
-    );
-}
+        searchString, searchString, pageable);
+  }
 }
