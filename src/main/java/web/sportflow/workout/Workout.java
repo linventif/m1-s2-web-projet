@@ -258,7 +258,16 @@ public class Workout {
   }
 
   public void setWorkoutExercises(List<WorkoutExercise> exercises) {
-    this.exercises = exercises;
+    this.exercises.clear();
+    if (exercises == null) {
+      return;
+    }
+    for (WorkoutExercise exercise : exercises) {
+      if (exercise != null) {
+        exercise.setWorkout(this);
+        this.exercises.add(exercise);
+      }
+    }
   }
 
   public User getUser() {
