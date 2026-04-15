@@ -1,6 +1,7 @@
 package web.sportflow.workout;
 
 import java.time.LocalDateTime;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import web.sportflow.sport.Sport;
 import web.sportflow.weather.WeatherStatsDTO; // Import important
@@ -24,20 +25,20 @@ public class WorkoutDto {
 
   public WorkoutDto() {
     this.weather =
-        new WeatherStatsDTO(); // Initialisation pour éviter les NullPointerException dans le form
+      new WeatherStatsDTO(); // Initialisation pour éviter les NullPointerException dans le form
   }
 
   public WorkoutDto(
-      Long id,
-      String name,
-      String description,
-      Sport sport,
-      LocalDateTime date,
-      Double rating,
-      Double duration,
-      Double distance,
-      String address,
-      WeatherStatsDTO weather) {
+    Long id,
+    String name,
+    String description,
+    Sport sport,
+    LocalDateTime date,
+    Double rating,
+    Double duration,
+    Double distance,
+    String address,
+    WeatherStatsDTO weather) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -69,6 +70,7 @@ public class WorkoutDto {
   public String getDescription() {
     return description;
   }
+
 
   public void setDescription(String description) {
     this.description = description;
