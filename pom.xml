@@ -9,10 +9,10 @@
 <relativePath/>
 <!-- lookup parent from repository -->
 	</parent>
-	<groupId>utc.miage</groupId>
-<artifactId>tp</artifactId>
+	<groupId>web</groupId>
+<artifactId>sportflow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-<name>tp</name>
+<name>sportflow</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
