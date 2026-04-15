@@ -105,7 +105,6 @@
 
           <div class="flex flex-col items-end gap-3">
             <div class="flex items-center gap-4">
-            
               <div class="rating rating-sm sm:rating-md rating-half">
                 <input type="radio" class="rating-hidden" disabled />
                 <input
@@ -174,9 +173,15 @@
                   <i class="fa-solid fa-ellipsis-vertical"></i>
                 </div>
 
-                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
                   <li th:if="${isOwner}">
-                    <a th:href="@{/workouts/{id}/edit(id=${workout.id})}" class="flex items-center gap-2">
+                    <a
+                      th:href="@{/workouts/{id}/edit(id=${workout.id})}"
+                      class="flex items-center gap-2"
+                    >
                       <i class="fa-solid fa-pen-to-square text-info"></i>
                       <span>Modifier</span>
                     </a>
@@ -189,7 +194,10 @@
                       onsubmit="return confirm('Supprimer cette activité ?');"
                       class="p-0"
                     >
-                      <button type="submit" class="flex items-center gap-2 w-full text-left px-4 py-2">
+                      <button
+                        type="submit"
+                        class="flex items-center gap-2 w-full text-left px-4 py-2"
+                      >
                         <i class="fa-solid fa-trash-can text-error"></i>
                         <span>Supprimer</span>
                       </button>
@@ -337,10 +345,8 @@
           </div>
         </details>
       </div>
-      
-      <div
-        th:replace="~{components/comment-section :: comment-section(workout=${workout})}"
-      ></div>
+
+      <div th:replace="~{components/comment-section :: comment-section(workout=${workout})}"></div>
     </article>
   </div>
   <script src="/js/kudo_toggle.js"></script>
