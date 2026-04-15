@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +32,10 @@ public class UserService implements UserDetailsService {
 
     return users;
   }
+
+  public Page<User> getAll(Pageable pageable) {
+    return userRepository.findAll(pageable);
+}
 
   @Transactional(readOnly = true)
   public Optional<User> getUserById(Long id) {
@@ -237,4 +244,12 @@ public class UserService implements UserDetailsService {
     else
       return "Entraînement axé sur la perte de poids avec cardio et exercices de haute intensité.";
   }
+
+  public Page<User> searchUsers(String searchString, Pageable pageable) {
+    return userRepository.findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+        searchString, 
+        searchString, 
+        pageable
+    );
+}
 }
