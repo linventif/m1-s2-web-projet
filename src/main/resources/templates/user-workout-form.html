@@ -61,7 +61,8 @@
                 <label class="label font-semibold">Date</label>
                 <input
                   type="datetime-local"
-                  th:field="*{date}"
+                  id="date"
+                  name="date"
                   th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : ''}"
                   class="input input-bordered w-full"
                   required
