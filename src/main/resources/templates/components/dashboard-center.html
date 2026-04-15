@@ -69,7 +69,7 @@
                 <span
                   class="badge rounded-full border-none bg-orange-100 text-orange-700"
                   th:text="${workout.date}"
-                >2026-04-08</span
+                  >2026-04-08</span
                 >
               </div>
               <p class="mt-2 text-sm text-base-content/65">
@@ -112,7 +112,7 @@
 
           <div class="flex flex-col items-end gap-3">
             <div class="rating rating-sm sm:rating-md rating-half">
-              <input type="radio" class="rating-hidden" disabled/>
+              <input type="radio" class="rating-hidden" disabled />
               <input
                 type="radio"
                 class="mask mask-star-2 mask-half-1 bg-orange-400"
@@ -227,7 +227,9 @@
                   <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
                     Synthèse
                   </p>
-                  <h4 class="mt-2 text-lg font-black" th:text="${display.sportNameLabel}">Course</h4>
+                  <h4 class="mt-2 text-lg font-black" th:text="${display.sportNameLabel}">
+                    Course
+                  </h4>
                   <p class="mt-2 text-sm text-base-content/65">
                     <span th:text="${display.primaryMetricLabel}">Distance</span> :
                     <strong th:text="${display.primaryMetricValue}">12.50 km</strong>
@@ -253,13 +255,13 @@
                   <p class="mt-2 text-sm text-base-content/65" th:if="${display.averageBpm > 0}">
                     FC moyenne :
                     <strong th:text="${#numbers.formatDecimal(display.averageBpm, 1, 0)} + ' bpm'"
-                    >145 bpm</strong
+                      >145 bpm</strong
                     >
                   </p>
                   <p class="text-sm text-base-content/65" th:if="${workout.sport.getMET() != null}">
                     MET :
                     <strong th:text="${#numbers.formatDecimal(workout.sport.getMET(), 1, 1)}"
-                    >8.0</strong
+                      >8.0</strong
                     >
                   </p>
                 </div>
@@ -280,31 +282,31 @@
                       th:if="${exercise.distanceM != null}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.distanceM / 1000, 1, 2)} + ' km'"
-                    >1.20 km</span
+                      >1.20 km</span
                     >
                     <span
                       th:if="${exercise.durationSec != null}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.durationSec / 60, 1, 0)} + ' min'"
-                    >7 min</span
+                      >7 min</span
                     >
                     <span
                       th:if="${exercise.sets != null and exercise.reps != null}"
                       class="badge badge-outline rounded-full"
                       th:text="${exercise.sets + 'x' + exercise.reps}"
-                    >4x12</span
+                      >4x12</span
                     >
                     <span
                       th:if="${exercise.weightKg != null}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.weightKg, 1, 0)} + ' kg'"
-                    >80 kg</span
+                      >80 kg</span
                     >
                     <span
                       th:if="${exercise.averageBpm != null}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.averageBpm, 1, 0)} + ' bpm'"
-                    >145 bpm</span
+                      >145 bpm</span
                     >
                   </div>
                 </div>
