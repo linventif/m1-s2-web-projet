@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -308,5 +310,16 @@ public class Workout {
   public void addComment(Comment comment) {
     this.comments.add(comment);
     comment.setWorkout(this);
+  }
+
+  @PrePersist
+  @PreUpdate
+  private void applyDefaults() {
+    if (date == null) {
+      date = LocalDateTime.now();
+    }
+    if (name == null || name.isBlank()) {
+      name = "Workout du " + date.toLocalDate();
+    }
   }
 }
