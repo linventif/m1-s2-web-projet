@@ -88,6 +88,7 @@ public class WorkoutController {
 
     workout.setSport(workoutDto.getSport());
     workout.setDate(workoutDto.getDate());
+    workout.setRating(normalizeRating(workoutDto.getRating()));
     workout.setWeather(workoutDto.getWeather());
     workout.setAddress(workoutDto.getAddress());
     workoutService.saveWorkout(workout, currentUser);
@@ -112,5 +113,16 @@ public class WorkoutController {
         && currentUser != null
         && currentUser.getId() != null
         && Objects.equals(workout.getUser().getId(), currentUser.getId());
+  }
+
+  private Double normalizeRating(Double rating) {
+    if (rating == null) {
+      return null;
+    }
+    double rounded = Math.round(rating * 2.0) / 2.0;
+    if (rounded < 0.5 || rounded > 5.0) {
+      return null;
+    }
+    return rounded;
   }
 }

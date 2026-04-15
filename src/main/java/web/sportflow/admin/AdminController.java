@@ -865,19 +865,23 @@ public class AdminController {
     return value;
   }
 
-  private Integer parseOptionalRating(String rawValue) {
+  private Double parseOptionalRating(String rawValue) {
     String normalized = normalizeNullable(rawValue);
     if (normalized == null) {
       return null;
     }
     try {
-      int rating = Integer.parseInt(normalized);
-      if (rating < 1 || rating > 5) {
-        throw new IllegalArgumentException("La note doit etre comprise entre 1 et 5.");
+      double rating = Double.parseDouble(normalized);
+      if (rating < 0.5 || rating > 5.0) {
+        throw new IllegalArgumentException("La note doit etre comprise entre 0.5 et 5.");
       }
-      return rating;
+      double rounded = Math.round(rating * 2.0) / 2.0;
+      if (Math.abs(rounded - rating) > 0.0001) {
+        throw new IllegalArgumentException("La note doit etre par tranche de 0.5.");
+      }
+      return rounded;
     } catch (NumberFormatException exception) {
-      throw new IllegalArgumentException("La note doit etre un entier entre 1 et 5.");
+      throw new IllegalArgumentException("La note doit etre un nombre entre 0.5 et 5.");
     }
   }
 

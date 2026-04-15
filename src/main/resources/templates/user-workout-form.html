@@ -69,15 +69,86 @@
               </div>
 
               <div class="form-control">
-                <label class="label font-semibold">Ressenti (1 à 5)</label>
-                <input
-                  type="number"
-                  th:field="*{rating}"
-                  min="1"
-                  max="5"
-                  class="input input-bordered w-full"
-                  placeholder="Note"
-                />
+                <label class="label font-semibold">Ressenti (étoiles par 0.5)</label>
+                <div class="rating rating-md rating-half">
+                  <input
+                    type="radio"
+                    name="rating"
+                    value=""
+                    class="rating-hidden"
+                    th:checked="${workout.rating == null}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="0.5"
+                    class="mask mask-star-2 mask-half-1 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 0.5}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="1.0"
+                    class="mask mask-star-2 mask-half-2 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 1.0}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="1.5"
+                    class="mask mask-star-2 mask-half-1 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 1.5}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="2.0"
+                    class="mask mask-star-2 mask-half-2 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 2.0}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="2.5"
+                    class="mask mask-star-2 mask-half-1 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 2.5}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="3.0"
+                    class="mask mask-star-2 mask-half-2 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 3.0}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="3.5"
+                    class="mask mask-star-2 mask-half-1 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 3.5}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="4.0"
+                    class="mask mask-star-2 mask-half-2 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 4.0}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="4.5"
+                    class="mask mask-star-2 mask-half-1 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 4.5}"
+                  />
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="5.0"
+                    class="mask mask-star-2 mask-half-2 bg-orange-400"
+                    th:checked="${workout.rating != null and workout.rating == 5.0}"
+                  />
+                </div>
               </div>
             </div>
 
