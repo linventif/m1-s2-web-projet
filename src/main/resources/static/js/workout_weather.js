@@ -47,16 +47,23 @@ function fetchWeather() {
         });
 }
 
+let cityDetectionStarted = false;
+
 function detectCityFromBrowserLocation() {
     const addressInput = document.getElementById('address');
-    if (!addressInput || addressInput.value.trim() !== '' || !navigator.geolocation) {
+    if (cityDetectionStarted || !addressInput || addressInput.value.trim() !== '' || !navigator.geolocation) {
         return;
     }
+    cityDetectionStarted = true;
 
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
+            const coordinatesFallback = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+            if (addressInput.value.trim() === '') {
+                addressInput.value = coordinatesFallback;
+            }
 
             try {
                 const response = await fetch(`/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`);
@@ -65,7 +72,10 @@ function detectCityFromBrowserLocation() {
                 }
                 const data = await response.json();
                 if (data && data.city && typeof data.city === 'string') {
-                    addressInput.value = data.city;
+                    const currentAddress = addressInput.value.trim();
+                    if (currentAddress === '' || currentAddress === coordinatesFallback) {
+                        addressInput.value = data.city;
+                    }
                 }
             } catch (error) {
                 console.warn("Géolocalisation ville impossible:", error);
@@ -83,3 +93,5 @@ if (document.readyState === 'loading') {
 } else {
     detectCityFromBrowserLocation();
 }
+
+window.addEventListener('load', detectCityFromBrowserLocation);

@@ -1,5 +1,7 @@
 package web.sportflow.workout;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -56,7 +58,9 @@ public class WorkoutController {
 
   @GetMapping("/new")
   public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
-    model.addAttribute("workout", new Workout());
+    Workout workout = new Workout();
+    workout.setDate(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+    model.addAttribute("workout", workout);
     model.addAttribute("sports", sportService.findAll());
     return "user-workout-form";
   }

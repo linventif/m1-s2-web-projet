@@ -42,14 +42,13 @@
                 <input
                   type="datetime-local"
                   th:field="*{date}"
-                  th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : #temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"
                   class="input input-bordered w-full"
                   required
                 />
               </div>
 
               <div class="form-control">
-                <label class="label font-semibold">Ressenti (étoiles par 0.5)</label>
+                <label class="label font-semibold">Ressenti</label>
                 <div class="rating rating-md rating-half">
                   <input
                     type="radio"
