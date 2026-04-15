@@ -426,19 +426,30 @@ public class UserController {
     int hoursPart = totalMinutes / 60;
     int minutesPart = totalMinutes % 60;
 
-    model.addAttribute("goals", goalService.getAll());
-    model.addAttribute("workouts", workoutService.getAll());
-    model.addAttribute(
-        "workoutDisplays",
-        workoutService.getAll().stream().map(WorkoutDashboardDisplay::new).toList());
-    model.addAttribute("activeChallenges", challengeService.getAll());
-    model.addAttribute("badges", badgeService.getAll());
+    List<Friendship> acceptedFriendships =
+        currentUser != null && currentUser.getId() != null
+            ? friendshipService.getAcceptedFriendships(currentUser.getId())
+            : List.of();
+    List<Workout> visibleWorkouts =
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getFriendsWorkout(currentUser.getId())
+            : List.of();
 
-    if (currentUser != null && currentUser.getId() != null) {
-      model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
-    } else {
-      model.addAttribute("friends", List.of());
-    }
+    model.addAttribute(
+        "goals",
+        currentUser != null && currentUser.getId() != null
+            ? goalService.getFriendsAndUserGoal(currentUser)
+            : List.of());
+    model.addAttribute("workouts", visibleWorkouts);
+
+    model.addAttribute(
+        "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());
+    model.addAttribute(
+        "activeChallenges",
+        currentUser != null && currentUser.getId() != null
+            ? challengeService.getFriendsAndUserChallenge(currentUser)
+            : List.of());
+    model.addAttribute("friends", acceptedFriendships);
 
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");

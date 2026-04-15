@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.sportflow.friendship.FriendshipService;
 import web.sportflow.user.User;
 import web.sportflow.weather.WeatherService;
 import web.sportflow.weather.WeatherStatsDTO;
@@ -17,10 +18,15 @@ public class WorkoutService {
 
   private final WorkoutRepository workoutRepository;
   private final WeatherService weatherService;
+  private final FriendshipService friendshipService;
 
-  public WorkoutService(WorkoutRepository workoutRepository, WeatherService weatherService) {
+  public WorkoutService(
+      WorkoutRepository workoutRepository,
+      WeatherService weatherService,
+      FriendshipService friendshipService) {
     this.workoutRepository = workoutRepository;
     this.weatherService = weatherService;
+    this.friendshipService = friendshipService;
   }
 
   @Transactional
@@ -52,6 +58,18 @@ public class WorkoutService {
 
   public List<Workout> getAll() {
     return workoutRepository.findAllByOrderByDateDesc();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Workout> getFriendsWorkout(long userId) {
+    return getAllForUsers(friendshipService.getCurrentUserAndFriendIds(userId));
+  }
+
+  public List<Workout> getAllForUsers(List<Long> userIds) {
+    if (userIds == null || userIds.isEmpty()) {
+      return List.of();
+    }
+    return workoutRepository.findByUserIdInOrderByDateDesc(userIds);
   }
 
   public List<Workout> getAllStatutsForUser() {
