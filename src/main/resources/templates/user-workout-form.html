@@ -94,6 +94,7 @@
                         </label>
                         <input
                           type="datetime-local"
+                          id="date"
                           th:field="*{date}"
                           th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : ''}"
                           class="input input-bordered w-full rounded-lg bg-base-100"
@@ -210,6 +211,7 @@
                         <div class="relative">
                           <input
                             type="number"
+                            id="duration"
                             name="duration"
                             th:value="${workout.durationSec != null ? workout.durationSec / 60 : ''}"
                             min="0"
@@ -229,6 +231,7 @@
                         </label>
                         <input
                           type="text"
+                          id="address"
                           th:field="*{address}"
                           class="input input-bordered w-full rounded-lg bg-base-100"
                           placeholder="Parc des sports, Toulouse"
@@ -248,13 +251,6 @@
                         Récupération depuis le lieu et la date de la séance.
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onclick="fetchWeather()"
-                      class="btn btn-outline btn-sm rounded-full"
-                    >
-                      Actualiser
-                    </button>
                   </div>
 
                   <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
