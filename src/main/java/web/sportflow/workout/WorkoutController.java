@@ -157,8 +157,9 @@ public class WorkoutController {
     if (workoutDto.getName() != null && !workoutDto.getName().isBlank()) {
       return workoutDto.getName().trim();
     }
+    throw new IllegalArgumentException("Workout name is mandatory");
   }
-  
+
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
@@ -167,9 +168,9 @@ public class WorkoutController {
       return "redirect:/dashboard";
     }
     String sportName =
-        workoutDto.getSport() == null || workoutDto.getSport().getName() == null
+        workout.getSport() == null || workout.getSport().getName() == null
             ? "activité"
-            : workoutDto.getSport().getName();
+            : workout.getSport().getName();
     return "Séance " + sportName;
   }
 
