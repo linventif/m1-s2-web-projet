@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{components/layout::head(title='Liste des activités')}">
-    <title>Liste des activités</title>
+  <head th:replace="~{components/layout::head(title='Toutes les activités')}">
+    <title>Toutes les activités</title>
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
@@ -18,128 +18,12 @@
               <span>Aucune activité à afficher.</span>
             </div>
 
-            <div
-              class="overflow-x-auto rounded-box border border-base-300"
-              th:if="${!#lists.isEmpty(workouts)}"
-            >
-              <table class="table table-zebra">
-                <thead>
-                  <tr>
-                    <th>Utilisateur</th>
-                    <th>Date</th>
-                    <th>Sport</th>
-                    <th>Durée</th>
-                    <th>Distance</th>
-                    <th>Calories brûlées</th>
-                    <th>Badges débloqués</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    th:each="workout : ${workouts}"
-                    th:with="isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}, isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}, canDeleteWorkout=${isOwner or isAdmin}"
-                  >
-                    <td>
-                      <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
-                    </td>
-                    <td th:text="${workout.date}"></td>
-                    <td th:text="${workout.sport.name}"></td>
-                    <td>
-                      <span th:text="${workout.duration}"></span>
-                      s
-                    </td>
-                    <td>
-                      <span th:text="${workout.distance}"></span>
-                      km
-                    </td>
-                    <td>
-                      <span th:text="${#numbers.formatDecimal(workout.calorieBurn, 1, 0)}"></span>
-                      kcal
-                    </td>
-                    <td>
-                      <div
-                        class="flex flex-wrap items-center gap-2"
-                        th:if="${!#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
-                      >
-                        <div
-                          class="tooltip"
-                          th:each="badge : ${unlockedBadgesByWorkoutId[workout.id]}"
-                          th:attr="data-tip=${badge.name}"
-                        >
-                          <img
-                            th:src="${badge.iconPath}"
-                            th:alt="${badge.name}"
-                            class="h-8 w-8 rounded-md object-cover"
-                          />
-                        </div>
-                      </div>
-                      <span
-                        class="text-base-content/50"
-                        th:if="${#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
-                        >-</span
-                      >
-                    </td>
-                    <td>
-                      <div class="flex items-center gap-2" th:if="${canDeleteWorkout}">
-                        <a
-                          th:if="${isOwner}"
-                          th:href="@{/workouts/{id}/edit(id=${workout.id})}"
-                          class="btn btn-xs btn-outline btn-square"
-                          title="Modifier"
-                          aria-label="Modifier"
-                        >
-                          <i class="fa-solid fa-pen-to-square"></i>
-                          <span class="sr-only">Modifier</span>
-                        </a>
-                        <form
-                          th:action="@{/workouts/{id}/delete(id=${workout.id})}"
-                          method="post"
-                          onsubmit="return confirm('Supprimer cette activité ?');"
-                        >
-                          <button
-                            type="submit"
-                            class="btn btn-xs btn-error btn-square text-white"
-                            title="Supprimer"
-                            aria-label="Supprimer"
-                          >
-                            <i class="fa-solid fa-trash-can"></i>
-                            <span class="sr-only">Supprimer</span>
-                          </button>
-                        </form>
-                      </div>
-                      <span class="text-base-content/50" th:if="${!canDeleteWorkout}">-</span>
-                    </td>
-                    <!-- <td th:text="${conference.idconf}"></td>
-                            <td class="font-semibold" th:text="${conference.titleconf}"></td>
-                            <td th:text="${conference.nbeditionconf}"></td>
-                            <td th:text="${conference.dtstartconf}"></td>
-                            <td th:text="${conference.dtendconf}"></td>
-                            <td>
-                                <span class="text-base-content/50" th:if="${#sets.isEmpty(conference.thematiques)}">-</span>
-                                <ul class="flex flex-wrap gap-2" th:if="${!#sets.isEmpty(conference.thematiques)}">
-                                    <li th:each="thematique : ${conference.thematiques}">
-                                        <span class="badge badge-outline badge-secondary" th:text="${thematique.nomThematique}">Thematique</span>
-                                    </li>
-                                </ul>
-                            </td>
-                            <td>
-                                <span class="text-base-content/50" th:if="${conference.urlwebsiteconf == null || conference.urlwebsiteconf.isBlank()}">-</span>
-                                <a class="link link-primary break-all"
-                                    th:if="${conference.urlwebsiteconf != null && !conference.urlwebsiteconf.isBlank()}"
-                                    th:href="${conference.urlwebsiteconf}"
-                                    th:text="${conference.urlwebsiteconf}"
-                                    target="_blank"
-                                    rel="noreferrer"></a>
-                            </td> -->
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div th:insert="~{components/dashboard-center}"></div>
           </div>
         </div>
       </section>
     </main>
+
     <div th:insert="~{components/layout::footer}"></div>
   </body>
 </html>

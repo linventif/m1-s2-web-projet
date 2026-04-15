@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{components/layout::head(title=${workout.id == null ? 'Nouvelle Activité' : 'Modifier Activité'})}"
+    th:replace="~{components/layout::head(title=${workout.id == null ? 'Nouvelle activité' : 'Modifier activité'})}"
   >
     <title>Activité</title>
   </head>
@@ -9,286 +9,706 @@
   <body class="min-h-screen bg-base-200 text-base-content">
     <div th:insert="~{components/layout::header}"></div>
 
-    <main class="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 pb-6 pt-24 sm:px-6">
-      <section class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body gap-6 p-6 sm:p-8">
-          <div class="flex flex-col gap-1">
-            <h2
-              class="text-2xl font-bold"
-              th:text="${workout.id == null ? 'Créer une nouvelle activité' : 'Modifier l''activité'}"
-            ></h2>
-            <p class="text-sm opacity-60">Enregistrez vos efforts pour suivre votre progression.</p>
-          </div>
+    <main class="mx-auto min-h-screen w-full max-w-6xl px-4 pb-8 pt-24 sm:px-6 lg:px-8">
+      <form th:action="@{/workouts/save}" th:object="${workout}" method="post" class="space-y-6">
+        <input type="hidden" th:field="*{id}" />
 
-          <form
-            th:action="@{/workouts/save}"
-            th:object="${workout}"
-            method="post"
-            class="space-y-5"
-          >
-            <input type="hidden" th:field="*{id}" />
-
-            <div class="form-control w-full">
-              <label class="label font-semibold">Sport</label>
-              <input
-                type="text"
-                id="sport-name"
-                class="input input-bordered w-full"
-                list="sports-list"
-                placeholder="Choisir un sport..."
-                th:value="${workout.sport != null ? workout.sport.name : ''}"
-                required
-                autocomplete="off"
-              />
-              <input
-                type="hidden"
-                name="sport"
-                id="sport-id"
-                th:value="${workout.sport != null ? workout.sport.id : ''}"
-                required
-              />
-              <datalist id="sports-list">
-                <option
-                  th:each="s : ${sports}"
-                  th:value="${s.name}"
-                  th:attr="data-id=${s.id}"
-                ></option>
-              </datalist>
+        <section class="card border border-base-300 bg-base-100 shadow-xl">
+          <div class="card-body gap-6 p-6 sm:p-8">
+            <div
+              class="flex flex-col gap-4 border-b border-base-300 pb-5 sm:flex-row sm:items-end sm:justify-between"
+            >
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-orange-600">
+                  Activité
+                </p>
+                <h1
+                  class="mt-1 text-3xl font-black tracking-tight"
+                  th:text="${workout.id == null ? 'Nouvelle activité' : 'Modifier l''activité'}"
+                >
+                  Nouvelle activité
+                </h1>
+                <p class="mt-2 max-w-2xl text-sm text-base-content/60">
+                  Ajoute une séance maintenant, pendant l'effort ou après coup. Les champs
+                  d'exercice s'adaptent au sport choisi.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <a th:href="@{/workouts}" class="btn btn-outline rounded-full">Annuler</a>
+                <button type="submit" class="btn btn-primary rounded-full px-6">Enregistrer</button>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="form-control">
-                <label class="label font-semibold">Date</label>
-                <input
-                  type="datetime-local"
-                  id="date"
-                  name="date"
-                  th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : ''}"
-                  class="input input-bordered w-full"
-                  required
-                />
+            <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+              <div class="space-y-6">
+                <section class="rounded-2xl border border-base-300 bg-base-200/40 p-5">
+                  <div class="mb-5 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 class="text-xl font-black">Séance</h2>
+                      <p class="mt-1 text-sm text-base-content/60">
+                        Les informations générales suffisent pour créer l'activité.
+                      </p>
+                    </div>
+                    <span class="badge rounded-full border-none bg-orange-100 text-orange-700">
+                      Base
+                    </span>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div class="form-control">
+                      <label class="label py-1">
+                        <span class="label-text font-semibold">Nom de la séance</span>
+                      </label>
+                      <input
+                        type="text"
+                        th:field="*{name}"
+                        class="input input-bordered w-full rounded-lg bg-base-100"
+                        placeholder="Fractionné du soir, Push day, sortie longue..."
+                      />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div class="form-control">
+                        <label class="label py-1">
+                          <span class="label-text font-semibold">Sport</span>
+                        </label>
+                        <select
+                          id="sport-select"
+                          class="select select-bordered w-full rounded-lg bg-base-100"
+                          th:field="*{sport}"
+                          required
+                        >
+                          <option value="" disabled selected>Choisir un sport...</option>
+                          <option
+                            th:each="s : ${sports}"
+                            th:value="${s.id}"
+                            th:text="${s.name}"
+                            th:attr="data-type=${s.type},data-distance=${s.type.distanceRelevant},data-strength=${s.type.strengthRelevant},data-mobility=${s.type.mobilityRelevant}"
+                          ></option>
+                        </select>
+                      </div>
+
+                      <div class="form-control">
+                        <label class="label py-1">
+                          <span class="label-text font-semibold">Date</span>
+                        </label>
+                        <input
+                          type="datetime-local"
+                          th:field="*{date}"
+                          th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                          class="input input-bordered w-full rounded-lg bg-base-100"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      <div class="form-control">
+                        <label class="label py-1">
+                          <span class="label-text font-semibold">Ressenti</span>
+                        </label>
+                        <input
+                          type="number"
+                          th:field="*{rating}"
+                          min="1"
+                          max="5"
+                          class="input input-bordered w-full rounded-lg bg-base-100"
+                          placeholder="1 à 5"
+                        />
+                      </div>
+
+                      <div class="form-control">
+                        <label class="label py-1">
+                          <span class="label-text font-semibold">Durée totale</span>
+                        </label>
+                        <div class="relative">
+                          <input
+                            type="number"
+                            name="duration"
+                            th:value="${workout.durationSec != null ? workout.durationSec / 60 : ''}"
+                            min="0"
+                            step="1"
+                            class="input input-bordered w-full rounded-lg bg-base-100 pr-14"
+                            placeholder="45"
+                          />
+                          <span class="absolute right-4 top-3 text-sm text-base-content/45">
+                            min
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="form-control">
+                        <label class="label py-1">
+                          <span class="label-text font-semibold">Lieu</span>
+                        </label>
+                        <input
+                          type="text"
+                          th:field="*{address}"
+                          class="input input-bordered w-full rounded-lg bg-base-100"
+                          placeholder="Parc des sports, Toulouse"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="rounded-2xl border border-base-300 bg-base-200/40 p-5">
+                  <div
+                    class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <h2 class="text-xl font-black">Conditions météo</h2>
+                      <p class="mt-1 text-sm text-base-content/60">
+                        Récupération depuis le lieu et la date de la séance.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onclick="fetchWeather()"
+                      class="btn btn-outline btn-sm rounded-full"
+                    >
+                      Actualiser
+                    </button>
+                  </div>
+
+                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <div class="rounded-2xl border border-base-300 bg-base-100 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
+                        Ciel
+                      </p>
+                      <div class="mt-3 flex h-16 items-center justify-center">
+                        <img
+                          id="weather-img"
+                          th:src="${workout.weather?.weatherIndicator != null ? '/images/weather/' + workout.weather.weatherIndicator + '.png' : '/images/weather/unknown.png'}"
+                          class="h-full object-contain"
+                          alt="Icône météo"
+                        />
+                      </div>
+                      <input
+                        type="hidden"
+                        th:field="*{weather.weatherIndicator}"
+                        id="weather-icon-hidden"
+                      />
+                    </div>
+
+                    <div class="form-control rounded-2xl border border-base-300 bg-base-100 p-4">
+                      <label class="label p-0 text-xs font-semibold uppercase text-base-content/50">
+                        Température
+                      </label>
+                      <div class="relative mt-3">
+                        <input
+                          type="text"
+                          th:field="*{weather.averageTemperature}"
+                          id="weather-temp"
+                          class="input input-bordered input-sm w-full rounded-lg bg-base-200/60 pr-10 font-semibold"
+                          readonly
+                        />
+                        <span class="absolute right-3 top-2 text-xs text-base-content/45">°C</span>
+                      </div>
+                    </div>
+
+                    <div class="form-control rounded-2xl border border-base-300 bg-base-100 p-4">
+                      <label class="label p-0 text-xs font-semibold uppercase text-base-content/50">
+                        Vent
+                      </label>
+                      <div class="relative mt-3">
+                        <input
+                          type="text"
+                          th:field="*{weather.averageWindSpeed}"
+                          id="weather-wind"
+                          class="input input-bordered input-sm w-full rounded-lg bg-base-200/60 pr-14 font-semibold"
+                          readonly
+                        />
+                        <span class="absolute right-3 top-2 text-xs text-base-content/45">
+                          km/h
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="form-control rounded-2xl border border-base-300 bg-base-100 p-4">
+                      <label class="label p-0 text-xs font-semibold uppercase text-base-content/50">
+                        Pluie
+                      </label>
+                      <div class="relative mt-3">
+                        <input
+                          type="text"
+                          th:field="*{weather.averagePrecipitation}"
+                          id="weather-precip"
+                          class="input input-bordered input-sm w-full rounded-lg bg-base-200/60 pr-10 font-semibold"
+                          readonly
+                        />
+                        <span class="absolute right-3 top-2 text-xs text-base-content/45">mm</span>
+                      </div>
+                    </div>
+
+                    <input type="hidden" th:field="*{weather.maxTemperature}" id="weather-max" />
+                    <input type="hidden" th:field="*{weather.minTemperature}" id="weather-min" />
+                    <input
+                      type="hidden"
+                      th:field="*{weather.averageApparentTemperature}"
+                      id="weather-apparent"
+                    />
+                  </div>
+                </section>
               </div>
 
+              <aside class="space-y-4">
+                <section class="rounded-2xl border border-base-300 bg-base-200/40 p-5">
+                  <div class="mb-5 flex items-start justify-between gap-3">
+                    <div>
+                      <h2 class="text-xl font-black">Exercices</h2>
+                      <p class="mt-1 text-sm text-base-content/60">
+                        Ajoute uniquement les mesures utiles au mouvement.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      id="add-exercise-row"
+                      class="btn btn-primary btn-sm rounded-full"
+                    >
+                      Ajouter
+                    </button>
+                  </div>
+
+                  <div
+                    class="mb-4 rounded-2xl border border-dashed border-base-300 bg-base-100 p-4 text-sm text-base-content/65"
+                  >
+                    Commence par choisir un sport, puis recherche un exercice. La liste et les
+                    champs de saisie se limitent aux mesures utiles pour ce type de sport.
+                  </div>
+
+                  <div id="exercise-rows" class="space-y-4">
+                    <div
+                      th:each="workoutExercise : ${workout.workoutExercises}"
+                      class="exercise-row rounded-2xl border border-base-300 bg-base-100 p-4"
+                    >
+                      <div
+                        class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div>
+                          <p class="font-bold">Exercice</p>
+                          <p class="text-xs text-base-content/55">Mesures de la séance</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            class="btn btn-ghost btn-xs rounded-full remove-exercise-row"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-1 gap-3">
+                        <div class="form-control">
+                          <label
+                            class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                          >
+                            Mouvement
+                          </label>
+                          <div class="relative exercise-picker">
+                            <input
+                              type="hidden"
+                              name="exerciseIds"
+                              class="exercise-id-input"
+                              th:value="${workoutExercise.exercise != null ? workoutExercise.exercise.id : ''}"
+                            />
+                            <input
+                              type="search"
+                              class="input input-bordered w-full rounded-lg exercise-search"
+                              th:value="${workoutExercise.exercise != null ? workoutExercise.exercise.name : ''}"
+                              placeholder="Rechercher un exercice..."
+                              autocomplete="off"
+                            />
+                            <div
+                              class="exercise-options absolute left-0 right-0 top-full z-20 mt-2 hidden max-h-64 overflow-y-auto rounded-lg border border-base-300 bg-base-100 p-2 shadow-xl"
+                            >
+                              <button
+                                type="button"
+                                th:each="exercise : ${exercises}"
+                                class="exercise-choice block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-base-200"
+                                th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-types=${exerciseSportTypes[exercise.id]}"
+                                th:text="${exercise.name}"
+                              >
+                                Course continue
+                              </button>
+                              <p
+                                class="exercise-empty hidden px-3 py-2 text-sm text-base-content/50"
+                              >
+                                Choisis un sport ou ajuste ta recherche.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                          <div class="form-control exercise-field" data-field-group="duration">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Durée
+                            </label>
+                            <input
+                              type="number"
+                              name="durationMin"
+                              th:value="${workoutExercise.durationMin}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="min"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="distance">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Distance
+                            </label>
+                            <input
+                              type="number"
+                              name="distanceM"
+                              th:value="${workoutExercise.distanceM}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="strength">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Séries
+                            </label>
+                            <input
+                              type="number"
+                              name="sets"
+                              th:value="${workoutExercise.sets}"
+                              min="0"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="strength">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Répétitions
+                            </label>
+                            <input
+                              type="number"
+                              name="reps"
+                              th:value="${workoutExercise.reps}"
+                              min="0"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="strength">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Charge
+                            </label>
+                            <input
+                              type="number"
+                              name="weightKg"
+                              th:value="${workoutExercise.weightKg}"
+                              min="0"
+                              step="0.5"
+                              class="input input-bordered rounded-lg"
+                              placeholder="kg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Cardio
+                            </label>
+                            <input
+                              type="number"
+                              name="averageBpm"
+                              th:value="${workoutExercise.averageBpm}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="bpm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <template id="exercise-row-template">
+          <div class="exercise-row rounded-2xl border border-base-300 bg-base-100 p-4">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="font-bold">Exercice</p>
+                <p class="text-xs text-base-content/55">Mesures de la séance</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn btn-ghost btn-xs rounded-full remove-exercise-row">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
               <div class="form-control">
-                <label class="label font-semibold">Ressenti</label>
-                <div class="input input-bordered h-12 items-center px-3">
-                  <div class="rating rating-md rating-half">
-                    <input
-                      type="radio"
-                      name="rating"
-                      value=""
-                      class="rating-hidden"
-                      th:checked="${workout.rating == null}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="0.5"
-                      class="mask mask-star-2 mask-half-1 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 0.5}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="1.0"
-                      class="mask mask-star-2 mask-half-2 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 1.0}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="1.5"
-                      class="mask mask-star-2 mask-half-1 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 1.5}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="2.0"
-                      class="mask mask-star-2 mask-half-2 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 2.0}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="2.5"
-                      class="mask mask-star-2 mask-half-1 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 2.5}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="3.0"
-                      class="mask mask-star-2 mask-half-2 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 3.0}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="3.5"
-                      class="mask mask-star-2 mask-half-1 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 3.5}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="4.0"
-                      class="mask mask-star-2 mask-half-2 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 4.0}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="4.5"
-                      class="mask mask-star-2 mask-half-1 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 4.5}"
-                    />
-                    <input
-                      type="radio"
-                      name="rating"
-                      value="5.0"
-                      class="mask mask-star-2 mask-half-2 bg-orange-400"
-                      th:checked="${workout.rating != null and workout.rating == 5.0}"
-                    />
+                <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                  Mouvement
+                </label>
+                <div class="relative exercise-picker">
+                  <input type="hidden" name="exerciseIds" class="exercise-id-input" />
+                  <input
+                    type="search"
+                    class="input input-bordered w-full rounded-lg exercise-search"
+                    placeholder="Rechercher un exercice..."
+                    autocomplete="off"
+                  />
+                  <div
+                    class="exercise-options absolute left-0 right-0 top-full z-20 mt-2 hidden max-h-64 overflow-y-auto rounded-lg border border-base-300 bg-base-100 p-2 shadow-xl"
+                  >
+                    <button
+                      type="button"
+                      th:each="exercise : ${exercises}"
+                      class="exercise-choice block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-base-200"
+                      th:attr="data-exercise-id=${exercise.id},data-exercise-name=${exercise.name},data-sport-types=${exerciseSportTypes[exercise.id]}"
+                      th:text="${exercise.name}"
+                    >
+                      Course continue
+                    </button>
+                    <p class="exercise-empty hidden px-3 py-2 text-sm text-base-content/50">
+                      Choisis un sport ou ajuste ta recherche.
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="form-control">
-              <label class="label font-semibold">Lieu / Adresse</label>
-              <input
-                type="text"
-                th:field="*{address}"
-                class="input input-bordered w-full"
-                placeholder="Ex: Parc des sports, Toulouse"
-              />
-            </div>
-
-            <div class="mt-8 p-6 border border-base-300 rounded-2xl bg-base-50/50 shadow-inner">
-              <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-lg flex items-center gap-2 text-slate-700">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                    />
-                  </svg>
-                  Conditions Météo
-                </h3>
-                <button
-                  type="button"
-                  onclick="fetchWeather()"
-                  class="btn btn-primary btn-sm gap-2 shadow-md"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  Actualiser
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-end">
-                <div
-                  class="form-control flex flex-col items-center border-r border-base-300 last:border-0"
-                >
-                  <label class="label text-xs font-bold uppercase opacity-50">Ciel</label>
-                  <div class="h-16 flex items-center justify-center">
-                    <img
-                      id="weather-img"
-                      th:src="${workout.weather?.weatherIndicator != null ? '/images/weather/' + workout.weather.weatherIndicator + '.png' : '/images/weather/unknown.png'}"
-                      class="h-full object-contain"
-                      alt="Icône météo"
-                    />
-                  </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="form-control exercise-field" data-field-group="duration">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Durée
+                  </label>
                   <input
-                    type="hidden"
-                    th:field="*{weather.weatherIndicator}"
-                    id="weather-icon-hidden"
+                    type="number"
+                    name="durationMin"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="min"
                   />
                 </div>
 
-                <div class="form-control">
-                  <label class="label text-xs font-bold uppercase opacity-50">Temp. Moyenne</label>
-                  <div class="relative">
-                    <input
-                      type="text"
-                      th:field="*{weather.averageTemperature}"
-                      id="weather-temp"
-                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
-                      readonly
-                    />
-                    <span class="absolute right-3 top-1 text-xs opacity-40">°C</span>
-                  </div>
+                <div class="form-control exercise-field" data-field-group="distance">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Distance
+                  </label>
+                  <input
+                    type="number"
+                    name="distanceM"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
                 </div>
 
-                <div class="form-control">
-                  <label class="label text-xs font-bold uppercase opacity-50">Vent</label>
-                  <div class="relative">
-                    <input
-                      type="text"
-                      th:field="*{weather.averageWindSpeed}"
-                      id="weather-wind"
-                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
-                      readonly
-                    />
-                    <span class="absolute right-3 top-1 text-xs opacity-40">km/h</span>
-                  </div>
+                <div class="form-control exercise-field" data-field-group="strength">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Séries
+                  </label>
+                  <input
+                    type="number"
+                    name="sets"
+                    min="0"
+                    class="input input-bordered rounded-lg"
+                  />
                 </div>
 
-                <div class="form-control">
-                  <label class="label text-xs font-bold uppercase opacity-50">Pluie</label>
-                  <div class="relative">
-                    <input
-                      type="text"
-                      th:field="*{weather.averagePrecipitation}"
-                      id="weather-precip"
-                      class="input input-bordered input-sm w-full bg-base-100 font-semibold"
-                      readonly
-                    />
-                    <span class="absolute right-3 top-1 text-xs opacity-40">mm</span>
-                  </div>
+                <div class="form-control exercise-field" data-field-group="strength">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Répétitions
+                  </label>
+                  <input
+                    type="number"
+                    name="reps"
+                    min="0"
+                    class="input input-bordered rounded-lg"
+                  />
                 </div>
 
-                <input type="hidden" th:field="*{weather.maxTemperature}" id="weather-max" />
-                <input type="hidden" th:field="*{weather.minTemperature}" id="weather-min" />
-                <input
-                  type="hidden"
-                  th:field="*{weather.averageApparentTemperature}"
-                  id="weather-apparent"
-                />
+                <div class="form-control exercise-field" data-field-group="strength">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Charge
+                  </label>
+                  <input
+                    type="number"
+                    name="weightKg"
+                    min="0"
+                    step="0.5"
+                    class="input input-bordered rounded-lg"
+                    placeholder="kg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Cardio
+                  </label>
+                  <input
+                    type="number"
+                    name="averageBpm"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="bpm"
+                  />
+                </div>
               </div>
             </div>
-
-            <div class="card-actions justify-end mt-6 pt-6 border-t border-base-200">
-              <a th:href="@{/}" class="btn btn-ghost">Annuler</a>
-              <button type="submit" class="btn btn-primary px-8">Enregistrer</button>
-            </div>
-          </form>
-        </div>
-      </section>
+          </div>
+        </template>
+      </form>
     </main>
 
     <div th:insert="~{components/layout::footer}"></div>
     <script src="/js/workout_weather.js"></script>
+    <script>
+      (() => {
+        const rows = document.getElementById("exercise-rows");
+        const template = document.getElementById("exercise-row-template");
+        const addButton = document.getElementById("add-exercise-row");
+        const sportSelect = document.getElementById("sport-select");
+
+        const currentProfile = () => {
+          const option = sportSelect?.selectedOptions?.[0];
+          return {
+            type: option?.dataset.type || "",
+            distance: option?.dataset.distance === "true",
+            strength: option?.dataset.strength === "true",
+            mobility: option?.dataset.mobility === "true",
+          };
+        };
+
+        const shouldShowField = (field, profile) => {
+          const group = field.dataset.fieldGroup;
+          if (group === "duration") return true;
+          if (group === "distance") return profile.distance;
+          if (group === "strength") return profile.strength;
+          return profile.distance || profile.strength;
+        };
+
+        const choiceMatchesSport = (choice, profile) => {
+          const sportTypes = choice.dataset.sportTypes || "";
+          return profile.type && sportTypes.split(",").includes(profile.type);
+        };
+
+        const choiceMatchesSearch = (choice, query) => {
+          return (choice.dataset.exerciseName || "").toLowerCase().includes(query);
+        };
+
+        const selectedChoice = (row) => {
+          const selectedId = row.querySelector(".exercise-id-input")?.value;
+          if (!selectedId) return null;
+          return row.querySelector(`.exercise-choice[data-exercise-id="${selectedId}"]`);
+        };
+
+        const updateExerciseChoices = (row) => {
+          const profile = currentProfile();
+          const query = (row.querySelector(".exercise-search")?.value || "").trim().toLowerCase();
+          let visibleCount = 0;
+
+          row.querySelectorAll(".exercise-choice").forEach((choice) => {
+            const visible =
+              choiceMatchesSport(choice, profile) && choiceMatchesSearch(choice, query);
+            choice.classList.toggle("hidden", !visible);
+            if (visible) visibleCount += 1;
+          });
+
+          row.querySelector(".exercise-empty")?.classList.toggle("hidden", visibleCount > 0);
+        };
+
+        const updateRowFields = (row) => {
+          const profile = currentProfile();
+          row.querySelectorAll(".exercise-field").forEach((field) => {
+            field.classList.toggle("hidden", !shouldShowField(field, profile));
+          });
+
+          const choice = selectedChoice(row);
+          if (choice && !choiceMatchesSport(choice, profile)) {
+            row.querySelector(".exercise-id-input").value = "";
+            row.querySelector(".exercise-search").value = "";
+          }
+          updateExerciseChoices(row);
+        };
+
+        const updateAllRows = () => {
+          rows.querySelectorAll(".exercise-row").forEach(updateRowFields);
+        };
+
+        const bindRemoveButtons = () => {
+          rows.querySelectorAll(".remove-exercise-row").forEach((button) => {
+            button.onclick = () => button.closest(".exercise-row").remove();
+          });
+        };
+
+        const bindExercisePickers = () => {
+          rows.querySelectorAll(".exercise-row").forEach((row) => {
+            const search = row.querySelector(".exercise-search");
+            const options = row.querySelector(".exercise-options");
+            const hiddenInput = row.querySelector(".exercise-id-input");
+
+            search.onfocus = () => {
+              options.classList.remove("hidden");
+              updateExerciseChoices(row);
+            };
+            search.oninput = () => {
+              hiddenInput.value = "";
+              options.classList.remove("hidden");
+              updateExerciseChoices(row);
+            };
+
+            row.querySelectorAll(".exercise-choice").forEach((choice) => {
+              choice.onclick = () => {
+                hiddenInput.value = choice.dataset.exerciseId;
+                search.value = choice.dataset.exerciseName;
+                options.classList.add("hidden");
+              };
+            });
+          });
+        };
+
+        const bindRows = () => {
+          bindRemoveButtons();
+          bindExercisePickers();
+          updateAllRows();
+        };
+
+        addButton?.addEventListener("click", () => {
+          rows.appendChild(template.content.cloneNode(true));
+          bindRows();
+        });
+        sportSelect?.addEventListener("change", updateAllRows);
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".exercise-picker")) {
+            document
+              .querySelectorAll(".exercise-options")
+              .forEach((options) => options.classList.add("hidden"));
+          }
+        });
+
+        bindRows();
+      })();
+    </script>
   </body>
 </html>

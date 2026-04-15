@@ -56,8 +56,15 @@ public class WorkoutService {
     return workoutRepository.save(savedWorkout);
   }
 
+  @Transactional(readOnly = true)
   public List<Workout> getAll() {
-    return workoutRepository.findAllByOrderByDateDesc();
+    List<Workout> workouts = workoutRepository.findAllByOrderByDateDesc();
+    workouts.forEach(
+        workout -> {
+          workout.getWorkoutExercises().size();
+          workout.getUser().getBadges().size();
+        });
+    return workouts;
   }
 
   @Transactional(readOnly = true)
@@ -405,8 +412,15 @@ public class WorkoutService {
     return a.isBefore(b) ? a : b;
   }
 
+  @Transactional(readOnly = true)
   public Optional<Workout> findById(Long id) {
-    return workoutRepository.findById(id);
+    return workoutRepository
+        .findById(id)
+        .map(
+            workout -> {
+              workout.getWorkoutExercises().size();
+              return workout;
+            });
   }
 
   @Transactional

@@ -1,6 +1,7 @@
 package web.sportflow.exercise;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,13 @@ public class ExerciseService {
 
   @Transactional(readOnly = true)
   public List<Exercise> getAll() {
-    return exerciseRepository.findAll();
+    List<Exercise> exercises = exerciseRepository.findAll();
+    exercises.forEach(exercise -> exercise.getSports().size());
+    return exercises;
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<Exercise> findById(Long id) {
+    return exerciseRepository.findById(id);
   }
 }

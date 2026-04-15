@@ -202,103 +202,6 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <div
-            th:if="${type.distanceRelevant and display.distanceKm > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-              Distance
-            </p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.distanceKm, 1, 2)} + ' km'"
-            >
-              12.50 km
-            </p>
-          </div>
-          <div th:if="${display.durationSec > 0}" class="rounded-2xl bg-base-200 p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">Durée</p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.durationMinutes, 1, 0)} + ' min'"
-            >
-              54 min
-            </p>
-          </div>
-          <div
-            th:if="${type.paceRelevant and display.averagePaceMinPerKm > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">Allure</p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.averagePaceMinPerKm, 1, 2)} + ' min/km'"
-            >
-              5.20 min/km
-            </p>
-          </div>
-          <div
-            th:if="${type.speedRelevant and display.averageSpeedKmh > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-              Vitesse
-            </p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.averageSpeedKmh, 1, 1)} + ' km/h'"
-            >
-              22.0 km/h
-            </p>
-          </div>
-          <div
-            th:if="${type.strengthRelevant and display.totalSets > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">Séries</p>
-            <p class="mt-2 text-2xl font-black" th:text="${display.totalSets + ' séries'}">
-              8 séries
-            </p>
-          </div>
-          <div
-            th:if="${type.strengthRelevant and display.totalReps > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-              Répétitions
-            </p>
-            <p class="mt-2 text-2xl font-black" th:text="${display.totalReps + ' répétitions'}">
-              42 répétitions
-            </p>
-          </div>
-          <div
-            th:if="${type.strengthRelevant and display.maxWeightKg > 0}"
-            class="rounded-2xl bg-base-200 p-4"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-              Charge max
-            </p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.maxWeightKg, 1, 0)} + ' kg'"
-            >
-              80 kg
-            </p>
-          </div>
-          <div class="rounded-2xl bg-base-200 p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-              Calories
-            </p>
-            <p
-              class="mt-2 text-2xl font-black"
-              th:text="${#numbers.formatDecimal(display.calories, 1, 0)} + ' kcal'"
-            >
-              430 kcal
-            </p>
-          </div>
-        </div>
-
         <details class="collapse rounded-2xl border border-base-300 bg-base-200/60 text-sm">
           <summary class="collapse-title flex flex-wrap items-center justify-between gap-3 p-4">
             <span class="flex flex-wrap items-center gap-2">
@@ -352,20 +255,6 @@
                       >8.0</strong
                     >
                   </p>
-                </div>
-              </div>
-              <div
-                class="carousel-item w-72 rounded-2xl border border-base-300 bg-base-100 p-4"
-                th:if="${workout.weather != null}"
-              >
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
-                    Météo
-                  </p>
-                  <div
-                    class="mt-3"
-                    th:insert="~{components/weather :: weather(data=${workout.weather})}"
-                  ></div>
                 </div>
               </div>
               <div

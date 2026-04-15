@@ -400,6 +400,8 @@ public class UserController {
       unlockedBadgesByWorkoutId.put(workout.getId(), getUnlockedBadgesForWorkout(workout));
     }
     model.addAttribute("workouts", workouts);
+    model.addAttribute(
+        "workoutDisplays", workouts.stream().map(WorkoutDashboardDisplay::new).toList());
     model.addAttribute("unlockedBadgesByWorkoutId", unlockedBadgesByWorkoutId);
     return "user-workout";
   }
