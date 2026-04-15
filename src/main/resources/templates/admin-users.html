@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Users')}">
-    <title>Admin - Users</title>
+  <head th:replace="~{components/layout::head(title='Administration - Utilisateurs')}">
+    <title>Administration - Utilisateurs</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -20,18 +20,18 @@
           <div class="mx-auto max-w-[1600px] space-y-6">
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h1 class="text-3xl font-black">Administration - Users</h1>
+                <h1 class="text-3xl font-black">Administration - Utilisateurs</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
                   <a
                     th:href="@{/admin/users}"
                     class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
-                    >Users</a
+                    >Utilisateurs</a
                   >
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -40,10 +40,10 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -58,19 +58,19 @@
 
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h2 class="card-title text-2xl">Users</h2>
+                <h2 class="card-title text-2xl">Utilisateurs</h2>
 
                 <form
                   th:action="@{/admin/users/create}"
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer un user</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer un utilisateur</h3>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                       name="firstname"
                       class="input input-bordered"
-                      placeholder="Prenom"
+                      placeholder="Prénom"
                       required
                     />
                     <input
@@ -97,7 +97,7 @@
                       <option
                         th:each="role : ${roles}"
                         th:value="${role}"
-                        th:text="${role}"
+                        th:text="${role.labelFr}"
                       ></option>
                     </select>
                     <input
@@ -119,13 +119,17 @@
                       required
                     />
                     <select name="sex" class="select select-bordered" required>
-                      <option th:each="sex : ${sexes}" th:value="${sex}" th:text="${sex}"></option>
+                      <option
+                        th:each="sex : ${sexes}"
+                        th:value="${sex}"
+                        th:text="${sex.labelFr}"
+                      ></option>
                     </select>
                     <select name="level" class="select select-bordered" required>
                       <option
                         th:each="level : ${levels}"
                         th:value="${level}"
-                        th:text="${level}"
+                        th:text="${level.labelFr}"
                       ></option>
                     </select>
                     <input name="birthDate" type="date" class="input input-bordered" />
@@ -149,11 +153,11 @@
                       ></option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                  <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
                 <div class="space-y-3" th:if="${#lists.isEmpty(users)}">
-                  <div class="alert"><span>Aucun user.</span></div>
+                  <div class="alert"><span>Aucun utilisateur.</span></div>
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(users)}">
                   <details
@@ -162,7 +166,7 @@
                   >
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${user.id}">1</span> -
-                      <span th:text="${user.firstname}">Prenom</span>
+                      <span th:text="${user.firstname}">Prénom</span>
                       <span th:text="${user.lastname}">Nom</span>
                       (<span th:text="${user.email}">email@demo.local</span>)
                     </summary>
@@ -198,7 +202,7 @@
                             <option
                               th:each="role : ${roles}"
                               th:value="${role}"
-                              th:text="${role}"
+                              th:text="${role.labelFr}"
                               th:selected="${role == user.role}"
                             ></option>
                           </select>
@@ -224,7 +228,7 @@
                             <option
                               th:each="sex : ${sexes}"
                               th:value="${sex}"
-                              th:text="${sex}"
+                              th:text="${sex.labelFr}"
                               th:selected="${sex == user.sex}"
                             ></option>
                           </select>
@@ -232,7 +236,7 @@
                             <option
                               th:each="level : ${levels}"
                               th:value="${level}"
-                              th:text="${level}"
+                              th:text="${level.labelFr}"
                               th:selected="${level == user.level}"
                             ></option>
                           </select>
@@ -264,7 +268,7 @@
                             ></option>
                           </select>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-4">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary mt-4">Mettre à jour</button>
                       </form>
 
                       <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">

@@ -106,7 +106,7 @@
                       th:each="currentSex : ${sexes}"
                       th:value="${currentSex.name()}"
                       th:selected="${user.sex != null and #strings.equals(user.sex.name(), currentSex.name())}"
-                      th:text="${#strings.equals(currentSex.name(), 'MALE') ? 'Homme' : 'Femme'}"
+                      th:text="${currentSex.labelFr}"
                     >
                       Sexe
                     </option>
@@ -120,7 +120,7 @@
                       th:each="practiceLevel : ${practiceLevels}"
                       th:value="${practiceLevel.name()}"
                       th:selected="${user.level != null and #strings.equals(user.level.name(), practiceLevel.name())}"
-                      th:text="${practiceLevel}"
+                      th:text="${practiceLevel.labelFr}"
                     >
                       BEGINNER
                     </option>

@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Workouts')}">
-    <title>Admin - Workouts</title>
+  <head th:replace="~{components/layout::head(title='Administration - Activités')}">
+    <title>Administration - Activités</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -20,16 +20,16 @@
           <div class="mx-auto max-w-[1600px] space-y-6">
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h1 class="text-3xl font-black">Administration - Workouts</h1>
+                <h1 class="text-3xl font-black">Administration - Activités</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a
                     th:href="@{/admin/workouts}"
                     class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -38,10 +38,10 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -56,14 +56,14 @@
 
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h2 class="card-title text-2xl">Workouts</h2>
+                <h2 class="card-title text-2xl">Activités</h2>
 
                 <form
                   th:action="@{/admin/workouts/create}"
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer un workout</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer une activité</h3>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                       name="date"
@@ -112,7 +112,7 @@
                       ></option>
                     </select>
                     <select name="userId" class="select select-bordered" required>
-                      <option value="" disabled selected>Choisir un user</option>
+                      <option value="" disabled selected>Choisir un utilisateur</option>
                       <option
                         th:each="user : ${users.?[#this != null]}"
                         th:value="${user.id}"
@@ -120,11 +120,11 @@
                       ></option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                  <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
                 <div class="space-y-3" th:if="${#lists.isEmpty(workouts)}">
-                  <div class="alert"><span>Aucun workout.</span></div>
+                  <div class="alert"><span>Aucune activité.</span></div>
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(workouts)}">
                   <details
@@ -140,7 +140,7 @@
                       /
                       <span
                         th:text="${workout.user != null ? workout.user.firstname + ' ' + workout.user.lastname : 'Utilisateur inconnu'}"
-                        >User</span
+                        >Utilisateur</span
                       >
                       - <span th:text="${workout.distance}">0</span> km
                     </summary>
@@ -204,7 +204,7 @@
                             th:selected="${workout.user != null and user != null and user.id != null and workout.user.id == user.id}"
                           ></option>
                         </select>
-                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
                       <form
                         th:action="@{/admin/workouts/{id}/delete(id=${workout.id})}"

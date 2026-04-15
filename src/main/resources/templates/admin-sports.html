@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Sports')}">
-    <title>Admin - Sports</title>
+  <head th:replace="~{components/layout::head(title='Administration - Sports')}">
+    <title>Administration - Sports</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -22,14 +22,14 @@
               <div class="card-body space-y-4">
                 <h1 class="text-3xl font-black">Administration - Sports</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a
                     th:href="@{/admin/sports}"
                     class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -38,10 +38,10 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -63,7 +63,7 @@
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer un sport</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer un sport</h3>
                   <div class="grid gap-3 md:grid-cols-3">
                     <input
                       name="name"
@@ -81,7 +81,7 @@
                       required
                     />
                   </div>
-                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                  <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
                 <div class="space-y-3" th:if="${#lists.isEmpty(sports)}">
@@ -117,7 +117,7 @@
                           th:value="${sport.caloryPerMinutes}"
                           required
                         />
-                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
                       <form th:action="@{/admin/sports/{id}/delete(id=${sport.id})}" method="post">
                         <button type="submit" class="btn btn-error btn-outline">Supprimer</button>

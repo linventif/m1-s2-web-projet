@@ -52,7 +52,8 @@ class UserControllerTest {
     String view = userController.sendFriendRequest(currentUser, 2L, "/users/users", redirect);
 
     assertEquals("redirect:/users/users", view);
-    assertEquals("Friend request auto-accepted.", redirect.getFlashAttributes().get("message"));
+    assertEquals(
+        "Demande d'ami acceptée automatiquement.", redirect.getFlashAttributes().get("message"));
   }
 
   @Test
@@ -68,7 +69,7 @@ class UserControllerTest {
     String view = userController.sendFriendRequest(currentUser, 2L, "/users/friends", redirect);
 
     assertEquals("redirect:/users/friends", view);
-    assertEquals("Friend request sent.", redirect.getFlashAttributes().get("message"));
+    assertEquals("Demande d'ami envoyée.", redirect.getFlashAttributes().get("message"));
     assertNull(redirect.getFlashAttributes().get("errorMessage"));
   }
 

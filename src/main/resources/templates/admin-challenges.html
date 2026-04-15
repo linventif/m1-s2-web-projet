@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Challenges')}">
-    <title>Admin - Challenges</title>
+  <head th:replace="~{components/layout::head(title='Administration - Défis')}">
+    <title>Administration - Défis</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -20,14 +20,14 @@
           <div class="mx-auto max-w-[1600px] space-y-6">
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h1 class="text-3xl font-black">Administration - Challenges</h1>
+                <h1 class="text-3xl font-black">Administration - Défis</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -38,10 +38,10 @@
                   <a
                     th:href="@{/admin/challenges}"
                     class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -56,14 +56,14 @@
 
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h2 class="card-title text-2xl">Challenges</h2>
+                <h2 class="card-title text-2xl">Défis</h2>
 
                 <form
                   th:action="@{/admin/challenges/create}"
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer un challenge</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer un défi</h3>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                       name="title"
@@ -75,7 +75,7 @@
                       <option
                         th:each="challengeType : ${challengeTypes}"
                         th:value="${challengeType}"
-                        th:text="${challengeType}"
+                        th:text="${challengeType.labelFr}"
                       ></option>
                     </select>
                     <input
@@ -102,7 +102,7 @@
                       required
                     />
                     <select name="creatorId" class="select select-bordered" required>
-                      <option value="" disabled selected>Createur</option>
+                      <option value="" disabled selected>Créateur</option>
                       <option
                         th:each="user : ${users.?[#this != null]}"
                         th:value="${user.id}"
@@ -126,11 +126,11 @@
                       placeholder="Description (optionnel)"
                     />
                   </div>
-                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                  <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
                 <div class="space-y-3" th:if="${#lists.isEmpty(challenges)}">
-                  <div class="alert"><span>Aucun challenge.</span></div>
+                  <div class="alert"><span>Aucun défi.</span></div>
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(challenges)}">
                   <details
@@ -141,13 +141,13 @@
                       #<span th:text="${challenge.id}">1</span> -
                       <span th:text="${challenge.title}">Challenge</span>
                       (<span
-                        th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'Createur inconnu'}"
-                        >Creator</span
+                        th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'Créateur inconnu'}"
+                        >Créateur</span
                       >)
                     </summary>
                     <div class="collapse-content space-y-3">
                       <p class="text-sm text-base-content/60">
-                        Badges:
+                        Badges :
                         <span th:if="${#lists.isEmpty(challenge.badges)}" class="italic"
                           >Aucun</span
                         >
@@ -172,7 +172,7 @@
                           <option
                             th:each="challengeType : ${challengeTypes}"
                             th:value="${challengeType}"
-                            th:text="${challengeType}"
+                            th:text="${challengeType.labelFr}"
                             th:selected="${challengeType == challenge.type}"
                           ></option>
                         </select>
@@ -224,7 +224,7 @@
                           class="input input-bordered md:col-span-2 xl:col-span-4"
                           th:value="${challenge.description}"
                         />
-                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
                       <form
                         th:action="@{/admin/challenges/{id}/delete(id=${challenge.id})}"

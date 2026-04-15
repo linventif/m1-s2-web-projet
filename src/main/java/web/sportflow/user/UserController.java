@@ -330,9 +330,9 @@ public class UserController {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
       if (friendship.getStatus() == FriendshipStatus.ACCEPTED) {
-        redirectAttributes.addFlashAttribute("message", "Friend request auto-accepted.");
+        redirectAttributes.addFlashAttribute("message", "Demande d'ami acceptée automatiquement.");
       } else {
-        redirectAttributes.addFlashAttribute("message", "Friend request sent.");
+        redirectAttributes.addFlashAttribute("message", "Demande d'ami envoyée.");
       }
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -348,7 +348,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
-      redirectAttributes.addFlashAttribute("message", "Friend request accepted.");
+      redirectAttributes.addFlashAttribute("message", "Demande d'ami acceptée.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }
@@ -363,7 +363,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
-      redirectAttributes.addFlashAttribute("message", "Friend request refused.");
+      redirectAttributes.addFlashAttribute("message", "Demande d'ami refusée.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }
@@ -378,7 +378,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);
-      redirectAttributes.addFlashAttribute("message", "Friend removed.");
+      redirectAttributes.addFlashAttribute("message", "Ami retiré.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }

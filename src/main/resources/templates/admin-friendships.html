@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Friendships')}">
-    <title>Admin - Friendships</title>
+  <head th:replace="~{components/layout::head(title='Administration - Amitiés')}">
+    <title>Administration - Amitiés</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -20,14 +20,14 @@
           <div class="mx-auto max-w-[1600px] space-y-6">
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h1 class="text-3xl font-black">Administration - Friendships</h1>
+                <h1 class="text-3xl font-black">Administration - Amitiés</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -36,12 +36,12 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a
                     th:href="@{/admin/friendships}"
                     class="btn btn-outline btn-sm rounded-full btn-primary text-primary-content border-primary"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -56,17 +56,17 @@
 
             <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
               <div class="card-body space-y-4">
-                <h2 class="card-title text-2xl">Friendships</h2>
+                <h2 class="card-title text-2xl">Amitiés</h2>
 
                 <form
                   th:action="@{/admin/friendships/create}"
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer / synchroniser une relation</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer / synchroniser une relation</h3>
                   <div class="grid gap-3 md:grid-cols-3">
                     <select name="requesterId" class="select select-bordered" required>
-                      <option value="" disabled selected>Requester</option>
+                      <option value="" disabled selected>Demandeur</option>
                       <option
                         th:each="user : ${users.?[#this != null]}"
                         th:value="${user.id}"
@@ -74,7 +74,7 @@
                       ></option>
                     </select>
                     <select name="addresseeId" class="select select-bordered" required>
-                      <option value="" disabled selected>Addressee</option>
+                      <option value="" disabled selected>Destinataire</option>
                       <option
                         th:each="user : ${users.?[#this != null]}"
                         th:value="${user.id}"
@@ -85,7 +85,7 @@
                       <option
                         th:each="friendshipStatus : ${friendshipStatuses}"
                         th:value="${friendshipStatus}"
-                        th:text="${friendshipStatus}"
+                        th:text="${friendshipStatus.labelFr}"
                       ></option>
                     </select>
                   </div>
@@ -103,24 +103,24 @@
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${friendship.id}">1</span> -
                       <span
-                        th:text="${friendship.requester != null ? friendship.requester.firstname + ' ' + friendship.requester.lastname : 'Requester inconnu'}"
-                        >Requester</span
+                        th:text="${friendship.requester != null ? friendship.requester.firstname + ' ' + friendship.requester.lastname : 'Demandeur inconnu'}"
+                        >Demandeur</span
                       >
                       ->
                       <span
-                        th:text="${friendship.addressee != null ? friendship.addressee.firstname + ' ' + friendship.addressee.lastname : 'Addressee inconnu'}"
-                        >Addressee</span
+                        th:text="${friendship.addressee != null ? friendship.addressee.firstname + ' ' + friendship.addressee.lastname : 'Destinataire inconnu'}"
+                        >Destinataire</span
                       >
-                      (<span th:text="${friendship.status}">PENDING</span>)
+                      (<span th:text="${friendship.status.labelFr}">En attente</span>)
                     </summary>
                     <div class="collapse-content space-y-3">
                       <p class="text-sm text-base-content/60">
-                        Creee le
+                        Créée le
                         <span
                           th:text="${friendship.createdAt != null ? #temporals.format(friendship.createdAt, 'yyyy-MM-dd HH:mm') : '-'}"
                           >date</span
                         >
-                        | MAJ le
+                        | Mise à jour le
                         <span
                           th:text="${friendship.updatedAt != null ? #temporals.format(friendship.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"
                           >date</span
@@ -152,11 +152,11 @@
                           <option
                             th:each="friendshipStatus : ${friendshipStatuses}"
                             th:value="${friendshipStatus}"
-                            th:text="${friendshipStatus}"
+                            th:text="${friendshipStatus.labelFr}"
                             th:selected="${friendshipStatus == friendship.status}"
                           ></option>
                         </select>
-                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
 
                       <form

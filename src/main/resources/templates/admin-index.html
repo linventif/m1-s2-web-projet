@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin Dashboard')}">
-    <title>Admin Dashboard</title>
+  <head th:replace="~{components/layout::head(title='Tableau de bord admin')}">
+    <title>Tableau de bord admin</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -24,20 +24,20 @@
                   <div>
                     <h1 class="text-3xl font-black">Administration</h1>
                     <p class="text-sm text-base-content/70">
-                      Espace admin decoupe par categories pour gerer chaque entite sur sa propre
+                      Espace admin découpé par catégories pour gérer chaque entité sur sa propre
                       page.
                     </p>
                   </div>
-                  <div class="badge badge-warning badge-lg rounded-full">Reserve ROLE_ADMIN</div>
+                  <div class="badge badge-warning badge-lg rounded-full">Réservé ROLE_ADMIN</div>
                 </div>
 
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -46,10 +46,10 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -68,7 +68,7 @@
                 class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition"
               >
                 <div class="card-body">
-                  <p class="text-sm text-base-content/60">Users</p>
+                  <p class="text-sm text-base-content/60">Utilisateurs</p>
                   <p class="text-3xl font-black" th:text="${usersCount}">0</p>
                 </div>
               </a>
@@ -86,7 +86,7 @@
                 class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition"
               >
                 <div class="card-body">
-                  <p class="text-sm text-base-content/60">Workouts</p>
+                  <p class="text-sm text-base-content/60">Activités</p>
                   <p class="text-3xl font-black" th:text="${workoutsCount}">0</p>
                 </div>
               </a>
@@ -113,7 +113,7 @@
                 class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition"
               >
                 <div class="card-body">
-                  <p class="text-sm text-base-content/60">Challenges</p>
+                  <p class="text-sm text-base-content/60">Défis</p>
                   <p class="text-3xl font-black" th:text="${challengesCount}">0</p>
                 </div>
               </a>
@@ -122,7 +122,7 @@
                 class="card border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition"
               >
                 <div class="card-body">
-                  <p class="text-sm text-base-content/60">Friendships</p>
+                  <p class="text-sm text-base-content/60">Amitiés</p>
                   <p class="text-3xl font-black" th:text="${friendshipsCount}">0</p>
                 </div>
               </a>

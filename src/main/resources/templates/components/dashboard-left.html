@@ -37,7 +37,7 @@
           </div>
           <div class="rounded-2xl bg-base-200 p-3">
             <p class="text-lg font-black text-emerald-600" th:text="${#lists.size(goals)}">0</p>
-            <p class="text-xs text-base-content/60">Goals</p>
+            <p class="text-xs text-base-content/60">Objectifs</p>
           </div>
           <div class="rounded-2xl bg-base-200 p-3">
             <p class="text-lg font-black text-sky-600" th:text="${#lists.size(friends)}">0</p>
@@ -47,11 +47,11 @@
       </div>
     </div>
 
-    <!-- This week -->
+    <!-- Cette semaine -->
     <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
       <div class="card-body">
         <div class="flex items-center justify-between">
-          <h2 class="card-title text-lg uppercase">This Week</h2>
+          <h2 class="card-title text-lg uppercase">Cette semaine</h2>
           <a
             th:href="@{/users/statistique}"
             class="btn btn-warning btn-outline btn-sm rounded-full"
@@ -97,31 +97,31 @@
         </div>
 
         <div class="mt-2 flex items-center justify-center gap-2 text-sm font-semibold">
-          <span
-            class="w-4 text-center"
-            th:classappend="${todayIndex == 0} ? ' text-orange-500' : ''"
-            >M</span
+            <span
+              class="w-4 text-center"
+              th:classappend="${todayIndex == 0} ? ' text-orange-500' : ''"
+            >L</span
           >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 1} ? ' text-orange-500' : ''"
-            >T</span
+            >M</span
           >
-          <span
-            class="w-4 text-center"
-            th:classappend="${todayIndex == 2} ? ' text-orange-500' : ''"
-            >W</span
-          >
+            <span
+              class="w-4 text-center"
+              th:classappend="${todayIndex == 2} ? ' text-orange-500' : ''"
+              >M</span
+            >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 3} ? ' text-orange-500' : ''"
-            >T</span
+            >J</span
           >
-          <span
-            class="w-4 text-center"
-            th:classappend="${todayIndex == 4} ? ' text-orange-500' : ''"
-            >F</span
-          >
+            <span
+              class="w-4 text-center"
+              th:classappend="${todayIndex == 4} ? ' text-orange-500' : ''"
+              >V</span
+            >
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 5} ? ' text-orange-500' : ''"
@@ -130,7 +130,7 @@
           <span
             class="w-4 text-center"
             th:classappend="${todayIndex == 6} ? ' text-orange-500' : ''"
-            >S</span
+            >D</span
           >
         </div>
 
@@ -155,7 +155,7 @@
     <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
       <div class="card-body">
         <div class="flex items-center justify-between">
-          <h2 class="card-title text-lg">Suggestion d'Amis -- To do --</h2>
+          <h2 class="card-title text-lg">Suggestions d'amis</h2>
           <span class="badge badge-neutral rounded-full" th:text="${#lists.size(friends)}">0</span>
         </div>
         <p class="text-sm text-base-content/60">Ton groupe sportif du moment.</p>
@@ -187,7 +187,7 @@
                 ami@email.com
               </p>
               <p class="mt-1 text-xs text-base-content/50">
-                Niveau : <span th:text="${friend.level}">BEGINNER</span>
+                Niveau : <span th:text="${friend.level.labelFr}">Débutant</span>
               </p>
             </div>
           </div>

@@ -38,7 +38,7 @@ public class ErrorController {
     response.setStatus(status);
     model.addAttribute("httpStatus", status);
     model.addAttribute("reason", reason);
-    model.addAttribute("message", throwable != null ? throwable.getMessage() : "Unknown Error");
+    model.addAttribute("message", throwable != null ? throwable.getMessage() : "Erreur inconnue");
 
     return "error";
   }

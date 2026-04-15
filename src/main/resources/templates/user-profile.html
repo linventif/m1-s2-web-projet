@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{components/layout::head(title='Profile')}">
-    <title>Profile</title>
+  <head th:replace="~{components/layout::head(title='Profil')}">
+    <title>Profil</title>
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
@@ -43,7 +43,7 @@
                 </p>
                 <span class="badge badge-warning badge-lg border-none text-slate-900">
                   Niveau:
-                  <span class="ml-1" th:text="${user.level}">BEGINNER</span>
+                  <span class="ml-1" th:text="${user.level.labelFr}">Débutant</span>
                 </span>
               </div>
             </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
               <p class="text-xs uppercase text-base-content/60">Sexe</p>
-              <p class="mt-1 font-medium" th:text="${user.sex}">Sexe</p>
+              <p class="mt-1 font-medium" th:text="${user.sex.labelFr}">Sexe</p>
             </div>
             <div class="rounded-xl border border-base-300 bg-base-200/60 p-3">
               <p class="text-xs uppercase text-base-content/60">Taille</p>

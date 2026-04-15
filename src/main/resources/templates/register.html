@@ -13,7 +13,7 @@
         <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
           <div class="form-control">
             <label class="label" for="firstname">
-              <span class="label-text">Prenom</span>
+              <span class="label-text">Prénom</span>
             </label>
             <input
               id="firstname"
@@ -26,7 +26,7 @@
           </div>
           <div class="form-control">
             <label class="label" for="lastname">
-              <span class="label-text">Nom de Famille</span>
+              <span class="label-text">Nom de famille</span>
             </label>
             <input
               id="lastname"
@@ -65,7 +65,7 @@
               <option
                 th:each="s : ${T(web.sportflow.user.Sex).values()}"
                 th:value="${s}"
-                th:text="${s}"
+                th:text="${s.labelFr}"
               ></option>
             </select>
           </div>
