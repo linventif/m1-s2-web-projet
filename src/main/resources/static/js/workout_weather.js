@@ -1,15 +1,18 @@
+/**
+ * Récupère les données météo via l'API
+ */
 function fetchWeather() {
     const dateInput = document.getElementById("date");
     const addressInput = document.getElementById("address");
     const durationInput = document.getElementById("duration");
+
     const date = dateInput ? dateInput.value : "";
     const address = addressInput ? addressInput.value : "";
     const duration = durationInput && durationInput.value ? durationInput.value : "60";
 
-    if (!date || !address) {
-        alert("Veuillez remplir la date et l'adresse pour obtenir la météo.");
-        return;
-    }
+    // On ne lance l'alerte que si l'appel est manuel (via bouton). 
+    // Pour l'auto-refresh, on vérifie juste silencieusement.
+    if (!date || !address) return;
 
     const url = `/api/weather/stats?date=${encodeURIComponent(date)}&address=${encodeURIComponent(address)}&duration=${duration}`;
 
@@ -39,9 +42,27 @@ function fetchWeather() {
             document.getElementById("weather-apparent").value = data.averageApparentTemperature || "";
         })
         .catch((error) => {
-            console.error("Erreur:", error);
-            alert("Impossible de récupérer la météo. Vérifiez l'adresse.");
+            console.error("Erreur météo:", error);
         });
+}
+
+/**
+ * Logique d'actualisation automatique avec Debounce
+ */
+let weatherTimeout;
+function autoUpdateWeather() {
+    // On annule le timer précédent si l'utilisateur continue de taper
+    clearTimeout(weatherTimeout);
+
+    // On attend 800ms de silence avant de lancer la requête
+    weatherTimeout = setTimeout(() => {
+        const date = document.getElementById("date").value;
+        const address = document.getElementById("address").value;
+
+        if (date && address && address.trim() !== "") {
+            fetchWeather();
+        }
+    }, 800);
 }
 
 let cityDetectionStarted = false;
@@ -65,27 +86,21 @@ function inferCityFromTimezone() {
         const parts = timeZone.split("/");
         const maybeCity = parts[parts.length - 1] || "";
         const normalized = maybeCity.replace(/_/g, " ").trim();
-        if (normalized) {
-            return normalized;
-        }
-    } catch (_error) {
-        // Ignore timezone parsing issues.
-    }
+        if (normalized) return normalized;
+    } catch (_error) {}
     return "Position inconnue";
 }
 
 function setAddressValue(addressInput, value) {
-    if (!addressInput || !value || !value.trim()) {
-        return;
-    }
+    if (!addressInput || !value || !value.trim()) return;
     addressInput.value = value;
     addressInput.dataset.autofilled = "true";
+    // On déclenche l'auto-update car la valeur a changé via script
+    autoUpdateWeather();
 }
 
 function canAutoFillAddress(addressInput) {
-    if (!addressInput) {
-        return false;
-    }
+    if (!addressInput) return false;
     const hasValue = addressInput.value.trim() !== "";
     const isAutofilled = addressInput.dataset.autofilled === "true";
     return !hasValue || isAutofilled;
@@ -93,9 +108,7 @@ function canAutoFillAddress(addressInput) {
 
 function detectCityFromBrowserLocation() {
     const addressInput = document.getElementById("address");
-    if (cityDetectionStarted || !addressInput || !canAutoFillAddress(addressInput)) {
-        return;
-    }
+    if (cityDetectionStarted || !addressInput || !canAutoFillAddress(addressInput)) return;
     cityDetectionStarted = true;
 
     const timezoneCity = inferCityFromTimezone();
@@ -103,15 +116,11 @@ function detectCityFromBrowserLocation() {
         setAddressValue(addressInput, timezoneCity);
     }
 
-    if (!navigator.geolocation) {
-        return;
-    }
+    if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
         async (position) => {
-            if (!canAutoFillAddress(addressInput)) {
-                return;
-            }
+            if (!canAutoFillAddress(addressInput)) return;
 
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -119,14 +128,10 @@ function detectCityFromBrowserLocation() {
             setAddressValue(addressInput, coordsFallback);
 
             try {
-                const response = await fetch(
-                    `/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`
-                );
-                if (!response.ok) {
-                    return;
-                }
+                const response = await fetch(`/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`);
+                if (!response.ok) return;
                 const data = await response.json();
-                if (data && typeof data.city === "string" && data.city.trim() !== "") {
+                if (data && data.city && data.city.trim() !== "") {
                     if (canAutoFillAddress(addressInput)) {
                         setAddressValue(addressInput, data.city);
                     }
@@ -135,9 +140,7 @@ function detectCityFromBrowserLocation() {
                 console.warn("Géolocalisation ville impossible:", error);
             }
         },
-        () => {
-            // Refus/erreur: on conserve la valeur de fallback déjà remplie.
-        },
+        () => {},
         { enableHighAccuracy: false, timeout: 7000, maximumAge: 300000 }
     );
 }
@@ -146,64 +149,63 @@ function initSportSuggestions() {
     const sportNameInput = document.getElementById("sport-name");
     const sportIdInput = document.getElementById("sport-id");
     const sportList = document.getElementById("sports-list");
-    if (!sportNameInput || !sportIdInput || !sportList) {
-        return;
-    }
+    if (!sportNameInput || !sportIdInput || !sportList) return;
 
     const optionElements = Array.from(sportList.querySelectorAll("option"));
     const syncSportSelection = () => {
         const currentValue = sportNameInput.value.trim().toLowerCase();
         const match = optionElements.find((option) => option.value.trim().toLowerCase() === currentValue);
         sportIdInput.value = match ? match.dataset.id || "" : "";
-
-        if (sportIdInput.value) {
-            sportNameInput.setCustomValidity("");
-        } else {
-            sportNameInput.setCustomValidity("Choisissez un sport dans la liste proposée.");
-        }
+        sportNameInput.setCustomValidity(sportIdInput.value ? "" : "Choisissez un sport dans la liste proposée.");
     };
 
     sportNameInput.addEventListener("input", syncSportSelection);
     sportNameInput.addEventListener("change", syncSportSelection);
     sportNameInput.addEventListener("blur", syncSportSelection);
     syncSportSelection();
-
-    const form = sportNameInput.closest("form");
-    if (form) {
-        form.addEventListener("submit", (event) => {
-            syncSportSelection();
-            if (!sportIdInput.value) {
-                event.preventDefault();
-                sportNameInput.reportValidity();
-            }
-        });
-    }
 }
 
 function initAddressInputTracking() {
     const addressInput = document.getElementById("address");
-    if (!addressInput) {
-        return;
-    }
+    if (!addressInput) return;
 
     addressInput.addEventListener("input", () => {
         addressInput.dataset.autofilled = "false";
+        autoUpdateWeather(); // Déclenche l'update au clavier
     });
 
     addressInput.addEventListener("focus", detectCityFromBrowserLocation, { once: true });
+}
+
+/**
+ * Initialise les écouteurs pour l'actualisation automatique
+ */
+function initWeatherListeners() {
+    const dateInput = document.getElementById("date");
+    const durationInput = document.getElementById("duration");
+
+    if (dateInput) {
+        dateInput.addEventListener("change", autoUpdateWeather);
+    }
+    if (durationInput) {
+        durationInput.addEventListener("input", autoUpdateWeather);
+    }
 }
 
 function initWorkoutFormEnhancements() {
     setDefaultWorkoutDate();
     initSportSuggestions();
     initAddressInputTracking();
+    initWeatherListeners();
     detectCityFromBrowserLocation();
+    
+    // Premier essai après avoir mis la date par défaut
+    autoUpdateWeather();
 }
 
+// Lancement au chargement de la page
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initWorkoutFormEnhancements);
 } else {
     initWorkoutFormEnhancements();
 }
-
-window.addEventListener("load", initWorkoutFormEnhancements);
