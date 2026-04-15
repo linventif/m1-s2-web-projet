@@ -19,7 +19,9 @@
         <main class="px-3 pb-8 pt-24 md:px-5">
           <div class="mx-auto max-w-[1600px] space-y-6">
             <!-- Hero -->
-            <section class="overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+            <section
+              class="overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+            >
               <div class="card-body">
                 <div
                   class="rounded-[1.75rem] bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 p-6 text-white md:p-8"
@@ -29,19 +31,22 @@
                       <p class="text-xs uppercase tracking-[0.35em] text-white/80">
                         Analyse détaillée
                       </p>
-                      <h1 class="mt-3 text-3xl font-black md:text-5xl">
-                        Mes Statistiques
-                      </h1>
+                      <h1 class="mt-3 text-3xl font-black md:text-5xl">Mes Statistiques</h1>
                       <p class="mt-3 max-w-2xl text-sm leading-7 text-white/90 md:text-base">
                         Retrouve une vue claire de tes performances avec les tendances semaine,
                         mois, année, un suivi santé et des recommandations personnalisées.
                       </p>
 
                       <div class="mt-5 flex flex-wrap gap-3">
-                        <a th:href="@{/users/dashboard}" class="btn rounded-full border-none bg-white text-orange-600 hover:bg-white/90">
+                        <a
+                          th:href="@{/users/dashboard}"
+                          class="btn rounded-full border-none bg-white text-orange-600 hover:bg-white/90"
+                        >
                           Retour au tableau de bord
                         </a>
-                        <button class="btn rounded-full border border-white/40 bg-white/10 text-white hover:bg-white/20">
+                        <button
+                          class="btn rounded-full border border-white/40 bg-white/10 text-white hover:bg-white/20"
+                        >
                           Exporter plus tard
                         </button>
                       </div>
@@ -58,9 +63,13 @@
                 <div class="max-h-[calc(100vh-7rem)] overflow-y-auto pr-2 dashboard-scrollbar">
                   <div class="space-y-6">
                     <!-- Evolution chart -->
-                    <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
                       <div class="card-body gap-5">
-                        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div
+                          class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"
+                        >
                           <div>
                             <h2 class="card-title text-2xl font-black" id="evolutionTitle">
                               Évolution - Mois
@@ -94,7 +103,9 @@
                           </div>
                         </div>
 
-                        <div class="rounded-[1.5rem] bg-base-200/70 p-4 text-sm text-base-content/65">
+                        <div
+                          class="rounded-[1.5rem] bg-base-200/70 p-4 text-sm text-base-content/65"
+                        >
                           La barre orange met en avant la période actuelle pour rendre la lecture
                           plus intuitive.
                         </div>
@@ -110,7 +121,9 @@
                     </section>
 
                     <!-- Monthly comparison -->
-                    <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
                       <div class="card-body gap-5">
                         <div class="flex items-center justify-between">
                           <div>
@@ -120,7 +133,9 @@
                             </p>
                           </div>
 
-                          <span class="badge rounded-full border-none bg-sky-100 px-4 py-3 text-sky-700">
+                          <span
+                            class="badge rounded-full border-none bg-sky-100 px-4 py-3 text-sky-700"
+                          >
                             Ce mois-ci
                           </span>
                         </div>
@@ -153,7 +168,9 @@
                                 <span class="text-base-content/70">Mois actuel</span>
                               </div>
                               <div class="flex items-center gap-2">
-                                <span class="inline-block h-3 w-3 rounded-full bg-emerald-500"></span>
+                                <span
+                                  class="inline-block h-3 w-3 rounded-full bg-emerald-500"
+                                ></span>
                                 <span class="text-base-content/70">Moyenne annuelle</span>
                               </div>
                             </div>
@@ -198,17 +215,22 @@
                     </section>
 
                     <!-- Suivi & recommandations -->
-                    <section class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
+                    <section
+                      class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm"
+                    >
                       <div class="card-body gap-5">
                         <div class="flex items-center justify-between">
                           <div>
                             <h2 class="card-title text-xl font-black">Suivi & recommandations</h2>
                             <p class="text-sm text-base-content/60">
-                              Une lecture rapide de ton profil, de ton objectif et des conseils utiles.
+                              Une lecture rapide de ton profil, de ton objectif et des conseils
+                              utiles.
                             </p>
                           </div>
 
-                          <span class="badge rounded-full border-none bg-emerald-100 px-4 py-3 text-emerald-700">
+                          <span
+                            class="badge rounded-full border-none bg-emerald-100 px-4 py-3 text-emerald-700"
+                          >
                             Insight
                           </span>
                         </div>
@@ -222,9 +244,14 @@
 
                           <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
-                              <p class="text-xs uppercase tracking-wide text-base-content/50">BMI</p>
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                BMI
+                              </p>
                               <p class="mt-3 text-4xl font-black text-sky-600">
-                                <span th:text="${bmi != null ? #numbers.formatDecimal(bmi,1,1) : '0.0'}">0.0</span>
+                                <span
+                                  th:text="${bmi != null ? #numbers.formatDecimal(bmi,1,1) : '0.0'}"
+                                  >0.0</span
+                                >
                               </p>
                               <p class="mt-2 text-sm text-base-content/60">
                                 Indice de masse corporelle
@@ -232,9 +259,15 @@
                             </div>
 
                             <div class="rounded-[1.5rem] bg-base-100 p-5 shadow-sm">
-                              <p class="text-xs uppercase tracking-wide text-base-content/50">BMR</p>
+                              <p class="text-xs uppercase tracking-wide text-base-content/50">
+                                BMR
+                              </p>
                               <p class="mt-3 text-4xl font-black text-orange-500">
-                                <span th:text="${bmr != null ? #numbers.formatDecimal(bmr,1,0) : '0'}">0</span> kcal
+                                <span
+                                  th:text="${bmr != null ? #numbers.formatDecimal(bmr,1,0) : '0'}"
+                                  >0</span
+                                >
+                                kcal
                               </p>
                               <p class="mt-2 text-sm text-base-content/60">
                                 Métabolisme de base estimé
@@ -259,16 +292,26 @@
                               <div th:if="${weeklyGoalKm != null and weeklyGoalKm > 0}">
                                 <p class="mt-3 text-base leading-8 text-base-content/85">
                                   Cette semaine, tu as parcouru
-                                  <span class="font-black text-sky-600" th:text="${distanceThisWeek}">0.0</span> km
-                                  sur un objectif de
-                                  <span class="font-black text-emerald-600" th:text="${weeklyGoalKm}">0.0</span> km.
+                                  <span
+                                    class="font-black text-sky-600"
+                                    th:text="${distanceThisWeek}"
+                                    >0.0</span
+                                  >
+                                  km sur un objectif de
+                                  <span
+                                    class="font-black text-emerald-600"
+                                    th:text="${weeklyGoalKm}"
+                                    >0.0</span
+                                  >
+                                  km.
                                 </p>
 
                                 <p
                                   class="mt-3 text-sm font-semibold text-orange-500"
                                   th:if="${remainingKm != null and remainingKm > 0}"
                                 >
-                                  Il te reste <span th:text="${remainingKm}">0.0</span> km pour atteindre ton objectif.
+                                  Il te reste <span th:text="${remainingKm}">0.0</span> km pour
+                                  atteindre ton objectif.
                                 </p>
 
                                 <p
@@ -300,7 +343,8 @@
                                 class="mt-3 text-base leading-8 text-base-content/85"
                                 th:text="${recommendation != null ? recommendation : 'Continue sur ton rythme actuel avec une séance régulière supplémentaire cette semaine.'}"
                               >
-                                Continue sur ton rythme actuel avec une séance régulière supplémentaire cette semaine.
+                                Continue sur ton rythme actuel avec une séance régulière
+                                supplémentaire cette semaine.
                               </p>
                             </div>
                           </div>
@@ -404,7 +448,7 @@
                 fill: false,
                 borderColor: "#0ea5e9",
                 backgroundColor: "#0ea5e9",
-                pointRadius: 3
+                pointRadius: 3,
               },
               {
                 label: "Moyenne annuelle",
@@ -414,32 +458,32 @@
                 borderColor: "#10b981",
                 backgroundColor: "#10b981",
                 pointRadius: 3,
-                borderDash: [6, 4]
-              }
-            ]
+                borderDash: [6, 4],
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                display: false
-              }
+                display: false,
+              },
             },
             scales: {
               y: {
                 beginAtZero: true,
                 grid: {
-                  color: "rgba(0,0,0,0.06)"
-                }
+                  color: "rgba(0,0,0,0.06)",
+                },
               },
               x: {
                 grid: {
-                  display: false
-                }
-              }
-            }
-          }
+                  display: false,
+                },
+              },
+            },
+          },
         });
       }
     </script>
@@ -470,7 +514,7 @@
         "Sep",
         "Oct",
         "Nov",
-        "Déc"
+        "Déc",
       ];
       const yearDistances = /*[[${yearChartDistances}]]*/ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -503,7 +547,7 @@
 
       function getBarColors(dataLength, highlightIndex) {
         return Array.from({ length: dataLength }, (_, index) =>
-          index === highlightIndex ? "#fb923c" : "#d6d3d1"
+          index === highlightIndex ? "#fb923c" : "#d6d3d1",
         );
       }
 
@@ -531,44 +575,44 @@
                 data: monthDistances,
                 backgroundColor: getBarColors(monthDistances.length, currentDayOfMonthIndex),
                 borderRadius: 14,
-                borderSkipped: false
-              }
-            ]
+                borderSkipped: false,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                display: false
+                display: false,
               },
               tooltip: {
                 callbacks: {
                   label: function (context) {
                     return context.raw + " km";
-                  }
-                }
-              }
+                  },
+                },
+              },
             },
             scales: {
               y: {
                 beginAtZero: true,
                 grid: {
-                  color: "rgba(0,0,0,0.06)"
+                  color: "rgba(0,0,0,0.06)",
                 },
                 ticks: {
                   callback: function (value) {
                     return value + " km";
-                  }
-                }
+                  },
+                },
               },
               x: {
                 grid: {
-                  display: false
-                }
-              }
-            }
-          }
+                  display: false,
+                },
+              },
+            },
+          },
         });
 
         updateEvolutionChart(
@@ -576,7 +620,7 @@
           monthDistances,
           "Évolution - Mois",
           "Visualisation de l’activité sur le mois.",
-          "month"
+          "month",
         );
         activateButton(filterMonth);
       }
@@ -587,7 +631,7 @@
           weekDistances,
           "Évolution - Semaine",
           "Visualisation de l’activité sur la semaine.",
-          "week"
+          "week",
         );
         activateButton(filterWeek);
       });
@@ -598,7 +642,7 @@
           monthDistances,
           "Évolution - Mois",
           "Visualisation de l’activité sur le mois.",
-          "month"
+          "month",
         );
         activateButton(filterMonth);
       });
@@ -609,7 +653,7 @@
           yearDistances,
           "Évolution - Année",
           "Visualisation de l’activité sur l’année.",
-          "year"
+          "year",
         );
         activateButton(filterYear);
       });
