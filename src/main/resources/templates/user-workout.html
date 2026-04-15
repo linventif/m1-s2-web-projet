@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{components/layout::head(title='Liste des Activité')}">
-    <title>Liste des Activité</title>
+  <head th:replace="~{components/layout::head(title='Liste des activités')}">
+    <title>Liste des activités</title>
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
@@ -12,10 +12,10 @@
       <section class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body gap-6 p-6 sm:p-8">
           <div class="space-y-4">
-            <h2 class="text-2xl font-bold text-slate-950">Toutes les activité</h2>
+            <h2 class="text-2xl font-bold text-slate-950">Toutes les activités</h2>
 
             <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(workouts)}">
-              <span>Aucune activité a afficher.</span>
+              <span>Aucune activité à afficher.</span>
             </div>
 
             <div
@@ -30,7 +30,7 @@
                     <th>Sport</th>
                     <th>Durée</th>
                     <th>Distance</th>
-                    <th>Calorie Bruler</th>
+                    <th>Calories brûlées</th>
                     <th>Badges débloqués</th>
                   </tr>
                 </thead>
@@ -51,7 +51,7 @@
                     </td>
                     <td>
                       <span th:text="${#numbers.formatDecimal(workout.calorieBurn, 1, 0)}"></span>
-                      kal
+                      kcal
                     </td>
                     <td>
                       <div

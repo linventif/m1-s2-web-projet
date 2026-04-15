@@ -30,7 +30,7 @@
             >
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <h3 class="font-semibold" th:text="${goal.label}">Objectif</h3>
-                <span class="badge badge-outline" th:text="${goal.type}">TYPE</span>
+                <span class="badge badge-outline" th:text="${goal.type.labelFr}">Type</span>
               </div>
 
               <p class="mt-2 text-sm text-base-content/80">
@@ -46,7 +46,7 @@
                 th:value="${goal.progressPercent}"
               ></progress>
               <p class="mt-1 text-xs text-base-content/70">
-                Progression:
+                Progression :
                 <span th:text="${goal.progressPercent}">0</span>
                 %
               </p>

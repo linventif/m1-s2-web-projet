@@ -5,8 +5,8 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{components/layout::head(title='Admin - Goals')}">
-    <title>Admin - Goals</title>
+  <head th:replace="~{components/layout::head(title='Administration - Objectifs')}">
+    <title>Administration - Objectifs</title>
   </head>
 
   <body class="strava-shell min-h-screen text-base-content">
@@ -22,12 +22,12 @@
               <div class="card-body space-y-4">
                 <h1 class="text-3xl font-black">Administration - Objectifs</h1>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Users</a>
+                  <a th:href="@{/admin/users}" class="btn btn-outline btn-sm rounded-full">Utilisateurs</a>
                   <a th:href="@{/admin/sports}" class="btn btn-outline btn-sm rounded-full"
                     >Sports</a
                   >
                   <a th:href="@{/admin/workouts}" class="btn btn-outline btn-sm rounded-full"
-                    >Workouts</a
+                    >Activités</a
                   >
                   <a th:href="@{/admin/badges}" class="btn btn-outline btn-sm rounded-full"
                     >Badges</a
@@ -38,10 +38,10 @@
                     >Objectifs</a
                   >
                   <a th:href="@{/admin/challenges}" class="btn btn-outline btn-sm rounded-full"
-                    >Challenges</a
+                    >Défis</a
                   >
                   <a th:href="@{/admin/friendships}" class="btn btn-outline btn-sm rounded-full"
-                    >Friendships</a
+                    >Amitiés</a
                   >
                 </div>
 
@@ -63,22 +63,22 @@
                   method="post"
                   class="rounded-2xl bg-base-200 p-4"
                 >
-                  <h3 class="mb-3 text-lg font-bold">Creer un objectif</h3>
+                  <h3 class="mb-3 text-lg font-bold">Créer un objectif</h3>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                       name="label"
                       class="input input-bordered md:col-span-2"
-                      placeholder="Libelle"
+                      placeholder="Libellé"
                       required
                     />
                     <select name="type" class="select select-bordered" required>
                       <option
                         th:each="goalType : ${goalTypes}"
                         th:value="${goalType}"
-                        th:text="${goalType}"
+                        th:text="${goalType.labelFr}"
                       ></option>
                     </select>
-                    <input name="unit" class="input input-bordered" placeholder="Unite" required />
+                    <input name="unit" class="input input-bordered" placeholder="Unité" required />
                     <input
                       name="targetValue"
                       type="number"
@@ -98,7 +98,7 @@
                       required
                     />
                     <select name="userId" class="select select-bordered md:col-span-2" required>
-                      <option value="" disabled selected>Choisir le proprietaire</option>
+                      <option value="" disabled selected>Choisir le propriétaire</option>
                       <option
                         th:each="user : ${users.?[#this != null]}"
                         th:value="${user.id}"
@@ -106,7 +106,7 @@
                       ></option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary mt-4">Creer</button>
+                  <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
                 <div class="space-y-3" th:if="${#lists.isEmpty(goals)}">
@@ -122,7 +122,7 @@
                       <span th:text="${goal.label}">Objectif</span>
                       (<span
                         th:text="${goal.user != null ? goal.user.firstname + ' ' + goal.user.lastname : 'Utilisateur inconnu'}"
-                        >User</span
+                        >Utilisateur</span
                       >)
                     </summary>
                     <div class="collapse-content space-y-3">
@@ -141,7 +141,7 @@
                           <option
                             th:each="goalType : ${goalTypes}"
                             th:value="${goalType}"
-                            th:text="${goalType}"
+                            th:text="${goalType.labelFr}"
                             th:selected="${goalType == goal.type}"
                           ></option>
                         </select>
@@ -177,7 +177,7 @@
                             th:selected="${goal.user != null and user != null and user.id != null and goal.user.id == user.id}"
                           ></option>
                         </select>
-                        <button type="submit" class="btn btn-primary">Mettre a jour</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
                       <form th:action="@{/admin/goals/{id}/delete(id=${goal.id})}" method="post">
                         <button type="submit" class="btn btn-error btn-outline">Supprimer</button>
