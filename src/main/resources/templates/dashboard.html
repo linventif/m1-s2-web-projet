@@ -5,34 +5,35 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-<head th:replace="~{components/layout::head(title='Dashboard')}">
-  <title>Dashboard</title>
-</head>
-<body class="strava-shell min-h-screen text-base-content">
-<div class="drawer">
-  <label for="mobile-nav"></label><input id="mobile-nav" type="checkbox" class="drawer-toggle"/>
+  <head th:replace="~{components/layout::head(title='Dashboard')}">
+    <title>Dashboard</title>
+  </head>
+  <body class="strava-shell min-h-screen text-base-content">
+    <div class="drawer">
+      <label for="mobile-nav"></label
+      ><input id="mobile-nav" type="checkbox" class="drawer-toggle" />
 
-  <div class="drawer-content min-h-screen">
-    <div th:insert="~{components/layout::header}"></div>
-    <!-- Main -->
-    <main class="px-3 pb-8 pt-24 md:px-5">
-      <div class="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]">
+      <div class="drawer-content min-h-screen">
+        <div th:insert="~{components/layout::header}"></div>
+        <!-- Main -->
+        <main class="px-3 pb-8 pt-24 md:px-5">
+          <div
+            class="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]"
+          >
+            <!-- Left rail -->
+            <aside th:replace="~{components/dashboard-left::left-content}"></aside>
 
-        <!-- Left rail -->
-        <aside th:replace="~{components/dashboard-left::left-content}"></aside>
+            <!-- Center content -->
+            <section th:replace="~{components/dashboard-center::center-content}"></section>
 
-        <!-- Center content -->
-        <section th:replace="~{components/dashboard-center::center-content}"></section>
-
-        <!-- Right rail -->
-        <aside th:replace="~{components/dashboard-right::right-content}"></aside>
-
+            <!-- Right rail -->
+            <aside th:replace="~{components/dashboard-right::right-content}"></aside>
+          </div>
+          <div th:insert="~{components/layout::footer}"></div>
+        </main>
       </div>
-      <div th:insert="~{components/layout::footer}"></div>
-    </main>
-  </div>
-</div>
+    </div>
 
-<script src="/js/kudo_toggle.js"></script>
-</body>
+    <script src="/js/kudo_toggle.js"></script>
+  </body>
 </html>
