@@ -41,6 +41,7 @@ import web.sportflow.weather.WeatherStatsDTO;
 import web.sportflow.workout.Workout;
 import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutRepository;
+import web.sportflow.workout.comment.Comment;
 
 @Component
 @ConditionalOnProperty(
@@ -365,6 +366,11 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.createAcceptedFriendship(userShifu.getId(), userPo.getId());
     friendshipService.createAcceptedFriendship(userOogway.getId(), userShifu.getId());
     friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
+    friendshipService.createAcceptedFriendship(userAdmin.getId(), userAlice.getId());
+    friendshipService.createAcceptedFriendship(userAdmin.getId(), userNick.getId());
+    friendshipService.createAcceptedFriendship(userAdmin.getId(), userPo.getId());
+    friendshipService.sendRequest(userAstrid.getId(), userAdmin.getId());
+    friendshipService.sendRequest(userBogo.getId(), userAdmin.getId());
 
     // Sports
     Sport sportCourseCanal = createSport("Course du canal", 9.8);
@@ -696,23 +702,48 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutKudo.addKudo(userBenoit);
     workoutKudo.addKudo(userOwen);
     workoutKudo.addKudo(userHiccup);
+    workoutKudo.addComment(new Comment("Belle sortie, bon rythme.", workoutKudo, userAdmin));
+    workoutKudo.addComment(
+        new Comment("Impressionnant, continue comme ca.", workoutKudo, userNick));
+
+    Workout workoutCourseCanalJudy =
+        createWorkout(
+            "Course du canal",
+            LocalDateTime.of(2026, 4, 1, 10, 0),
+            "Toulouse",
+            clearsky,
+            List.of(
+                createWorkoutExercise(
+                    150.0, 6500.0, 2400.0, null, null, null, null, exerciseCourseContinue),
+                createWorkoutExercise(170.0, null, 300.0, null, null, null, null, exerciseSprint)),
+            sportCourseCanal,
+            userJudy);
+    workoutCourseCanalJudy.addComment(
+        new Comment("Top session, bravo pour la regularite.", workoutCourseCanalJudy, userAlice));
+    workoutCourseCanalJudy.addComment(
+        new Comment(
+            "Exemple parfait pour les tests de commentaires.", workoutCourseCanalJudy, userAdmin));
+
+    Workout workoutSprintNick =
+        createWorkout(
+            null,
+            LocalDateTime.of(2026, 4, 2, 10, 0),
+            "Toulouse",
+            cloudy,
+            List.of(
+                createWorkoutExercise(178.0, 1200.0, 420.0, null, null, null, null, exerciseSprint),
+                createWorkoutExercise(
+                    172.0, 900.0, 480.0, null, null, null, null, exerciseMonteeCote)),
+            sportSprintCote,
+            userNick);
+    workoutSprintNick.addComment(
+        new Comment("Super effort sur les cotes, propre.", workoutSprintNick, userAdmin));
 
     // Workouts
     workoutRepository.saveAll(
         List.of(
             workoutKudo,
-            createWorkout(
-                "Course du canal",
-                LocalDateTime.of(2026, 4, 1, 10, 0),
-                "Toulouse",
-                clearsky,
-                List.of(
-                    createWorkoutExercise(
-                        150.0, 6500.0, 2400.0, null, null, null, null, exerciseCourseContinue),
-                    createWorkoutExercise(
-                        170.0, null, 300.0, null, null, null, null, exerciseSprint)),
-                sportCourseCanal,
-                userJudy),
+            workoutCourseCanalJudy,
             createWorkout(
                 "Parcours agilité",
                 LocalDateTime.of(2026, 4, 3, 10, 0),
@@ -732,18 +763,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                 new ArrayList<>(),
                 sportCoursePied,
                 userJudy),
-            createWorkout(
-                null,
-                LocalDateTime.of(2026, 4, 2, 10, 0),
-                "Toulouse",
-                cloudy,
-                List.of(
-                    createWorkoutExercise(
-                        178.0, 1200.0, 420.0, null, null, null, null, exerciseSprint),
-                    createWorkoutExercise(
-                        172.0, 900.0, 480.0, null, null, null, null, exerciseMonteeCote)),
-                sportSprintCote,
-                userNick),
+            workoutSprintNick,
             createWorkout(
                 null,
                 LocalDateTime.of(2026, 4, 5, 10, 0),
