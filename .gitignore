@@ -33,6 +33,11 @@ build/
 ### VS Code ###
 .vscode/
 
-# Runtime uploaded avatars
+# Legacy runtime uploaded avatars (pre-migration)
 /avatar_upload/*
-!/avatar_upload/.gitkeep
+
+# Runtime uploaded media
+/upload_data/images/avatar/*
+!/upload_data/images/avatar/.gitkeep
+/upload_data/images/badge/*
+!/upload_data/images/badge/.gitkeep

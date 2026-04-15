@@ -12,7 +12,7 @@ RUN mvn -B -DskipTests clean package \
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-RUN mkdir -p /app/avatar_upload
+RUN mkdir -p /app/upload_data/images/avatar /app/upload_data/images/badge
 
 COPY --from=builder /build/target/app.jar /app/app.jar
 

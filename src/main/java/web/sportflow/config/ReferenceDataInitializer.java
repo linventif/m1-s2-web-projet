@@ -9,10 +9,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,8 @@ import web.sportflow.badge.BadgeRepository;
 import web.sportflow.challenge.Challenge;
 import web.sportflow.challenge.ChallengeRepository;
 import web.sportflow.challenge.ChallengeType;
+import web.sportflow.exercise.Exercise;
+import web.sportflow.exercise.ExerciseRepository;
 import web.sportflow.friendship.FriendshipService;
 import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
@@ -35,10 +39,14 @@ import web.sportflow.user.User;
 import web.sportflow.user.UserRepository;
 import web.sportflow.weather.WeatherStatsDTO;
 import web.sportflow.workout.Workout;
+import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutRepository;
-import web.sportflow.workout.comment.Comment;
 
 @Component
+@ConditionalOnProperty(
+    name = "app.data-initializer.enabled",
+    havingValue = "true",
+    matchIfMissing = false)
 public class ReferenceDataInitializer implements CommandLineRunner {
 
   private final WorkoutRepository workoutRepository;
@@ -49,9 +57,13 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   private final GoalRepository goalRepository;
   private final PasswordEncoder passwordEncoder;
   private final FriendshipService friendshipService;
+  private final ExerciseRepository exerciseRepository;
 
-  @Value("${app.avatar-upload-dir:avatar_upload}")
+  @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
+
+  @Value("${app.badge-upload-dir:upload_data/images/badge}")
+  private String badgeUploadDir;
 
   public ReferenceDataInitializer(
       UserRepository userRepository,
@@ -61,7 +73,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       GoalRepository goalRepository,
       PasswordEncoder passwordEncoder,
       WorkoutRepository workoutRepository,
-      FriendshipService friendshipService) {
+      FriendshipService friendshipService,
+      ExerciseRepository exerciseRepository) {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
     this.badgeRepository = badgeRepository;
@@ -70,6 +83,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     this.passwordEncoder = passwordEncoder;
     this.workoutRepository = workoutRepository;
     this.friendshipService = friendshipService;
+    this.exerciseRepository = exerciseRepository;
   }
 
   @Override
@@ -353,28 +367,126 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
 
     // Sports
-    Sport sportCourseCanal = createSport("Course du canal", 9.0);
-    Sport sportSprintCote = createSport("Sprint en cote", 11.0);
+    Sport sportCourseCanal = createSport("Course du canal", 9.8);
+    Sport sportSprintCote = createSport("Sprint en cote", 14.0);
     Sport sportParcoursAgilite = createSport("Parcours d agilite", 8.0);
-    Sport sportFractionneIntense = createSport("Fractionne intense", 12.0);
-    Sport sportRenforcementFonctionnel = createSport("Renforcement fonctionnel", 7.0);
+    Sport sportFractionneIntense = createSport("Fractionne intense", 11.0);
+    Sport sportRenforcementFonctionnel = createSport("Renforcement fonctionnel", 6.0);
     Sport sportEnduranceMixte = createSport("Endurance mixte", 8.0);
-    Sport sportParkourUrbain = createSport("Parkour urbain", 10.0);
-    Sport sportCircuitCardio = createSport("Circuit cardio", 11.0);
-    Sport sportMobiliteActive = createSport("Mobilite active", 4.5);
+    Sport sportParkourUrbain = createSport("Parkour urbain", 8.5);
+    Sport sportCircuitCardio = createSport("Circuit cardio", 8.0);
+    Sport sportMobiliteActive = createSport("Mobilite active", 3.3);
     Sport sportEscaladeVitesse = createSport("Escalade de vitesse", 10.0);
     Sport sportEscaladeBloc = createSport("Escalade bloc", 8.0);
-    Sport sportCoursePied = createSport("Course a pied", 9.5);
-    Sport sportNatation = createSport("Natation", 9.0);
-    Sport sportSautParachute = createSport("Saut en parachute", 4.0);
-    Sport sportPlongee = createSport("Plongee sous-marine", 6.0);
-    Sport sportFootball = createSport("Football", 8.5);
+    Sport sportCoursePied = createSport("Course a pied", 9.8);
+    Sport sportNatation = createSport("Natation", 8.3);
+    Sport sportSautParachute = createSport("Saut en parachute", 3.5);
+    Sport sportPlongee = createSport("Plongee sous-marine", 7.0);
+    Sport sportFootball = createSport("Football", 7.0);
     Sport sportCyclisme = createSport("Cyclisme", 8.0);
-    Sport sportBasketball = createSport("Basketball", 7.5);
-    Sport sportTennis = createSport("Tennis", 7.0);
+    Sport sportBasketball = createSport("Basketball", 8.0);
+    Sport sportTennis = createSport("Tennis", 7.3);
     Sport sportMusculation = createSport("Musculation", 6.0);
-    Sport sportYogaDynamique = createSport("Yoga dynamique", 4.0);
-    Sport sportRandonnee = createSport("Randonnee", 5.5);
+    Sport sportYogaDynamique = createSport("Yoga dynamique", 3.3);
+    Sport sportRandonnee = createSport("Randonnee", 6.0);
+
+    sportRepository.saveAll(
+        List.of(
+            sportCourseCanal,
+            sportSprintCote,
+            sportParcoursAgilite,
+            sportFractionneIntense,
+            sportRenforcementFonctionnel,
+            sportEnduranceMixte,
+            sportParkourUrbain,
+            sportCircuitCardio,
+            sportMobiliteActive,
+            sportEscaladeVitesse,
+            sportEscaladeBloc,
+            sportCoursePied,
+            sportNatation,
+            sportSautParachute,
+            sportPlongee,
+            sportFootball,
+            sportCyclisme,
+            sportBasketball,
+            sportTennis,
+            sportMusculation,
+            sportYogaDynamique,
+            sportRandonnee));
+
+    Exercise exerciseCourseContinue = createExercice("Course continue", null);
+    Exercise exerciseSprint = createExercice("Sprint", null);
+    Exercise exerciseMonteeCote = createExercice("Montee de cote", null);
+    Exercise exerciseCircuitCardio = createExercice("Circuit cardio", null);
+    Exercise exerciseBurpees = createExercice("Burpees", null);
+    Exercise exercisePompes = createExercice("Pompes", null);
+    Exercise exerciseSquat = createExercice("Squat", null);
+    Exercise exerciseDeveloppeCouche = createExercice("Developpe couche", 0.12);
+    Exercise exerciseDeveloppeMilitaire = createExercice("Developpe militaire", 0.10);
+    Exercise exerciseTractions = createExercice("Tractions", null);
+    Exercise exerciseNageLibre = createExercice("Nage libre", null);
+    Exercise exerciseCrawl = createExercice("Crawl", null);
+    Exercise exerciseEscaladeBloc = createExercice("Escalade bloc", null);
+    Exercise exerciseVoieVitesse = createExercice("Voie de vitesse", null);
+    Exercise exercisePedalage = createExercice("Pedalage endurance", null);
+    Exercise exerciseDribble = createExercice("Dribble et tirs", null);
+    Exercise exerciseYogaFlow = createExercice("Yoga flow", null);
+    Exercise exerciseMarcheSentier = createExercice("Marche sur sentier", null);
+
+    linkExercises(sportCourseCanal, exerciseCourseContinue, exerciseSprint, exerciseMonteeCote);
+    linkExercises(sportSprintCote, exerciseSprint, exerciseMonteeCote);
+    linkExercises(sportParcoursAgilite, exerciseSprint, exerciseBurpees, exerciseTractions);
+    linkExercises(sportFractionneIntense, exerciseSprint, exerciseCourseContinue, exerciseBurpees);
+    linkExercises(
+        sportRenforcementFonctionnel,
+        exercisePompes,
+        exerciseSquat,
+        exerciseTractions,
+        exerciseBurpees);
+    linkExercises(sportEnduranceMixte, exerciseCourseContinue, exerciseCircuitCardio);
+    linkExercises(sportParkourUrbain, exerciseSprint, exerciseTractions, exerciseSquat);
+    linkExercises(sportCircuitCardio, exerciseCircuitCardio, exerciseBurpees, exercisePompes);
+    linkExercises(sportMobiliteActive, exerciseYogaFlow, exerciseSquat);
+    linkExercises(sportEscaladeVitesse, exerciseVoieVitesse, exerciseTractions);
+    linkExercises(sportEscaladeBloc, exerciseEscaladeBloc, exerciseTractions);
+    linkExercises(sportCoursePied, exerciseCourseContinue, exerciseSprint);
+    linkExercises(sportNatation, exerciseNageLibre, exerciseCrawl);
+    linkExercises(sportSautParachute, exerciseSquat);
+    linkExercises(sportPlongee, exerciseNageLibre);
+    linkExercises(sportFootball, exerciseSprint, exerciseCourseContinue, exerciseDribble);
+    linkExercises(sportCyclisme, exercisePedalage);
+    linkExercises(sportBasketball, exerciseSprint, exerciseDribble);
+    linkExercises(sportTennis, exerciseSprint);
+    linkExercises(
+        sportMusculation,
+        exerciseDeveloppeCouche,
+        exerciseDeveloppeMilitaire,
+        exerciseSquat,
+        exerciseTractions);
+    linkExercises(sportYogaDynamique, exerciseYogaFlow);
+    linkExercises(sportRandonnee, exerciseMarcheSentier);
+
+    exerciseRepository.saveAll(
+        List.of(
+            exerciseCourseContinue,
+            exerciseSprint,
+            exerciseMonteeCote,
+            exerciseCircuitCardio,
+            exerciseBurpees,
+            exercisePompes,
+            exerciseSquat,
+            exerciseDeveloppeCouche,
+            exerciseDeveloppeMilitaire,
+            exerciseTractions,
+            exerciseNageLibre,
+            exerciseCrawl,
+            exerciseEscaladeBloc,
+            exerciseVoieVitesse,
+            exercisePedalage,
+            exerciseDribble,
+            exerciseYogaFlow,
+            exerciseMarcheSentier));
 
     sportRepository.saveAll(
         List.of(
@@ -442,6 +554,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
                         + sportYogaDynamique.getName()
                         + " sans interruption.",
                     "/images/badge/yoga.png")));
+    assignDemoBadgeIcons(demoBadges);
     Badge badgeRookie5k = demoBadges.get(0);
     Badge badgeMarathonHerbe = demoBadges.get(1);
     Badge badgeMarathonien = demoBadges.get(2);
@@ -569,12 +682,11 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     Workout workoutKudo =
         createWorkout(
+            null,
             LocalDateTime.of(2026, 4, 1, 10, 0),
-            4.2,
-            32.0,
             "Toulouse",
-            4,
             clearsky,
+            new ArrayList<>(),
             sportCourseCanal,
             userJudy);
     workoutKudo.addKudo(userTaiLung);
@@ -584,350 +696,387 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutKudo.addKudo(userBenoit);
     workoutKudo.addKudo(userOwen);
     workoutKudo.addKudo(userHiccup);
-    Comment comment1 = new Comment();
-    comment1.setAuthor(userAlice);
-    comment1.setContent("Super seance, bravo !");
-    workoutKudo.addComment(comment1);
-    Comment comment2 = new Comment();
-    comment2.setAuthor(userBenoit);
-    comment2.setContent("Impressionnant, continue comme ca !");
-    workoutKudo.addComment(comment2);
-    Comment comment3 = new Comment();
-    comment3.setAuthor(userOwen);
-    comment3.setContent("Tu vas tout dechirer avec ce rythme !");
-    workoutKudo.addComment(comment3);
 
     // Workouts
     workoutRepository.saveAll(
         List.of(
             workoutKudo,
             createWorkout(
-                LocalDateTime.of(2026, 4, 3, 10, 0),
-                3.8,
-                29.0,
+                "Course du canal",
+                LocalDateTime.of(2026, 4, 1, 10, 0),
                 "Toulouse",
-                4,
+                clearsky,
+                List.of(
+                    createWorkoutExercise(
+                        150.0, 6500.0, 2400.0, null, null, null, null, exerciseCourseContinue),
+                    createWorkoutExercise(
+                        170.0, null, 300.0, null, null, null, null, exerciseSprint)),
+                sportCourseCanal,
+                userJudy),
+            createWorkout(
+                "Parcours agilité",
+                LocalDateTime.of(2026, 4, 3, 10, 0),
+                "Toulouse",
                 cloudy,
+                List.of(
+                    createWorkoutExercise(
+                        155.0, 800.0, 900.0, null, null, null, null, exerciseSprint),
+                    createWorkoutExercise(160.0, null, 600.0, 12, 4, null, null, exerciseBurpees)),
                 sportParcoursAgilite,
                 userJudy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 6, 10, 0),
-                5.0,
-                37.0,
                 "Toulouse",
-                5,
                 clearsky,
+                new ArrayList<>(),
                 sportCoursePied,
                 userJudy),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 2, 10, 0),
-                6.5,
-                43.0,
                 "Toulouse",
-                4,
                 cloudy,
+                List.of(
+                    createWorkoutExercise(
+                        178.0, 1200.0, 420.0, null, null, null, null, exerciseSprint),
+                    createWorkoutExercise(
+                        172.0, 900.0, 480.0, null, null, null, null, exerciseMonteeCote)),
                 sportSprintCote,
                 userNick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 5, 10, 0),
-                2.4,
-                30.0,
                 "Toulouse",
-                3,
                 rain,
+                List.of(
+                    createWorkoutExercise(
+                        135.0, 1000.0, 1800.0, null, null, null, null, exerciseCrawl),
+                    createWorkoutExercise(
+                        125.0, 600.0, 900.0, null, null, null, null, exerciseNageLibre)),
                 sportNatation,
                 userNick),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 8, 10, 0),
-                7.2,
-                48.0,
                 "Toulouse",
-                5,
                 cloudy,
+                new ArrayList<>(),
                 sportCoursePied,
                 userNick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 1, 10, 0),
-                3.0,
-                36.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 1, 10, 0),
+                "Toulouse",
+                null,
+                List.of(
+                    createWorkoutExercise(155.0, null, 900.0, 15, 4, null, null, exerciseBurpees),
+                    createWorkoutExercise(145.0, null, 600.0, 20, 4, null, null, exercisePompes)),
                 sportCircuitCardio,
                 userBogo),
             createWorkout(
-                LocalDateTime.of(2026, 4, 4, 10, 0),
-                4.4,
-                38.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 4, 10, 0),
+                "Toulouse",
+                null,
+                List.of(
+                    createWorkoutExercise(130.0, null, 720.0, 12, 4, null, null, exerciseSquat),
+                    createWorkoutExercise(140.0, null, 600.0, 8, 4, null, null, exerciseTractions)),
                 sportRenforcementFonctionnel,
                 userBogo),
             createWorkout(
-                LocalDateTime.of(2026, 4, 9, 10, 0),
-                2.2,
-                28.0,
-                "Toulouse",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 9, 10, 0),
+                "Toulouse",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        160.0, 120.0, 900.0, null, null, null, null, exerciseVoieVitesse),
+                    createWorkoutExercise(145.0, null, 600.0, 8, 3, null, null, exerciseTractions)),
                 sportEscaladeVitesse,
                 userBogo),
             createWorkout(
-                LocalDateTime.of(2026, 4, 2, 10, 0),
-                3.7,
-                31.0,
-                "Toulouse",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 2, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportMobiliteActive,
                 userBellwether),
             createWorkout(
-                LocalDateTime.of(2026, 4, 7, 10, 0),
-                2.9,
-                27.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 7, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportNatation,
                 userBellwether),
             createWorkout(
-                LocalDateTime.of(2026, 4, 10, 10, 0),
-                4.1,
-                33.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 10, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userBellwether),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 1, 10, 0),
-                12.0,
-                58.0,
                 "Toulouse",
-                5,
                 clearsky,
+                new ArrayList<>(),
                 sportFractionneIntense,
                 userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 4, 10, 0),
-                6.0,
-                45.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 4, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportEnduranceMixte,
                 userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 11, 10, 0),
-                8.3,
-                52.0,
-                "Pau",
-                5,
                 null,
+                LocalDateTime.of(2026, 4, 11, 10, 0),
+                "Pau",
+                null,
+                new ArrayList<>(),
                 sportCoursePied,
                 userHiccup),
             createWorkout(
-                LocalDateTime.of(2026, 4, 3, 10, 0),
-                5.5,
-                41.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 3, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportFootball,
                 userAstrid),
             createWorkout(
-                LocalDateTime.of(2026, 4, 7, 10, 0),
-                4.6,
-                36.0,
-                "Tarbes",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 7, 10, 0),
+                "Tarbes",
+                null,
+                new ArrayList<>(),
                 sportEscaladeVitesse,
                 userAstrid),
             createWorkout(
-                LocalDateTime.of(2026, 4, 12, 10, 0),
-                7.0,
-                49.0,
-                "Limoges",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 12, 10, 0),
+                "Limoges",
+                null,
+                new ArrayList<>(),
                 sportSautParachute,
                 userAstrid),
             createWorkout(
-                LocalDateTime.of(2026, 4, 2, 10, 0),
-                4.8,
-                44.0,
-                "Marseille",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 2, 10, 0),
+                "Marseille",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        110.0, null, 900.0, 10, 4, 80000.0, null, exerciseDeveloppeCouche),
+                    createWorkoutExercise(
+                        115.0, null, 720.0, 8, 4, 45000.0, null, exerciseDeveloppeMilitaire),
+                    createWorkoutExercise(125.0, null, 900.0, 12, 4, 90000.0, null, exerciseSquat)),
                 sportMusculation,
                 userStoick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 6, 10, 0),
-                3.1,
-                35.0,
-                "Toulouse",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 6, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportPlongee,
                 userStoick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 13, 10, 0),
-                6.2,
-                50.0,
-                "Strasbourg",
-                5,
                 null,
+                LocalDateTime.of(2026, 4, 13, 10, 0),
+                "Strasbourg",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        145.0, 22000.0, 3600.0, null, null, null, null, exercisePedalage)),
                 sportCyclisme,
                 userStoick),
             createWorkout(
-                LocalDateTime.of(2026, 4, 2, 10, 0),
-                4.0,
-                39.0,
-                "Perpignan",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 2, 10, 0),
+                "Perpignan",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        150.0, 2500.0, 1800.0, null, null, null, null, exerciseDribble),
+                    createWorkoutExercise(
+                        165.0, 700.0, 600.0, null, null, null, null, exerciseSprint)),
                 sportBasketball,
                 userFishlegs),
             createWorkout(
-                LocalDateTime.of(2026, 4, 8, 10, 0),
-                3.3,
-                33.0,
-                "Marseille",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 8, 10, 0),
+                "Marseille",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        145.0, 80.0, 1500.0, null, null, null, null, exerciseEscaladeBloc),
+                    createWorkoutExercise(135.0, null, 600.0, 6, 4, null, null, exerciseTractions)),
                 sportEscaladeBloc,
                 userFishlegs),
             createWorkout(
-                LocalDateTime.of(2026, 4, 14, 10, 0),
-                5.9,
-                47.0,
-                "Paris",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 14, 10, 0),
+                "Paris",
+                null,
+                new ArrayList<>(),
                 sportCoursePied,
                 userFishlegs),
             createWorkout(
-                LocalDateTime.of(2026, 4, 3, 10, 0),
-                6.1,
-                42.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 3, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportParkourUrbain,
                 userRodney),
             createWorkout(
-                LocalDateTime.of(2026, 4, 9, 10, 0),
-                4.9,
-                37.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 9, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userRodney),
             createWorkout(
+                null,
                 LocalDateTime.of(2026, 4, 15, 10, 0),
-                7.4,
-                51.0,
                 "Toulouse",
-                5,
-                clearsky,
+                null,
+                new ArrayList<>(),
                 sportCyclisme,
                 userRodney),
             createWorkout(
-                LocalDateTime.of(2026, 4, 4, 10, 0),
-                3.6,
-                30.0,
-                "Toulouse",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 4, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportMobiliteActive,
                 userCappy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 10, 10, 0),
-                4.2,
-                34.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 10, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportNatation,
                 userCappy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 16, 10, 0),
-                5.0,
-                39.0,
-                "Toulouse",
-                3,
                 null,
+                LocalDateTime.of(2026, 4, 16, 10, 0),
+                "Toulouse",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        95.0, null, 2400.0, null, null, null, null, exerciseYogaFlow)),
                 sportYogaDynamique,
                 userCappy),
             createWorkout(
-                LocalDateTime.of(2026, 4, 5, 10, 0),
-                5.2,
-                40.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 5, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportCircuitCardio,
                 userFender),
             createWorkout(
-                LocalDateTime.of(2026, 4, 11, 10, 0),
-                4.5,
-                35.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 11, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportParkourUrbain,
                 userFender),
             createWorkout(
-                LocalDateTime.of(2026, 4, 17, 10, 0),
-                6.6,
-                46.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 17, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportPlongee,
                 userFender),
             createWorkout(
-                LocalDateTime.of(2026, 4, 6, 10, 0),
-                4.7,
-                43.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 6, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportRenforcementFonctionnel,
                 userBigweld),
             createWorkout(
-                LocalDateTime.of(2026, 4, 12, 10, 0),
-                5.3,
-                44.0,
-                "Toulouse",
-                4,
                 null,
+                LocalDateTime.of(2026, 4, 12, 10, 0),
+                "Toulouse",
+                null,
+                new ArrayList<>(),
                 sportEscaladeBloc,
                 userBigweld),
             createWorkout(
-                LocalDateTime.of(2026, 4, 18, 10, 0),
-                7.1,
-                53.0,
-                "Toulouse",
-                5,
                 null,
+                LocalDateTime.of(2026, 4, 18, 10, 0),
+                "Toulouse",
+                null,
+                List.of(
+                    createWorkoutExercise(
+                        125.0, 12000.0, 5400.0, null, null, null, null, exerciseMarcheSentier)),
                 sportRandonnee,
                 userBigweld)));
   }
 
   private Workout createWorkout(
+      String name,
       LocalDateTime date,
-      Double distance,
-      Double duration,
       String address,
-      Integer rating,
       WeatherStatsDTO weather,
+      List<WorkoutExercise> exercises,
       Sport sport,
       User user) {
-    return new Workout(date, distance, duration, address, rating, weather, sport, user);
+    if (exercises.isEmpty()) return new Workout(name, date, address, weather, sport, user);
+
+    Workout workout = new Workout(name, date, address, weather, exercises, sport, user);
+    for (WorkoutExercise exercise : exercises) {
+      exercise.setWorkout(workout);
+    }
+    return workout;
+  }
+
+  private Sport createSport(String name, Double met) {
+    return new Sport(name, met);
+  }
+
+  private WorkoutExercise createWorkoutExercise(
+      Double averageBps,
+      Double distanceM,
+      Double durationSec,
+      Integer reps,
+      Integer sets,
+      Double weightG,
+      Workout workout,
+      Exercise exercise) {
+    if (distanceM == null)
+      return new WorkoutExercise(averageBps, durationSec, reps, sets, weightG, workout, exercise);
+    if (weightG == null && reps == null && sets == null)
+      return new WorkoutExercise(averageBps, distanceM, durationSec, workout, exercise);
+    return new WorkoutExercise(averageBps, distanceM, durationSec, reps, sets, workout, exercise);
+  }
+
+  private Exercise createExercice(String name, Double calPerSec) {
+    return new Exercise(name, calPerSec, new ArrayList<>(), new ArrayList<>());
+  }
+
+  private void linkExercises(Sport sport, Exercise... exercises) {
+    sport.setExercises(new ArrayList<>(List.of(exercises)));
+    for (Exercise exercise : exercises) {
+      exercise.getSports().add(sport);
+    }
   }
 
   private Goal createGoal(
@@ -938,10 +1087,6 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       String unit,
       User user) {
     return new Goal(label, type, targetValue, currentValue, unit, user);
-  }
-
-  private Sport createSport(String name, Double calPerMin) {
-    return new Sport(name, calPerMin);
   }
 
   private Badge createSportBadge(Sport sport, String suffix, String description, String iconPath) {
@@ -1009,6 +1154,66 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     } catch (IOException exception) {
       throw new IllegalStateException("Impossible de copier les avatars de demo.", exception);
     }
+  }
+
+  private void assignDemoBadgeIcons(List<Badge> badges) {
+    try {
+      Path uploadDir = Paths.get(badgeUploadDir).toAbsolutePath().normalize();
+      Files.createDirectories(uploadDir);
+      for (Badge badge : badges) {
+        if (badge == null) {
+          continue;
+        }
+        String sourceFileName = extractFileName(badge.getIconPath());
+        if (sourceFileName.isBlank()) {
+          continue;
+        }
+        String extension = extractExtension(sourceFileName);
+        if (extension.isBlank()) {
+          continue;
+        }
+
+        Path targetPath = uploadDir.resolve(sourceFileName).normalize();
+        if (!targetPath.startsWith(uploadDir)) {
+          continue;
+        }
+
+        ClassPathResource resource = new ClassPathResource("static/images/badge/" + sourceFileName);
+        if (!resource.exists()) {
+          continue;
+        }
+
+        try (InputStream inputStream = resource.getInputStream()) {
+          Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+          badge.setIconPath("/badge_upload/" + sourceFileName);
+        }
+      }
+      badgeRepository.saveAll(badges);
+    } catch (IOException exception) {
+      throw new IllegalStateException("Impossible de copier les badges de demo.", exception);
+    }
+  }
+
+  private String extractFileName(String pathValue) {
+    if (pathValue == null || pathValue.isBlank()) {
+      return "";
+    }
+    String normalizedPath = pathValue.trim().replace('\\', '/');
+    int queryIndex = normalizedPath.indexOf('?');
+    if (queryIndex >= 0) {
+      normalizedPath = normalizedPath.substring(0, queryIndex);
+    }
+    int fragmentIndex = normalizedPath.indexOf('#');
+    if (fragmentIndex >= 0) {
+      normalizedPath = normalizedPath.substring(0, fragmentIndex);
+    }
+    int lastSlashIndex = normalizedPath.lastIndexOf('/');
+    String fileName =
+        lastSlashIndex >= 0 ? normalizedPath.substring(lastSlashIndex + 1) : normalizedPath;
+    if (fileName.isBlank() || fileName.contains("..")) {
+      return "";
+    }
+    return fileName;
   }
 
   private String extractExtension(String filename) {

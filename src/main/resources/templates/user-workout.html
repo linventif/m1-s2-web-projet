@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{components/layout::head(title='Liste des Activité')}">
-    <title>Liste des Activité</title>
+  <head th:replace="~{components/layout::head(title='Liste des activités')}">
+    <title>Liste des activités</title>
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
@@ -12,10 +12,10 @@
       <section class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body gap-6 p-6 sm:p-8">
           <div class="space-y-4">
-            <h2 class="text-2xl font-bold text-slate-950">Toutes les activité</h2>
+            <h2 class="text-2xl font-bold text-slate-950">Toutes les activités</h2>
 
             <div class="alert alert-info alert-outline" th:if="${#lists.isEmpty(workouts)}">
-              <span>Aucune activité a afficher.</span>
+              <span>Aucune activité à afficher.</span>
             </div>
 
             <div
@@ -30,12 +30,16 @@
                     <th>Sport</th>
                     <th>Durée</th>
                     <th>Distance</th>
-                    <th>Calorie Bruler</th>
+                    <th>Calories brûlées</th>
                     <th>Badges débloqués</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="workout : ${workouts}">
+                  <tr
+                    th:each="workout : ${workouts}"
+                    th:with="isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}"
+                  >
                     <td>
                       <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
                     </td>
@@ -51,7 +55,7 @@
                     </td>
                     <td>
                       <span th:text="${#numbers.formatDecimal(workout.calorieBurn, 1, 0)}"></span>
-                      kal
+                      kcal
                     </td>
                     <td>
                       <div
@@ -75,6 +79,35 @@
                         th:if="${#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
                         >-</span
                       >
+                    </td>
+                    <td>
+                      <div class="flex items-center gap-2" th:if="${isOwner}">
+                        <a
+                          th:href="@{/workouts/{id}/edit(id=${workout.id})}"
+                          class="btn btn-xs btn-outline btn-square"
+                          title="Modifier"
+                          aria-label="Modifier"
+                        >
+                          <i class="fa-solid fa-pen-to-square"></i>
+                          <span class="sr-only">Modifier</span>
+                        </a>
+                        <form
+                          th:action="@{/workouts/{id}/delete(id=${workout.id})}"
+                          method="post"
+                          onsubmit="return confirm('Supprimer cette activité ?');"
+                        >
+                          <button
+                            type="submit"
+                            class="btn btn-xs btn-error btn-square text-white"
+                            title="Supprimer"
+                            aria-label="Supprimer"
+                          >
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span class="sr-only">Supprimer</span>
+                          </button>
+                        </form>
+                      </div>
+                      <span class="text-base-content/50" th:if="${!isOwner}">-</span>
                     </td>
                     <!-- <td th:text="${conference.idconf}"></td>
                             <td class="font-semibold" th:text="${conference.titleconf}"></td>

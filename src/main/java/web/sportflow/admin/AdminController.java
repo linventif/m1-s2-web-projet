@@ -25,6 +25,8 @@ import web.sportflow.badge.BadgeRepository;
 import web.sportflow.challenge.Challenge;
 import web.sportflow.challenge.ChallengeRepository;
 import web.sportflow.challenge.ChallengeType;
+import web.sportflow.exercise.Exercise;
+import web.sportflow.exercise.ExerciseRepository;
 import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipRepository;
 import web.sportflow.friendship.FriendshipStatus;
@@ -39,6 +41,8 @@ import web.sportflow.user.Sex;
 import web.sportflow.user.User;
 import web.sportflow.user.UserRepository;
 import web.sportflow.workout.Workout;
+import web.sportflow.workout.WorkoutExercise;
+import web.sportflow.workout.WorkoutExerciseRepository;
 import web.sportflow.workout.WorkoutRepository;
 
 @Controller
@@ -50,6 +54,8 @@ public class AdminController {
   private final UserRepository userRepository;
   private final SportRepository sportRepository;
   private final WorkoutRepository workoutRepository;
+  private final WorkoutExerciseRepository workoutExerciseRepository;
+  private final ExerciseRepository exerciseRepository;
   private final BadgeRepository badgeRepository;
   private final GoalRepository goalRepository;
   private final ChallengeRepository challengeRepository;
@@ -60,6 +66,8 @@ public class AdminController {
       UserRepository userRepository,
       SportRepository sportRepository,
       WorkoutRepository workoutRepository,
+      WorkoutExerciseRepository workoutExerciseRepository,
+      ExerciseRepository exerciseRepository,
       BadgeRepository badgeRepository,
       GoalRepository goalRepository,
       ChallengeRepository challengeRepository,
@@ -68,6 +76,8 @@ public class AdminController {
     this.userRepository = userRepository;
     this.sportRepository = sportRepository;
     this.workoutRepository = workoutRepository;
+    this.workoutExerciseRepository = workoutExerciseRepository;
+    this.exerciseRepository = exerciseRepository;
     this.badgeRepository = badgeRepository;
     this.goalRepository = goalRepository;
     this.challengeRepository = challengeRepository;
@@ -80,6 +90,8 @@ public class AdminController {
     List<User> users = loadUsers();
     List<Sport> sports = loadSports();
     List<Workout> workouts = loadWorkouts();
+    List<WorkoutExercise> workoutExercises = loadWorkoutExercises();
+    List<Exercise> exercises = loadExercises();
     List<Badge> badges = loadBadges();
     List<Goal> goals = loadGoals();
     List<Challenge> challenges = loadChallenges();
@@ -347,7 +359,7 @@ public class AdminController {
 
       Sport sport = new Sport();
       sport.setName(normalizedName);
-      sport.setCaloryPerMinutes(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
+      sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
 
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport cree avec succes.");
@@ -378,7 +390,7 @@ public class AdminController {
       }
 
       sport.setName(normalizedName);
-      sport.setCaloryPerMinutes(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
+      sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport mis a jour.");
     } catch (Exception exception) {
@@ -576,21 +588,21 @@ public class AdminController {
   @PostMapping("/workouts/create")
   @Transactional
   public String createWorkout(
+      @RequestParam String name,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-      @RequestParam Double distance,
-      @RequestParam Double duration,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
+      @RequestParam List<WorkoutExercise> workoutExercises,
       @RequestParam Long sportId,
       @RequestParam Long userId,
       RedirectAttributes redirectAttributes) {
     try {
       Workout workout = new Workout();
+      workout.setName(normalizeNullable(name));
       workout.setDate(date);
-      workout.setDistance(requirePositive(distance, "La distance doit etre superieure a 0."));
-      workout.setDuration(requirePositive(duration, "La duree doit etre superieure a 0."));
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
+      workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
 
@@ -606,21 +618,21 @@ public class AdminController {
   @Transactional
   public String updateWorkout(
       @PathVariable Long workoutId,
+      @RequestParam String name,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-      @RequestParam Double distance,
-      @RequestParam Double duration,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
+      @RequestParam List<WorkoutExercise> workoutExercises,
       @RequestParam Long sportId,
       @RequestParam Long userId,
       RedirectAttributes redirectAttributes) {
     try {
       Workout workout = requireWorkout(workoutId);
+      workout.setName(normalizeNullable(name));
       workout.setDate(date);
-      workout.setDistance(requirePositive(distance, "La distance doit etre superieure a 0."));
-      workout.setDuration(requirePositive(duration, "La duree doit etre superieure a 0."));
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
+      workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
 
@@ -853,19 +865,23 @@ public class AdminController {
     return value;
   }
 
-  private Integer parseOptionalRating(String rawValue) {
+  private Double parseOptionalRating(String rawValue) {
     String normalized = normalizeNullable(rawValue);
     if (normalized == null) {
       return null;
     }
     try {
-      int rating = Integer.parseInt(normalized);
-      if (rating < 1 || rating > 5) {
-        throw new IllegalArgumentException("La note doit etre comprise entre 1 et 5.");
+      double rating = Double.parseDouble(normalized);
+      if (rating < 0.5 || rating > 5.0) {
+        throw new IllegalArgumentException("La note doit etre comprise entre 0.5 et 5.");
       }
-      return rating;
+      double rounded = Math.round(rating * 2.0) / 2.0;
+      if (Math.abs(rounded - rating) > 0.0001) {
+        throw new IllegalArgumentException("La note doit etre par tranche de 0.5.");
+      }
+      return rounded;
     } catch (NumberFormatException exception) {
-      throw new IllegalArgumentException("La note doit etre un entier entre 1 et 5.");
+      throw new IllegalArgumentException("La note doit etre un nombre entre 0.5 et 5.");
     }
   }
 
@@ -918,6 +934,12 @@ public class AdminController {
         .orElseThrow(() -> new IllegalArgumentException("Workout introuvable: " + workoutId));
   }
 
+  private WorkoutExercise requireWorkoutExercise(Long workoutId) {
+    return workoutExerciseRepository
+        .findById(workoutId)
+        .orElseThrow(() -> new IllegalArgumentException("Workout introuvable: " + workoutId));
+  }
+
   private Challenge requireChallenge(Long challengeId) {
     return challengeRepository
         .findById(challengeId)
@@ -950,7 +972,19 @@ public class AdminController {
     if (normalized == null) {
       return DEFAULT_BADGE_ICON;
     }
-    return normalized;
+    if (normalized.startsWith("http://")
+        || normalized.startsWith("https://")
+        || normalized.startsWith("/")) {
+      return normalized;
+    }
+
+    String sanitized = normalized.replace('\\', '/');
+    int slashIndex = sanitized.lastIndexOf('/');
+    String fileName = slashIndex >= 0 ? sanitized.substring(slashIndex + 1) : sanitized;
+    if (fileName.isBlank()) {
+      return DEFAULT_BADGE_ICON;
+    }
+    return "/badge_upload/" + fileName;
   }
 
   private void syncGoalMembership(Goal goal, User owner) {
@@ -1006,6 +1040,19 @@ public class AdminController {
     List<Workout> workouts = workoutRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
     workouts.removeIf(Objects::isNull);
     return workouts;
+  }
+
+  private List<WorkoutExercise> loadWorkoutExercises() {
+    List<WorkoutExercise> workoutExercises =
+        workoutExerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "workout.date"));
+    workoutExercises.removeIf(Objects::isNull);
+    return workoutExercises;
+  }
+
+  private List<Exercise> loadExercises() {
+    List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    exercises.removeIf(Objects::isNull);
+    return exercises;
   }
 
   private List<Badge> loadBadges() {

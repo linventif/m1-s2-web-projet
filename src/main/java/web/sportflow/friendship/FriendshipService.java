@@ -1,5 +1,6 @@
 package web.sportflow.friendship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -109,6 +110,43 @@ public class FriendshipService {
   @Transactional(readOnly = true)
   public List<Friendship> getAcceptedFriendships(Long currentUserId) {
     return friendshipRepository.findAcceptedForUser(currentUserId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Long> getCurrentUserAndFriendIds(Long currentUserId) {
+    if (currentUserId == null) {
+      return List.of();
+    }
+
+    List<Long> userIds =
+        getAcceptedFriendships(currentUserId).stream()
+            .map(
+                friendship ->
+                    friendship.getRequester().getId().equals(currentUserId)
+                        ? friendship.getAddressee().getId()
+                        : friendship.getRequester().getId())
+            .toList();
+    ArrayList<Long> visibleUserIds = new ArrayList<>(userIds);
+    visibleUserIds.add(currentUserId);
+    return visibleUserIds;
+  }
+
+  @Transactional(readOnly = true)
+  public List<User> getCurrentUserAndFriend(User currentUser) {
+    if (currentUser == null || currentUser.getId() == null) {
+      return List.of();
+    }
+
+    ArrayList<User> visibleUsers = new ArrayList<>();
+    visibleUsers.add(currentUser);
+    getAcceptedFriendships(currentUser.getId()).stream()
+        .map(
+            friendship ->
+                friendship.getRequester().getId().equals(currentUser.getId())
+                    ? friendship.getAddressee()
+                    : friendship.getRequester())
+        .forEach(visibleUsers::add);
+    return visibleUsers;
   }
 
   @Transactional(readOnly = true)

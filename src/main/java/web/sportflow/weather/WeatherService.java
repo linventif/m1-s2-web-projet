@@ -109,14 +109,82 @@ public class WeatherService {
     return Collections.emptyMap();
   }
 
+  public String getCityFromCoordinates(Double latitude, Double longitude) {
+    if (latitude == null || longitude == null) {
+      return null;
+    }
+
+    Map<String, Object> result =
+        restClient
+            .get()
+            .uri(
+                uriBuilder ->
+                    uriBuilder
+                        .path("/reverse")
+                        .queryParam("lat", latitude)
+                        .queryParam("lon", longitude)
+                        .queryParam("format", "jsonv2")
+                        .queryParam("zoom", 10)
+                        .queryParam("addressdetails", 1)
+                        .build())
+            .header("User-Agent", "SchoolSpringProject/1.0 (leushuis.robbe@gmail.com)")
+            .retrieve()
+            .body(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+    if (result == null) {
+      return null;
+    }
+
+    Object addressObject = result.get("address");
+    if (addressObject instanceof Map<?, ?> addressMap) {
+      String city = extractAddressPart(addressMap, "city");
+      if (city != null) {
+        return city;
+      }
+      city = extractAddressPart(addressMap, "town");
+      if (city != null) {
+        return city;
+      }
+      city = extractAddressPart(addressMap, "village");
+      if (city != null) {
+        return city;
+      }
+      city = extractAddressPart(addressMap, "municipality");
+      if (city != null) {
+        return city;
+      }
+      city = extractAddressPart(addressMap, "county");
+      if (city != null) {
+        return city;
+      }
+      city = extractAddressPart(addressMap, "state");
+      if (city != null) {
+        return city;
+      }
+    }
+
+    Object displayName = result.get("display_name");
+    if (displayName instanceof String cityName && !cityName.isBlank()) {
+      return cityName;
+    }
+    return null;
+  }
+
+  private String extractAddressPart(Map<?, ?> addressMap, String key) {
+    Object value = addressMap.get(key);
+    if (value instanceof String text && !text.isBlank()) {
+      return text;
+    }
+    return null;
+  }
+
   public WeatherStatsDTO getWeatherStats(String address, LocalDateTime startDate, Double duration) {
     Map<String, Double> coordinates = getCoordinates(address);
     if (coordinates == null) return null;
 
     double latitude = coordinates.get("lat");
     double longitude = coordinates.get("lon");
-
-    LocalDateTime endDate = startDate.plusMinutes(duration.longValue());
+    LocalDateTime endDate = startDate.plusSeconds(duration.longValue());
     WeatherDTO weather =
         getWeather(latitude, longitude, startDate.toLocalDate(), endDate.toLocalDate());
 

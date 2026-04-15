@@ -38,6 +38,7 @@ import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.goal.GoalService;
 import web.sportflow.sport.Sport;
 import web.sportflow.workout.Workout;
+import web.sportflow.workout.WorkoutDashboardDisplay;
 import web.sportflow.workout.WorkoutService;
 
 @Controller
@@ -47,7 +48,7 @@ public class UserController {
   private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
       Set.of("png", "jpg", "jpeg", "webp", "gif");
 
-  @Value("${app.avatar-upload-dir:avatar_upload}")
+  @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
 
   private final UserService userService;
@@ -329,9 +330,9 @@ public class UserController {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
       if (friendship.getStatus() == FriendshipStatus.ACCEPTED) {
-        redirectAttributes.addFlashAttribute("message", "Friend request auto-accepted.");
+        redirectAttributes.addFlashAttribute("message", "Demande d'ami acceptée automatiquement.");
       } else {
-        redirectAttributes.addFlashAttribute("message", "Friend request sent.");
+        redirectAttributes.addFlashAttribute("message", "Demande d'ami envoyée.");
       }
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
@@ -347,7 +348,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
-      redirectAttributes.addFlashAttribute("message", "Friend request accepted.");
+      redirectAttributes.addFlashAttribute("message", "Demande d'ami acceptée.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }
@@ -362,7 +363,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
-      redirectAttributes.addFlashAttribute("message", "Friend request refused.");
+      redirectAttributes.addFlashAttribute("message", "Demande d'ami refusée.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }
@@ -377,7 +378,7 @@ public class UserController {
       RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);
-      redirectAttributes.addFlashAttribute("message", "Friend removed.");
+      redirectAttributes.addFlashAttribute("message", "Ami retiré.");
     } catch (IllegalArgumentException exception) {
       redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
     }
@@ -425,16 +426,30 @@ public class UserController {
     int hoursPart = totalMinutes / 60;
     int minutesPart = totalMinutes % 60;
 
-    model.addAttribute("goals", goalService.getAll());
-    model.addAttribute("workouts", workoutService.getAll());
-    model.addAttribute("activeChallenges", challengeService.getAll());
-    model.addAttribute("badges", badgeService.getAll());
+    List<Friendship> acceptedFriendships =
+        currentUser != null && currentUser.getId() != null
+            ? friendshipService.getAcceptedFriendships(currentUser.getId())
+            : List.of();
+    List<Workout> visibleWorkouts =
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getFriendsWorkout(currentUser.getId())
+            : List.of();
 
-    if (currentUser != null && currentUser.getId() != null) {
-      model.addAttribute("friends", friendshipService.getAcceptedFriendships(currentUser.getId()));
-    } else {
-      model.addAttribute("friends", List.of());
-    }
+    model.addAttribute(
+        "goals",
+        currentUser != null && currentUser.getId() != null
+            ? goalService.getFriendsAndUserGoal(currentUser)
+            : List.of());
+    model.addAttribute("workouts", visibleWorkouts);
+
+    model.addAttribute(
+        "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());
+    model.addAttribute(
+        "activeChallenges",
+        currentUser != null && currentUser.getId() != null
+            ? challengeService.getFriendsAndUserChallenge(currentUser)
+            : List.of());
+    model.addAttribute("friends", acceptedFriendships);
 
     model.addAttribute("currentMonthLabel", "Avril 2026");
     model.addAttribute("mainGoalLabel", "Objectif : 50 km");

@@ -2,6 +2,7 @@ package web.sportflow.weather;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,5 +50,12 @@ public class WeatherController {
   @GetMapping("/at/{date}")
   public WeatherDTO getWeatherAtDate(@PathVariable String date, @RequestParam String address) {
     return weatherService.getWeather(address, LocalDate.parse(date));
+  }
+
+  @GetMapping("/reverse-city")
+  public Map<String, String> getCityFromCoordinates(
+      @RequestParam Double lat, @RequestParam Double lon) {
+    String city = weatherService.getCityFromCoordinates(lat, lon);
+    return Map.of("city", city == null ? "" : city);
   }
 }

@@ -6,6 +6,7 @@
 
 ## Links
 
+- [Sport Flow](https://sportflow.linv.dev)
 - [JavaDoc](https://linventif.github.io/m1-s2-web-projet/java-docs/)
 - [Swagger UI](https://linventif.github.io/m1-s2-web-projet/swagger/)
 - [SonarQube](https://sorar.linv.dev) (user: `indu`, password: `le nom du prof`)
@@ -25,3 +26,15 @@
 2. Se placer dans le dossier du projet: `cd m1-s2-web-projet`
 3. Lancer la base de données PostgreSQL avec Docker Compose: `docker compose up -d`
 4. Lancer l'application Spring Boot: `mvn spring-boot:run`
+
+## Auto-format avec IntelliJ IDEA Ultimate
+
+1. Installer le plugin IntelliJ `google-java-format`.
+2. Activer le plugin: `Settings > google-java-format > Enable google-java-format`.
+3. Activer le formatage à la sauvegarde: `Settings > Tools > Actions on Save`.
+4. Cocher `Reformat code` et `Optimize imports`.
+5. Avant commit (ou en cas de doute), lancer:
+   - `mvn -B spotless:apply`
+   - `npx --yes prettier@3 --write "src/main/resources/**/*.html"`
+
+Le CI vérifie maintenant le format (`spotless:check` + `prettier --check`) sans pousser de commit automatique.

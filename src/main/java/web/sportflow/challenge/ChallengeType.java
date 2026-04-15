@@ -5,5 +5,15 @@ public enum ChallengeType {
   DUREE,
   CALORIE,
   REPETITION,
-  ENDURENCE
+  ENDURENCE;
+
+  public String getLabelFr() {
+    return switch (this) {
+      case DISTANCE -> "Distance";
+      case DUREE -> "Durée";
+      case CALORIE -> "Calories";
+      case REPETITION -> "Répétitions";
+      case ENDURENCE -> "Endurance";
+    };
+  }
 }

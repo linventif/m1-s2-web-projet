@@ -15,7 +15,7 @@ public class SportService {
 
   @Transactional
   public Sport createSport(Sport sport) {
-    Sport newSport = new Sport(sport.getName(), sport.getCaloryPerMinutes());
+    Sport newSport = new Sport(sport.getName(), sport.getMET());
 
     Sport savedSport = sportRepository.save(newSport);
 
@@ -23,7 +23,12 @@ public class SportService {
   }
 
   @Transactional(readOnly = true)
-  public List<Sport> getAllStatuts() {
+  public List<Sport> getAll() {
+    return sportRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Sport> findAll() {
     return sportRepository.findAll();
   }
 }
