@@ -125,8 +125,11 @@ public class UserService implements UserDetailsService {
     user.setFirstname(registrationDTO.firstname());
     user.setLastname(registrationDTO.lastname());
     user.setEmail(registrationDTO.email());
-    user.setProfileImagePath(null);
+    user.setSex(registrationDTO.sex());
+    user.setWeight(registrationDTO.weight());
+    user.setHeight(registrationDTO.height());
     user.setPassword(registrationDTO.password());
+    user.setProfileImagePath(null);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     // 2. Assign the Role
