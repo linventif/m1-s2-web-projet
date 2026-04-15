@@ -1,9 +1,11 @@
 <!doctype html>
 <div th:fragment="comment-section(workout)" th:id="'comment-wrapper-' + ${workout.id}">
-  <div class="collapse collapse-arrow bg-base-100 border border-base-300 rounded-lg">
+  <div class="collapse collapse-arrow bg-base-100 border-t border-base-300 rounded-none">
     <input type="checkbox" class="peer" />
 
-    <div class="collapse-title font-semibold">
+    <div
+      class="collapse-title font-semibold after:start-4 after:end-auto ps-12 pe-4 flex items-center justify-between"
+    >
       <div class="flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +27,12 @@
             >0</span
           >)
         </span>
+      </div>
+
+      <div class="flex items-center gap-1 relative z-20">
+        <div
+          th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
+        ></div>
       </div>
     </div>
 

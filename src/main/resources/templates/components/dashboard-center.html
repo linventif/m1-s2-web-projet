@@ -111,68 +111,107 @@
           </div>
 
           <div class="flex flex-col items-end gap-3">
-            <div class="rating rating-sm sm:rating-md rating-half">
-              <input type="radio" class="rating-hidden" disabled />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-1 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 0.5}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-2 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 1.0}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-1 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 1.5}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-2 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 2.0}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-1 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 2.5}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-2 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 3.0}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-1 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 3.5}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-2 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 4.0}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-1 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 4.5}"
-              />
-              <input
-                type="radio"
-                class="mask mask-star-2 mask-half-2 bg-orange-400"
-                disabled
-                th:checked="${workout.rating != null and workout.rating >= 5}"
-              />
+            <div class="flex items-center gap-4">
+              <div class="rating rating-sm sm:rating-md rating-half">
+                <input type="radio" class="rating-hidden" disabled />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-1 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 0.5}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-2 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 1.0}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-1 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 1.5}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-2 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 2.0}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-1 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 2.5}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-2 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 3.0}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-1 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 3.5}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-2 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 4.0}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-1 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 4.5}"
+                />
+                <input
+                  type="radio"
+                  class="mask mask-star-2 mask-half-2 bg-orange-400"
+                  disabled
+                  th:checked="${workout.rating != null and workout.rating >= 5}"
+                />
+              </div>
+              <div th:if="${canDeleteWorkout}" class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-circle">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li th:if="${isOwner}">
+                    <a
+                      th:href="@{/workouts/{id}/edit(id=${workout.id})}"
+                      class="flex items-center gap-2"
+                    >
+                      <i class="fa-solid fa-pen-to-square text-info"></i>
+                      <span>Modifier</span>
+                    </a>
+                  </li>
+
+                  <li th:if="${canDeleteWorkout}">
+                    <form
+                      th:action="@{/workouts/{id}/delete(id=${workout.id})}"
+                      method="post"
+                      onsubmit="return confirm('Supprimer cette activité ?');"
+                      class="p-0"
+                    >
+                      <button
+                        type="submit"
+                        class="flex items-center gap-2 w-full text-left px-4 py-2"
+                      >
+                        <i class="fa-solid fa-trash-can text-error"></i>
+                        <span>Supprimer</span>
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
             </div>
             <div
               th:if="${workout.weather != null}"
@@ -315,44 +354,10 @@
           </div>
         </details>
       </div>
-      <div class="card-actions flex-wrap justify-between gap-3">
-        <div class="flex items-center gap-2" th:if="${canDeleteWorkout}">
-          <a
-            th:if="${isOwner}"
-            th:href="@{/workouts/{id}/edit(id=${workout.id})}"
-            class="btn btn-sm btn-outline btn-square rounded-full"
-            title="Modifier"
-            aria-label="Modifier"
-          >
-            <i class="fa-solid fa-pen-to-square"></i>
-            <span class="sr-only">Modifier</span>
-          </a>
-          <form
-            th:if="${canDeleteWorkout}"
-            th:action="@{/workouts/{id}/delete(id=${workout.id})}"
-            method="post"
-            onsubmit="return confirm('Supprimer cette activité ?');"
-          >
-            <button
-              type="submit"
-              class="btn btn-sm btn-error btn-square rounded-full text-white"
-              title="Supprimer"
-              aria-label="Supprimer"
-            >
-              <i class="fa-solid fa-trash-can"></i>
-              <span class="sr-only">Supprimer</span>
-            </button>
-          </form>
-        </div>
-        <div
-          th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
-        ></div>
-      </div>
-      <div>
-        <div
-          th:replace="~{components/comment-section :: comment-section(workout=${workout})}"
-        ></div>
-      </div>
+
+      <div th:replace="~{components/comment-section :: comment-section(workout=${workout})}"></div>
     </article>
   </div>
+  <script src="/js/kudo_toggle.js"></script>
+  <script src="/js/comment.js"></script>
 </section>
