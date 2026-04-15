@@ -21,6 +21,7 @@ import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
 import web.sportflow.sport.Sport;
 import web.sportflow.sport.SportService;
+import web.sportflow.user.Role;
 import web.sportflow.user.User;
 import web.sportflow.workout.comment.CommentService;
 
@@ -78,6 +79,17 @@ public class WorkoutController {
       @AuthenticationPrincipal User currentUser,
       Model model) {
     commentService.addComment(workoutId, currentUser.getEmail(), content);
+    model.addAttribute("workout", workoutService.findById(workoutId).orElseThrow());
+    return "components/comment-section :: comment-section";
+  }
+
+  @PostMapping("/{id}/comments/{commentId}/delete")
+  public String deleteComment(
+      @PathVariable("id") Long workoutId,
+      @PathVariable Long commentId,
+      @AuthenticationPrincipal User currentUser,
+      Model model) {
+    commentService.deleteComment(workoutId, commentId, currentUser);
     model.addAttribute("workout", workoutService.findById(workoutId).orElseThrow());
     return "components/comment-section :: comment-section";
   }
@@ -144,6 +156,15 @@ public class WorkoutController {
   private String resolveWorkoutName(WorkoutDto workoutDto) {
     if (workoutDto.getName() != null && !workoutDto.getName().isBlank()) {
       return workoutDto.getName().trim();
+    }
+  }
+  
+  @PostMapping("/{id}/delete")
+  public String deleteWorkout(
+      @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
+    Workout workout = workoutService.findById(workoutId).orElseThrow();
+    if (!isWorkoutOwner(workout, currentUser) && !isAdmin(currentUser)) {
+      return "redirect:/dashboard";
     }
     String sportName =
         workoutDto.getSport() == null || workoutDto.getSport().getName() == null
@@ -302,6 +323,10 @@ public class WorkoutController {
         && currentUser != null
         && currentUser.getId() != null
         && Objects.equals(workout.getUser().getId(), currentUser.getId());
+  }
+
+  private boolean isAdmin(User currentUser) {
+    return currentUser != null && currentUser.getRole() == Role.ADMIN;
   }
 
   private Double normalizeRating(Double rating) {
