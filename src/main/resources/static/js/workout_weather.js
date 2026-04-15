@@ -50,8 +50,8 @@ function fetchWeather() {
 let cityDetectionStarted = false;
 
 function detectCityFromBrowserLocation() {
-    const addressInput = document.getElementById('address');
-    if (cityDetectionStarted || !addressInput || addressInput.value.trim() !== '' || !navigator.geolocation) {
+    const addressInput = document.getElementById("address");
+    if (cityDetectionStarted || !addressInput || addressInput.value.trim() !== "" || !navigator.geolocation) {
         return;
     }
     cityDetectionStarted = true;
@@ -60,22 +60,19 @@ function detectCityFromBrowserLocation() {
         async (position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            const coordinatesFallback = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-            if (addressInput.value.trim() === '') {
-                addressInput.value = coordinatesFallback;
-            }
+            const fallback = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+            addressInput.value = fallback;
 
             try {
-                const response = await fetch(`/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`);
+                const response = await fetch(
+                    `/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`
+                );
                 if (!response.ok) {
                     return;
                 }
                 const data = await response.json();
-                if (data && data.city && typeof data.city === 'string') {
-                    const currentAddress = addressInput.value.trim();
-                    if (currentAddress === '' || currentAddress === coordinatesFallback) {
-                        addressInput.value = data.city;
-                    }
+                if (data && typeof data.city === "string" && data.city.trim() !== "") {
+                    addressInput.value = data.city;
                 }
             } catch (error) {
                 console.warn("Géolocalisation ville impossible:", error);
@@ -88,10 +85,58 @@ function detectCityFromBrowserLocation() {
     );
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', detectCityFromBrowserLocation);
-} else {
-    detectCityFromBrowserLocation();
+function initSportSuggestions() {
+    const sportNameInput = document.getElementById("sport-name");
+    const sportIdInput = document.getElementById("sport-id");
+    const sportList = document.getElementById("sports-list");
+    if (!sportNameInput || !sportIdInput || !sportList) {
+        return;
+    }
+
+    const optionElements = Array.from(sportList.querySelectorAll("option"));
+    const syncSportSelection = () => {
+        const currentValue = sportNameInput.value.trim().toLowerCase();
+        const match = optionElements.find((option) => option.value.trim().toLowerCase() === currentValue);
+        sportIdInput.value = match ? match.dataset.id || "" : "";
+
+        if (sportIdInput.value) {
+            sportNameInput.setCustomValidity("");
+        } else {
+            sportNameInput.setCustomValidity("Choisissez un sport dans la liste proposée.");
+        }
+    };
+
+    sportNameInput.addEventListener("input", syncSportSelection);
+    sportNameInput.addEventListener("change", syncSportSelection);
+    sportNameInput.addEventListener("blur", syncSportSelection);
+    syncSportSelection();
+
+    const form = sportNameInput.closest("form");
+    if (form) {
+        form.addEventListener("submit", (event) => {
+            syncSportSelection();
+            if (!sportIdInput.value) {
+                event.preventDefault();
+                sportNameInput.reportValidity();
+            }
+        });
+    }
 }
 
-window.addEventListener('load', detectCityFromBrowserLocation);
+function initWorkoutFormEnhancements() {
+    initSportSuggestions();
+    detectCityFromBrowserLocation();
+
+    const addressInput = document.getElementById("address");
+    if (addressInput) {
+        addressInput.addEventListener("focus", detectCityFromBrowserLocation, { once: true });
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWorkoutFormEnhancements);
+} else {
+    initWorkoutFormEnhancements();
+}
+
+window.addEventListener("load", initWorkoutFormEnhancements);
