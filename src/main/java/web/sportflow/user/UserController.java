@@ -38,6 +38,7 @@ import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.goal.GoalService;
 import web.sportflow.sport.Sport;
 import web.sportflow.workout.Workout;
+import web.sportflow.workout.WorkoutDashboardDisplay;
 import web.sportflow.workout.WorkoutService;
 
 @Controller
@@ -427,6 +428,9 @@ public class UserController {
 
     model.addAttribute("goals", goalService.getAll());
     model.addAttribute("workouts", workoutService.getAll());
+    model.addAttribute(
+        "workoutDisplays",
+        workoutService.getAll().stream().map(WorkoutDashboardDisplay::new).toList());
     model.addAttribute("activeChallenges", challengeService.getAll());
     model.addAttribute("badges", badgeService.getAll());
 

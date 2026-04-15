@@ -81,11 +81,10 @@ public class WorkoutController {
     } else {
       workout = new Workout();
     }
+
     workout.setSport(workoutDto.getSport());
     workout.setDate(workoutDto.getDate());
-    workout.setDuration(workoutDto.getDuration());
     workout.setWeather(workoutDto.getWeather());
-    workout.setDistance(workoutDto.getDistance());
     workout.setAddress(workoutDto.getAddress());
     workoutService.saveWorkout(workout, currentUser);
     return "redirect:/dashboard";

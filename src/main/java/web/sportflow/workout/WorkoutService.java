@@ -27,12 +27,14 @@ public class WorkoutService {
   public Workout createWorkout(Workout workout) {
     Workout newWorkout =
         new Workout(
+            workout.getName(),
             workout.getDate(),
-            workout.getDistance(),
-            workout.getDuration(),
             workout.getAddress(),
+            workout.getDurationSec(),
             workout.getRating(),
             workout.getSport(),
+            workout.getWeather(),
+            workout.getWorkoutExercises(),
             workout.getUser());
     if (workout.getAddress() != null
         && !workout.getAddress().isEmpty()
@@ -40,7 +42,7 @@ public class WorkoutService {
         && workout.getDate().getMonthValue() > java.time.LocalDateTime.now().getMonthValue() - 1) {
       WeatherStatsDTO weatherStatsDTO =
           weatherService.getWeatherStats(
-              workout.getAddress(), workout.getDate(), workout.getDuration());
+              workout.getAddress(), workout.getDate(), workout.getDurationSec());
       newWorkout.setWeather(weatherStatsDTO);
     }
     Workout savedWorkout = workoutRepository.save(newWorkout);
@@ -64,8 +66,7 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDistance() != null)
-        .mapToDouble(Workout::getDistance)
+        .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
 
@@ -77,8 +78,7 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDistance() != null)
-        .mapToDouble(Workout::getDistance)
+        .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
 
@@ -90,8 +90,7 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDistance() != null)
-        .mapToDouble(Workout::getDistance)
+        .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
 
@@ -103,8 +102,8 @@ public class WorkoutService {
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
     return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
-        .filter(workout -> workout.getDuration() != null)
-        .mapToDouble(Workout::getDuration)
+        .filter(workout -> workout.getDurationSec() != null)
+        .mapToDouble(Workout::getDurationSec)
         .sum();
   }
 
@@ -139,8 +138,7 @@ public class WorkoutService {
               .findByUserAndDateBetween(
                   user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
               .stream()
-              .filter(workout -> workout.getDistance() != null)
-              .mapToDouble(Workout::getDistance)
+              .mapToDouble(this::getWorkoutDistanceKm)
               .sum();
 
       monthlyDistances.add(Math.round(totalDistance * 10.0) / 10.0);
@@ -198,8 +196,7 @@ public class WorkoutService {
               .findByUserAndDateBetween(
                   user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
               .stream()
-              .filter(workout -> workout.getDistance() != null)
-              .mapToDouble(Workout::getDistance)
+              .mapToDouble(this::getWorkoutDistanceKm)
               .sum();
 
       total += monthDistance;
@@ -304,8 +301,7 @@ public class WorkoutService {
               .findByUserAndDateBetween(
                   user, currentDay.atStartOfDay(), currentDay.plusDays(1).atStartOfDay())
               .stream()
-              .filter(workout -> workout.getDistance() != null)
-              .mapToDouble(Workout::getDistance)
+              .mapToDouble(this::getWorkoutDistanceKm)
               .sum();
 
       distances.add(Math.round(total * 10.0) / 10.0);
@@ -341,8 +337,7 @@ public class WorkoutService {
               .findByUserAndDateBetween(
                   user, currentDate.atStartOfDay(), currentDate.plusDays(1).atStartOfDay())
               .stream()
-              .filter(workout -> workout.getDistance() != null)
-              .mapToDouble(Workout::getDistance)
+              .mapToDouble(this::getWorkoutDistanceKm)
               .sum();
 
       distances.add(Math.round(total * 10.0) / 10.0);
@@ -370,9 +365,22 @@ public class WorkoutService {
         .findByUserAndDateBetween(
             user, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay())
         .stream()
-        .filter(workout -> workout.getDistance() != null)
-        .mapToDouble(Workout::getDistance)
+        .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
+  }
+
+  private double getWorkoutDistanceKm(Workout workout) {
+    if (workout == null || workout.getWorkoutExercises() == null) {
+      return 0.0;
+    }
+
+    double totalDistanceM =
+        workout.getWorkoutExercises().stream()
+            .filter(exercise -> exercise != null && exercise.getDistanceM() != null)
+            .mapToDouble(WorkoutExercise::getDistanceM)
+            .sum();
+
+    return totalDistanceM / 1000.0;
   }
 
   private LocalDate minDate(LocalDate a, LocalDate b) {

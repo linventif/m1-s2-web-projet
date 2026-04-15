@@ -1,16 +1,10 @@
 package web.sportflow.sport;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import web.sportflow.exercise.Exercise;
 import web.sportflow.workout.Workout;
 
 @Entity
@@ -23,17 +17,24 @@ public class Sport implements Serializable {
   @Column(nullable = false, unique = true)
   private String name;
 
-  @Column(name = "cal_per_min", nullable = false)
-  private Double calPerMin;
+  @Column(name = "met", nullable = false)
+  private Double met;
 
   @OneToMany(mappedBy = "sport", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Workout> workouts = new ArrayList<>();
 
+  @ManyToMany
+  @JoinTable(
+      name = "sport_exercise",
+      joinColumns = @JoinColumn(name = "sport_id"),
+      inverseJoinColumns = @JoinColumn(name = "exercise_id"))
+  private List<Exercise> exercises = new ArrayList<>();
+
   public Sport() {}
 
-  public Sport(String name, Double calPerMin) {
+  public Sport(String name, Double met) {
     this.name = name;
-    this.calPerMin = calPerMin;
+    this.met = met;
   }
 
   public Long getId() {
@@ -44,8 +45,12 @@ public class Sport implements Serializable {
     return name;
   }
 
-  public Double getCaloryPerMinutes() {
-    return calPerMin;
+  public Double getMET() {
+    return met;
+  }
+
+  public SportType getType() {
+    return SportType.fromSportName(name);
   }
 
   public void setId(Long id) {
@@ -56,8 +61,9 @@ public class Sport implements Serializable {
     this.name = name;
   }
 
-  public void setCaloryPerMinutes(Double calPerMin) {
-    this.calPerMin = calPerMin;
+  public void setMET(Double met) {
+    if (met < 1.0 || met > 23.0) this.met = met;
+    else throw new IllegalArgumentException("MET must be between 1.0 and 23.0");
   }
 
   public List<Workout> getWorkouts() {
@@ -66,5 +72,13 @@ public class Sport implements Serializable {
 
   public void setWorkouts(List<Workout> workouts) {
     this.workouts = workouts;
+  }
+
+  public List<Exercise> getExercises() {
+    return exercises;
+  }
+
+  public void setExercises(List<Exercise> exercises) {
+    this.exercises = exercises;
   }
 }

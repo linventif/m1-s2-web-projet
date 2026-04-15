@@ -31,16 +31,16 @@ class SportServiceTest {
 
     assertNotSame(input, created);
     assertEquals("Swim", created.getName());
-    assertEquals(9.5, created.getCaloryPerMinutes());
+    assertEquals(9.5, created.getMET());
     verify(sportRepository, times(2)).save(any(Sport.class));
   }
 
   @Test
-  void getAllStatuts_returnsRepositoryValues() {
+  void getAll_returnsRepositoryValues() {
     List<Sport> expected = List.of(new Sport("Bike", 7.0), new Sport("Run", 10.0));
     when(sportRepository.findAll()).thenReturn(expected);
 
-    List<Sport> result = sportService.getAllStatuts();
+    List<Sport> result = sportService.getAll();
 
     assertEquals(expected, result);
     verify(sportRepository).findAll();
