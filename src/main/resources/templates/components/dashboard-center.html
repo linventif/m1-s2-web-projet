@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<!-- Center content -->
+<section th:fragment="center-content" class="min-w-0 w-full space-y-6">
+  <div id="workouts-container" class="space-y-5">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-base-300 pb-5"
+    >
+      <div>
+        <h2 class="text-2xl font-black tracking-tight">Fil d'activités</h2>
+        <p class="text-sm opacity-60">
+          Retrouvez vos dernières séances et celles de vos amis
+        </p>
+      </div>
+      <a th:href="@{/workouts/new}" class="btn btn-link group">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2 transition-transform group-hover:scale-125"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Nouvelle activité
+      </a>
+    </div>
+    <div
+      id="workout-empty-state"
+      th:if="${#lists.isEmpty(workouts)}"
+      class="card rounded-[2rem] border border-dashed border-base-300 bg-base-100 shadow-sm"
+    >
+      <div class="card-body items-center py-12 text-center">
+        <div
+          class="flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 text-4xl"
+        >
+          🏃
+        </div>
+        <h3 class="mt-3 text-2xl font-black">Aucune séance disponible</h3>
+        <p class="max-w-md text-base-content/70">
+          Ajoute une première séance pour faire apparaître les filtres par sport et
+          remplir automatiquement les séries.
+        </p>
+      </div>
+    </div>
+
+    <article
+      th:each="display : ${workoutDisplays}"
+      th:with="workout=${display.workout}, type=${display.sportType}"
+      th:attr="data-sport=${workout.sport.name}"
+      class="workout-card card overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div class="card-body gap-5">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-start gap-4">
+            <div class="avatar hidden sm:block">
+              <div
+                class="w-14 rounded-full overflow-hidden border border-base-300 bg-base-200"
+              >
+                <img
+                  th:src="${workout.user.profileImagePath}"
+                  alt="Photo de profil sportif"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="text-xl font-black" th:text="${workout.sport.name}">
+                  Course
+                </h3>
+                <span
+                  class="badge rounded-full border-none bg-orange-100 text-orange-700"
+                  th:text="${workout.date}"
+                >2026-04-08</span
+                >
+              </div>
+              <p class="mt-2 text-sm text-base-content/65">
+                Séance publiée par
+                <span
+                  th:replace="~{components/user::nameLink(user=${workout.user})}"
+                ></span>
+              </p>
+              <div
+                th:if="${workout.address != null}"
+                class="mt-1 flex items-center gap-1.5 text-xs text-base-content/50"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-3.5 h-3.5 text-orange-500"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 7.23 7.23 0 0 0 .758.433 8.15 8.15 0 0 0 .281.14l.018.008.006.003ZM10 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <a
+                  th:href="@{https://www.google.com/maps/search/(api=1,query=${workout.address})}"
+                  target="_blank"
+                  class="hover:text-orange-600 hover:underline transition-colors"
+                  th:text="${workout.address}"
+                >
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-end gap-3">
+            <div class="rating rating-sm sm:rating-md">
+              <input type="radio" class="rating-hidden" disabled/>
+              <input
+                type="radio"
+                class="mask mask-star-2 bg-orange-400"
+                disabled
+                th:checked="${workout.rating != null and workout.rating >= 1}"
+              />
+              <input
+                type="radio"
+                class="mask mask-star-2 bg-orange-400"
+                disabled
+                th:checked="${workout.rating != null and workout.rating >= 2}"
+              />
+              <input
+                type="radio"
+                class="mask mask-star-2 bg-orange-400"
+                disabled
+                th:checked="${workout.rating != null and workout.rating >= 3}"
+              />
+              <input
+                type="radio"
+                class="mask mask-star-2 bg-orange-400"
+                disabled
+                th:checked="${workout.rating != null and workout.rating >= 4}"
+              />
+              <input
+                type="radio"
+                class="mask mask-star-2 bg-orange-400"
+                disabled
+                th:checked="${workout.rating != null and workout.rating >= 5}"
+              />
+            </div>
+            <div
+              th:if="${workout.weather != null}"
+              th:insert="~{components/weather :: weather(data=${workout.weather})}"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="overflow-hidden rounded-[1.75rem] border border-base-300 bg-gradient-to-r from-orange-500 via-orange-400 to-amber-300 p-5 text-white"
+        >
+          <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p
+                class="text-xs uppercase tracking-[0.35em] text-white/80"
+                th:text="${'Résumé ' + type.label}"
+              >
+                Résumé sortie
+              </p>
+              <p
+                class="mt-2 text-2xl font-black"
+                th:text="${display.primaryMetricValue}"
+              >
+                12.50 km
+              </p>
+              <p class="mt-1 text-sm text-white/85">
+                <span th:text="${display.primaryMetricLabel}">Distance</span>
+                <span>prioritaire pour cette séance.</span>
+              </p>
+            </div>
+            <div class="rounded-2xl bg-white/15 px-4 py-3 text-sm backdrop-blur">
+              <p class="font-semibold" th:text="${display.secondaryMetricLabel}">
+                Allure moyenne
+              </p>
+              <p class="text-xl font-black" th:text="${display.secondaryMetricValue}">
+                5.20 min/km
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div
+            th:if="${type.distanceRelevant and display.distanceKm > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Distance
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.distanceKm, 1, 2)} + ' km'"
+            >
+              12.50 km
+            </p>
+          </div>
+          <div th:if="${display.durationSec > 0}" class="rounded-2xl bg-base-200 p-4">
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Durée
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.durationMinutes, 1, 0)} + ' min'"
+            >
+              54 min
+            </p>
+          </div>
+          <div
+            th:if="${type.paceRelevant and display.averagePaceMinPerKm > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Allure
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.averagePaceMinPerKm, 1, 2)} + ' min/km'"
+            >
+              5.20 min/km
+            </p>
+          </div>
+          <div
+            th:if="${type.speedRelevant and display.averageSpeedKmh > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Vitesse
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.averageSpeedKmh, 1, 1)} + ' km/h'"
+            >
+              22.0 km/h
+            </p>
+          </div>
+          <div
+            th:if="${type.strengthRelevant and display.totalSets > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Séries
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${display.totalSets + ' séries'}"
+            >
+              8 séries
+            </p>
+          </div>
+          <div
+            th:if="${type.strengthRelevant and display.totalReps > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Répétitions
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${display.totalReps + ' reps'}"
+            >
+              42 reps
+            </p>
+          </div>
+          <div
+            th:if="${type.strengthRelevant and display.maxWeightKg > 0}"
+            class="rounded-2xl bg-base-200 p-4"
+          >
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Charge max
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.maxWeightKg, 1, 0)} + ' kg'"
+            >
+              80 kg
+            </p>
+          </div>
+          <div class="rounded-2xl bg-base-200 p-4">
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+            >
+              Calories
+            </p>
+            <p
+              class="mt-2 text-2xl font-black"
+              th:text="${#numbers.formatDecimal(display.calories, 1, 0)} + ' kcal'"
+            >
+              430 kcal
+            </p>
+          </div>
+        </div>
+
+        <details
+          class="collapse rounded-2xl border border-base-300 bg-base-200/60 text-sm"
+        >
+          <summary
+            class="collapse-title flex flex-wrap items-center justify-between gap-3 p-4"
+          >
+                        <span class="flex flex-wrap items-center gap-2">
+                          <span class="badge rounded-full border-none bg-white">Session</span>
+                          <span>
+                            <strong th:text="${workout.sport.name}">Course</strong>
+                            le <span th:text="${workout.date}">2026-04-08</span>
+                          </span>
+                        </span>
+            <span class="font-semibold text-orange-600">Détails de la séance</span>
+          </summary>
+          <div class="collapse-content px-4 pb-4">
+            <div class="carousel carousel-center w-full gap-3 rounded-box">
+              <div
+                class="carousel-item w-72 rounded-2xl border border-base-300 bg-base-100 p-4"
+              >
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                  >
+                    Synthèse
+                  </p>
+                  <h4 class="mt-2 text-lg font-black" th:text="${type.label}">
+                    Course
+                  </h4>
+                  <p class="mt-2 text-sm text-base-content/65">
+                    <span th:text="${display.primaryMetricLabel}">Distance</span> :
+                    <strong th:text="${display.primaryMetricValue}">12.50 km</strong>
+                  </p>
+                  <p class="text-sm text-base-content/65">
+                                <span th:text="${display.secondaryMetricLabel}"
+                                >Allure moyenne</span
+                                >
+                    :
+                    <strong th:text="${display.secondaryMetricValue}"
+                    >5.20 min/km</strong
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="carousel-item w-72 rounded-2xl border border-base-300 bg-base-100 p-4"
+              >
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                  >
+                    Effort
+                  </p>
+                  <h4
+                    class="mt-2 text-lg font-black"
+                    th:text="${#numbers.formatDecimal(display.calories, 1, 0)} + ' kcal'"
+                  >
+                    430 kcal
+                  </h4>
+                  <p
+                    class="mt-2 text-sm text-base-content/65"
+                    th:if="${display.averageBpm > 0}"
+                  >
+                    FC moyenne :
+                    <strong
+                      th:text="${#numbers.formatDecimal(display.averageBpm, 1, 0)} + ' bpm'"
+                    >145 bpm</strong
+                    >
+                  </p>
+                  <p
+                    class="text-sm text-base-content/65"
+                    th:if="${workout.sport.getMET() != null}"
+                  >
+                    MET :
+                    <strong
+                      th:text="${#numbers.formatDecimal(workout.sport.getMET(), 1, 1)}"
+                    >8.0</strong>
+                  </p>
+                </div>
+              </div>
+              <div
+                class="carousel-item w-72 rounded-2xl border border-base-300 bg-base-100 p-4"
+                th:if="${workout.weather != null}"
+              >
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                  >
+                    Météo
+                  </p>
+                  <div
+                    class="mt-3"
+                    th:insert="~{components/weather :: weather(data=${workout.weather})}"
+                  ></div>
+                </div>
+              </div>
+              <div
+                th:each="exercise : ${workout.workoutExercises}"
+                class="carousel-item w-72 rounded-2xl border border-base-300 bg-base-100 p-4"
+              >
+                <div>
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                  >
+                    Exercice
+                  </p>
+                  <h4
+                    class="mt-2 text-lg font-black"
+                    th:text="${exercise.exercise.name}"
+                  >
+                    Sprint
+                  </h4>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                                <span
+                                  th:if="${exercise.distanceM != null}"
+                                  class="badge badge-outline rounded-full"
+                                  th:text="${#numbers.formatDecimal(exercise.distanceM / 1000, 1, 2)} + ' km'"
+                                >1.20 km</span
+                                >
+                    <span
+                      th:if="${exercise.durationSec != null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.durationSec / 60, 1, 0)} + ' min'"
+                    >7 min</span
+                    >
+                    <span
+                      th:if="${exercise.sets != null and exercise.reps != null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${exercise.sets + 'x' + exercise.reps}"
+                    >4x12</span
+                    >
+                    <span
+                      th:if="${exercise.weightKg != null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.weightKg, 1, 0)} + ' kg'"
+                    >80 kg</span
+                    >
+                    <span
+                      th:if="${exercise.averageBpm != null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.averageBpm, 1, 0)} + ' bpm'"
+                    >145 bpm</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+      <div class="card-actions justify-end">
+        <div
+          th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
+        ></div>
+      </div>
+      <div>
+        <div
+          th:replace="~{components/comment-section :: comment-section(workout=${workout})}"
+        ></div>
+      </div>
+    </article>
+  </div>
+</section>
