@@ -1,10 +1,13 @@
 function fetchWeather() {
-    const date = document.getElementById('date').value;
-    const address = document.getElementById('address').value;
-    const duration = document.getElementById('duration').value;
+    const dateInput = document.getElementById('date');
+    const addressInput = document.getElementById('address');
+    const durationInput = document.getElementById('duration');
+    const date = dateInput ? dateInput.value : '';
+    const address = addressInput ? addressInput.value : '';
+    const duration = durationInput && durationInput.value ? durationInput.value : '60';
 
-    if (!date || !address || !duration) {
-        alert("Veuillez remplir la date, l'adresse et la durée pour obtenir la météo.");
+    if (!date || !address) {
+        alert("Veuillez remplir la date et l'adresse pour obtenir la météo.");
         return;
     }
 
@@ -42,4 +45,41 @@ function fetchWeather() {
             console.error("Erreur:", error);
             alert("Impossible de récupérer la météo. Vérifiez l'adresse.");
         });
+}
+
+function detectCityFromBrowserLocation() {
+    const addressInput = document.getElementById('address');
+    if (!addressInput || addressInput.value.trim() !== '' || !navigator.geolocation) {
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            try {
+                const response = await fetch(`/api/weather/reverse-city?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`);
+                if (!response.ok) {
+                    return;
+                }
+                const data = await response.json();
+                if (data && data.city && typeof data.city === 'string') {
+                    addressInput.value = data.city;
+                }
+            } catch (error) {
+                console.warn("Géolocalisation ville impossible:", error);
+            }
+        },
+        () => {
+            // Ignore refus/erreur utilisateur, on laisse la saisie manuelle.
+        },
+        { enableHighAccuracy: false, timeout: 7000, maximumAge: 300000 }
+    );
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', detectCityFromBrowserLocation);
+} else {
+    detectCityFromBrowserLocation();
 }
