@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
   @GetMapping("/")
-  public String redirectToProfile() {
-    return "redirect:/user/profile";
+  public String redirectToDashboardHome() {
+    return "redirect:/dashboard";
   }
 
   @GetMapping("/dashboard")
