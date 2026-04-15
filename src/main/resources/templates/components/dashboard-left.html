@@ -21,8 +21,10 @@
           </div>
           <div class="min-w-0">
             <h2 class="truncate text-lg font-black">
-              <span sec:authentication="principal.firstname">Prénom</span>
-              <span sec:authentication="principal.lastname">Nom</span>
+              <a th:href="@{/users/profile}" class="link link-hover">
+                <span sec:authentication="principal.firstname">Prénom</span>
+                <span sec:authentication="principal.lastname">Nom</span>
+              </a>
             </h2>
             <p class="truncate text-sm text-base-content/60" sec:authentication="name">
               user@email.com
