@@ -1,6 +1,7 @@
 package web.sportflow.workout;
 
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +65,9 @@ public class WorkoutController {
   public String editWorkoutForm(
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
     Workout workout = workoutService.findById(workoutId).orElseThrow();
+    if (!isWorkoutOwner(workout, currentUser)) {
+      return "redirect:/dashboard";
+    }
     model.addAttribute("workout", workout);
     model.addAttribute("sports", sportService.findAll());
     return "user-workout-form";
@@ -74,7 +78,7 @@ public class WorkoutController {
     Workout workout;
     if (workoutDto.getId() != null) {
       Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
-      if (!existingWorkout.getUser().getEmail().equals(currentUser.getEmail())) {
+      if (!isWorkoutOwner(existingWorkout, currentUser)) {
         return "redirect:/dashboard";
       }
       workout = existingWorkout;
@@ -88,5 +92,25 @@ public class WorkoutController {
     workout.setAddress(workoutDto.getAddress());
     workoutService.saveWorkout(workout, currentUser);
     return "redirect:/dashboard";
+  }
+
+  @PostMapping("/{id}/delete")
+  public String deleteWorkout(
+      @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
+    Workout workout = workoutService.findById(workoutId).orElseThrow();
+    if (!isWorkoutOwner(workout, currentUser)) {
+      return "redirect:/dashboard";
+    }
+    workoutService.deleteWorkout(workout);
+    return "redirect:/dashboard";
+  }
+
+  private boolean isWorkoutOwner(Workout workout, User currentUser) {
+    return workout != null
+        && workout.getUser() != null
+        && workout.getUser().getId() != null
+        && currentUser != null
+        && currentUser.getId() != null
+        && Objects.equals(workout.getUser().getId(), currentUser.getId());
   }
 }

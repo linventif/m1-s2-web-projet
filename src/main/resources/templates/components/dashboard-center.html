@@ -47,7 +47,7 @@
 
     <article
       th:each="display : ${workoutDisplays}"
-      th:with="workout=${display.workout}, type=${display.sportType}"
+      th:with="workout=${display.workout}, type=${display.sportType}, isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}"
       th:attr="data-sport=${workout.sport.name}"
       class="workout-card card overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
     >
@@ -387,7 +387,24 @@
           </div>
         </details>
       </div>
-      <div class="card-actions justify-end">
+      <div class="card-actions flex-wrap justify-between gap-3">
+        <div class="flex items-center gap-2" th:if="${isOwner}">
+          <a
+            th:href="@{/workouts/{id}/edit(id=${workout.id})}"
+            class="btn btn-sm btn-outline rounded-full"
+          >
+            Modifier
+          </a>
+          <form
+            th:action="@{/workouts/{id}/delete(id=${workout.id})}"
+            method="post"
+            onsubmit="return confirm('Supprimer cette activité ?');"
+          >
+            <button type="submit" class="btn btn-sm btn-error rounded-full text-white">
+              Supprimer
+            </button>
+          </form>
+        </div>
         <div
           th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
         ></div>

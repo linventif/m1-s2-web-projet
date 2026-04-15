@@ -428,4 +428,8 @@ public class WorkoutService {
     workout.setUser(currentUser);
     workoutRepository.save(workout);
   }
+
+  public void deleteWorkout(Workout workout) {
+    workoutRepository.delete(workout);
+  }
 }

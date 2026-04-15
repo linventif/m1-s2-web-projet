@@ -32,10 +32,14 @@
                     <th>Distance</th>
                     <th>Calories brûlées</th>
                     <th>Badges débloqués</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="workout : ${workouts}">
+                  <tr
+                    th:each="workout : ${workouts}"
+                    th:with="isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}"
+                  >
                     <td>
                       <span th:replace="~{components/user::nameLink(user=${workout.user})}"></span>
                     </td>
@@ -75,6 +79,26 @@
                         th:if="${#lists.isEmpty(unlockedBadgesByWorkoutId[workout.id])}"
                         >-</span
                       >
+                    </td>
+                    <td>
+                      <div class="flex items-center gap-2" th:if="${isOwner}">
+                        <a
+                          th:href="@{/workouts/{id}/edit(id=${workout.id})}"
+                          class="btn btn-xs btn-outline"
+                        >
+                          Modifier
+                        </a>
+                        <form
+                          th:action="@{/workouts/{id}/delete(id=${workout.id})}"
+                          method="post"
+                          onsubmit="return confirm('Supprimer cette activité ?');"
+                        >
+                          <button type="submit" class="btn btn-xs btn-error text-white">
+                            Supprimer
+                          </button>
+                        </form>
+                      </div>
+                      <span class="text-base-content/50" th:if="${!isOwner}">-</span>
                     </td>
                     <!-- <td th:text="${conference.idconf}"></td>
                             <td class="font-semibold" th:text="${conference.titleconf}"></td>
