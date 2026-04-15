@@ -15,7 +15,8 @@ public class Sport implements Serializable {
   private Long id;
 
   @Column(nullable = false, unique = true)
-  private String name;
+  @Enumerated(EnumType.STRING)
+  private SportName name;
 
   @Column(name = "met", nullable = false)
   private Double met;
@@ -32,7 +33,7 @@ public class Sport implements Serializable {
 
   public Sport() {}
 
-  public Sport(String name, Double met) {
+  public Sport(SportName name, Double met) {
     this.name = name;
     this.met = met;
   }
@@ -41,28 +42,85 @@ public class Sport implements Serializable {
     return id;
   }
 
-  public String getName() {
+  public SportName getName() {
     return name;
+  }
+
+  public String getDisplayName() {
+    return getNameOrDefault().name();
+  }
+
+  public boolean isDistanceRelevant() {
+    return switch (getNameOrDefault()) {
+      case Course,
+          Cyclisme,
+          Natation,
+          Football,
+          Basketball,
+          Tennis,
+          Escalade,
+          Randonnee,
+          Plongee,
+          Parkour,
+          Seance ->
+          true;
+      case Musculation, Yoga, Parachute, Cardio, Mobilite -> false;
+    };
+  }
+
+  public boolean isStrengthRelevant() {
+    return switch (getNameOrDefault()) {
+      case Musculation, Escalade, Cardio -> true;
+      case Course,
+          Cyclisme,
+          Natation,
+          Football,
+          Basketball,
+          Tennis,
+          Yoga,
+          Randonnee,
+          Parachute,
+          Plongee,
+          Parkour,
+          Mobilite,
+          Seance ->
+          false;
+    };
+  }
+
+  public boolean isMobilityRelevant() {
+    return switch (getNameOrDefault()) {
+      case Musculation, Yoga, Cardio, Mobilite -> true;
+      case Course,
+          Cyclisme,
+          Natation,
+          Football,
+          Basketball,
+          Tennis,
+          Escalade,
+          Randonnee,
+          Parachute,
+          Plongee,
+          Parkour,
+          Seance ->
+          false;
+    };
   }
 
   public Double getMET() {
     return met;
   }
 
-  public SportType getType() {
-    return SportType.fromSportName(name);
-  }
-
   public void setId(Long id) {
     this.id = id;
   }
 
-  public void setName(String name) {
+  public void setName(SportName name) {
     this.name = name;
   }
 
   public void setMET(Double met) {
-    if (met < 1.0 || met > 23.0) this.met = met;
+    if (met >= 1.0 && met <= 23.0) this.met = met;
     else throw new IllegalArgumentException("MET must be between 1.0 and 23.0");
   }
 
@@ -80,5 +138,9 @@ public class Sport implements Serializable {
 
   public void setExercises(List<Exercise> exercises) {
     this.exercises = exercises;
+  }
+
+  private SportName getNameOrDefault() {
+    return name == null ? SportName.Seance : name;
   }
 }

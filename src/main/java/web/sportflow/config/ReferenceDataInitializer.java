@@ -31,6 +31,7 @@ import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
 import web.sportflow.goal.GoalType;
 import web.sportflow.sport.Sport;
+import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
@@ -367,43 +368,36 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
 
     // Sports
-    Sport sportCourseCanal = createSport("Course du canal", 9.8);
-    Sport sportSprintCote = createSport("Sprint en cote", 14.0);
-    Sport sportParcoursAgilite = createSport("Parcours d agilite", 8.0);
-    Sport sportFractionneIntense = createSport("Fractionne intense", 11.0);
-    Sport sportRenforcementFonctionnel = createSport("Renforcement fonctionnel", 6.0);
-    Sport sportEnduranceMixte = createSport("Endurance mixte", 8.0);
-    Sport sportParkourUrbain = createSport("Parkour urbain", 8.5);
-    Sport sportCircuitCardio = createSport("Circuit cardio", 8.0);
-    Sport sportMobiliteActive = createSport("Mobilite active", 3.3);
-    Sport sportEscaladeVitesse = createSport("Escalade de vitesse", 10.0);
-    Sport sportEscaladeBloc = createSport("Escalade bloc", 8.0);
-    Sport sportCoursePied = createSport("Course a pied", 9.8);
-    Sport sportNatation = createSport("Natation", 8.3);
-    Sport sportSautParachute = createSport("Saut en parachute", 3.5);
-    Sport sportPlongee = createSport("Plongee sous-marine", 7.0);
-    Sport sportFootball = createSport("Football", 7.0);
-    Sport sportCyclisme = createSport("Cyclisme", 8.0);
-    Sport sportBasketball = createSport("Basketball", 8.0);
-    Sport sportTennis = createSport("Tennis", 7.3);
-    Sport sportMusculation = createSport("Musculation", 6.0);
-    Sport sportYogaDynamique = createSport("Yoga dynamique", 3.3);
-    Sport sportRandonnee = createSport("Randonnee", 6.0);
+    Sport sportCoursePied = createSport(SportName.Course, 9.8);
+    Sport sportNatation = createSport(SportName.Natation, 8.3);
+    Sport sportCyclisme = createSport(SportName.Cyclisme, 8.0);
+    Sport sportFootball = createSport(SportName.Football, 7.0);
+    Sport sportBasketball = createSport(SportName.Basketball, 8.0);
+    Sport sportTennis = createSport(SportName.Tennis, 7.3);
+    Sport sportMusculation = createSport(SportName.Musculation, 6.0);
+    Sport sportEscaladeBloc = createSport(SportName.Escalade, 8.0);
+    Sport sportYogaDynamique = createSport(SportName.Yoga, 3.3);
+    Sport sportRandonnee = createSport(SportName.Randonnee, 6.0);
+    Sport sportSautParachute = createSport(SportName.Parachute, 3.5);
+    Sport sportPlongee = createSport(SportName.Plongee, 7.0);
+    Sport sportParkourUrbain = createSport(SportName.Parkour, 8.5);
+    Sport sportCircuitCardio = createSport(SportName.Cardio, 8.0);
+    Sport sportMobiliteActive = createSport(SportName.Mobilite, 3.3);
+    Sport sportCourseCanal = sportCoursePied;
+    Sport sportSprintCote = sportCoursePied;
+    Sport sportParcoursAgilite = sportCoursePied;
+    Sport sportFractionneIntense = sportCoursePied;
+    Sport sportRenforcementFonctionnel = sportMusculation;
+    Sport sportEnduranceMixte = sportCoursePied;
+    Sport sportEscaladeVitesse = sportEscaladeBloc;
 
     sportRepository.saveAll(
         List.of(
             sportCourseCanal,
-            sportSprintCote,
-            sportParcoursAgilite,
-            sportFractionneIntense,
-            sportRenforcementFonctionnel,
-            sportEnduranceMixte,
             sportParkourUrbain,
             sportCircuitCardio,
             sportMobiliteActive,
-            sportEscaladeVitesse,
             sportEscaladeBloc,
-            sportCoursePied,
             sportNatation,
             sportSautParachute,
             sportPlongee,
@@ -491,17 +485,10 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     sportRepository.saveAll(
         List.of(
             sportCourseCanal,
-            sportSprintCote,
-            sportParcoursAgilite,
-            sportFractionneIntense,
-            sportRenforcementFonctionnel,
-            sportEnduranceMixte,
             sportParkourUrbain,
             sportCircuitCardio,
             sportMobiliteActive,
-            sportEscaladeVitesse,
             sportEscaladeBloc,
-            sportCoursePied,
             sportNatation,
             sportSautParachute,
             sportPlongee,
@@ -1048,7 +1035,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return workout;
   }
 
-  private Sport createSport(String name, Double met) {
+  private Sport createSport(SportName name, Double met) {
     return new Sport(name, met);
   }
 
@@ -1073,9 +1060,15 @@ public class ReferenceDataInitializer implements CommandLineRunner {
   }
 
   private void linkExercises(Sport sport, Exercise... exercises) {
-    sport.setExercises(new ArrayList<>(List.of(exercises)));
     for (Exercise exercise : exercises) {
-      exercise.getSports().add(sport);
+      if (!sport.getExercises().contains(exercise)) {
+        sport.getExercises().add(exercise);
+      }
+    }
+    for (Exercise exercise : exercises) {
+      if (!exercise.getSports().contains(sport)) {
+        exercise.getSports().add(sport);
+      }
     }
   }
 

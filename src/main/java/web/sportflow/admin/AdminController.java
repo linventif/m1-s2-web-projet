@@ -34,6 +34,7 @@ import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
 import web.sportflow.goal.GoalType;
 import web.sportflow.sport.Sport;
+import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
@@ -123,6 +124,7 @@ public class AdminController {
   @GetMapping("/sports")
   public String showSportsPage(Model model) {
     model.addAttribute("sports", loadSports());
+    model.addAttribute("sportNames", SportName.values());
     model.addAttribute("activeAdminPage", "sports");
     return "admin-sports";
   }
@@ -345,20 +347,18 @@ public class AdminController {
   @PostMapping("/sports/create")
   @Transactional
   public String createSport(
-      @RequestParam String name,
+      @RequestParam SportName name,
       @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
       RedirectAttributes redirectAttributes) {
     try {
-      String normalizedName = requireText(name, "Le nom du sport est obligatoire.");
       boolean alreadyExists =
-          sportRepository.findAll().stream()
-              .anyMatch(sport -> sport.getName().equalsIgnoreCase(normalizedName));
+          sportRepository.findAll().stream().anyMatch(sport -> sport.getName() == name);
       if (alreadyExists) {
         throw new IllegalArgumentException("Un sport avec ce nom existe deja.");
       }
 
       Sport sport = new Sport();
-      sport.setName(normalizedName);
+      sport.setName(name);
       sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
 
       sportRepository.save(sport);
@@ -373,23 +373,21 @@ public class AdminController {
   @Transactional
   public String updateSport(
       @PathVariable Long sportId,
-      @RequestParam String name,
+      @RequestParam SportName name,
       @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
       RedirectAttributes redirectAttributes) {
     try {
       Sport sport = requireSport(sportId);
-      String normalizedName = requireText(name, "Le nom du sport est obligatoire.");
       boolean alreadyExists =
           sportRepository.findAll().stream()
               .anyMatch(
                   currentSport ->
-                      !currentSport.getId().equals(sportId)
-                          && currentSport.getName().equalsIgnoreCase(normalizedName));
+                      !currentSport.getId().equals(sportId) && currentSport.getName() == name);
       if (alreadyExists) {
         throw new IllegalArgumentException("Un sport avec ce nom existe deja.");
       }
 
-      sport.setName(normalizedName);
+      sport.setName(name);
       sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport mis a jour.");
@@ -589,6 +587,7 @@ public class AdminController {
   @Transactional
   public String createWorkout(
       @RequestParam String name,
+      @RequestParam(required = false) String description,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
@@ -599,12 +598,14 @@ public class AdminController {
     try {
       Workout workout = new Workout();
       workout.setName(normalizeNullable(name));
+      workout.setDescription(normalizeNullable(description));
       workout.setDate(date);
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
       workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
+      workout.getCalorieBurn();
 
       workoutRepository.save(workout);
       redirectAttributes.addFlashAttribute("message", "Workout cree avec succes.");
@@ -619,6 +620,7 @@ public class AdminController {
   public String updateWorkout(
       @PathVariable Long workoutId,
       @RequestParam String name,
+      @RequestParam(required = false) String description,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
       @RequestParam(required = false) String address,
       @RequestParam(required = false) String rating,
@@ -629,12 +631,14 @@ public class AdminController {
     try {
       Workout workout = requireWorkout(workoutId);
       workout.setName(normalizeNullable(name));
+      workout.setDescription(normalizeNullable(description));
       workout.setDate(date);
       workout.setAddress(normalizeNullable(address));
       workout.setRating(parseOptionalRating(rating));
       workout.setWorkoutExercises(workoutExercises);
       workout.setSport(requireSport(sportId));
       workout.setUser(requireUser(userId));
+      workout.getCalorieBurn();
 
       workoutRepository.save(workout);
       redirectAttributes.addFlashAttribute("message", "Workout mis a jour.");

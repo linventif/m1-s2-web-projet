@@ -67,12 +67,14 @@
                 >
                   <h3 class="mb-3 text-lg font-bold">Créer un sport</h3>
                   <div class="grid gap-3 md:grid-cols-3">
-                    <input
-                      name="name"
-                      class="input input-bordered"
-                      placeholder="Nom du sport"
-                      required
-                    />
+                    <select name="name" class="select select-bordered" required>
+                      <option value="" disabled selected>Choisir un sport</option>
+                      <option
+                        th:each="sportName : ${sportNames}"
+                        th:value="${sportName.name()}"
+                        th:text="${sportName.name()}"
+                      ></option>
+                    </select>
                     <input
                       name="caloriesPerMinute"
                       type="number"
@@ -91,12 +93,12 @@
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(sports)}">
                   <details
-                    th:each="sport : ${sports.?[#this != null]}"
+                    th:each="sport : ${sports}"
                     class="collapse collapse-arrow border border-base-300 bg-base-100"
                   >
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${sport.id}">1</span> -
-                      <span th:text="${sport.name}">Course</span>
+                      <span th:text="${sport.displayName}">Course</span>
                     </summary>
                     <div class="collapse-content space-y-3">
                       <form
@@ -104,12 +106,14 @@
                         method="post"
                         class="grid gap-3 md:grid-cols-3"
                       >
-                        <input
-                          name="name"
-                          class="input input-bordered"
-                          th:value="${sport.name}"
-                          required
-                        />
+                        <select name="name" class="select select-bordered" required>
+                          <option
+                            th:each="sportName : ${sportNames}"
+                            th:value="${sportName.name()}"
+                            th:text="${sportName.name()}"
+                            th:selected="${sport.name == sportName}"
+                          ></option>
+                        </select>
                         <input
                           name="caloriesPerMinute"
                           type="number"

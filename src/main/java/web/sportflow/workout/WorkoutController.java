@@ -136,6 +136,7 @@ public class WorkoutController {
     }
 
     workout.setName(resolveWorkoutName(workoutDto));
+    workout.setDescription(normalizeNullable(workoutDto.getDescription()));
     workout.setSport(workoutDto.getSport());
     workout.setDate(workoutDto.getDate() == null ? LocalDateTime.now() : workoutDto.getDate());
     workout.setRating(normalizeRating(workoutDto.getRating()));
@@ -170,7 +171,7 @@ public class WorkoutController {
     String sportName =
         workout.getSport() == null || workout.getSport().getName() == null
             ? "activité"
-            : workout.getSport().getName();
+            : workout.getSport().getDisplayName();
     return "Séance " + sportName;
   }
 
@@ -271,22 +272,22 @@ public class WorkoutController {
     model.addAttribute("workout", workout);
     model.addAttribute("sports", sports);
     model.addAttribute("exercises", exercises);
-    model.addAttribute("exerciseSportTypes", buildExerciseSportTypes(exercises));
+    model.addAttribute("exerciseSportNames", buildExerciseSportNames(exercises));
     model.addAttribute("sportFieldProfiles", buildSportFieldProfiles(sports));
   }
 
-  private Map<Long, String> buildExerciseSportTypes(List<Exercise> exercises) {
-    Map<Long, String> exerciseSportTypes = new HashMap<>();
+  private Map<Long, String> buildExerciseSportNames(List<Exercise> exercises) {
+    Map<Long, String> exerciseSportNames = new HashMap<>();
     for (Exercise exercise : exercises) {
-      String sportTypes =
+      String sportNames =
           exercise.getSports().stream()
-              .filter(sport -> sport != null && sport.getType() != null)
-              .map(sport -> sport.getType().name())
+              .filter(sport -> sport != null && sport.getName() != null)
+              .map(sport -> sport.getName().name())
               .distinct()
               .collect(Collectors.joining(","));
-      exerciseSportTypes.put(exercise.getId(), sportTypes);
+      exerciseSportNames.put(exercise.getId(), sportNames);
     }
-    return exerciseSportTypes;
+    return exerciseSportNames;
   }
 
   private Map<Long, Map<String, Boolean>> buildSportFieldProfiles(List<Sport> sports) {
@@ -295,9 +296,9 @@ public class WorkoutController {
       profiles.put(
           sport.getId(),
           Map.of(
-              "distance", sport.getType().isDistanceRelevant(),
-              "strength", sport.getType().isStrengthRelevant(),
-              "mobility", sport.getType().isMobilityRelevant()));
+              "distance", sport.isDistanceRelevant(),
+              "strength", sport.isStrengthRelevant(),
+              "mobility", sport.isMobilityRelevant()));
     }
     return profiles;
   }
@@ -311,7 +312,7 @@ public class WorkoutController {
       return List.of();
     }
 
-    String sportPrefix = workout.getSport().getName() + " - ";
+    String sportPrefix = workout.getSport().getDisplayName() + " - ";
     return workout.getUser().getBadges().stream()
         .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
         .toList();
@@ -339,5 +340,9 @@ public class WorkoutController {
       return null;
     }
     return rounded;
+  }
+
+  private String normalizeNullable(String value) {
+    return value == null || value.isBlank() ? null : value.trim();
   }
 }
