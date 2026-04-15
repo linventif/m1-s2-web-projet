@@ -35,9 +35,7 @@
               </div>
               <div class="flex flex-wrap gap-2">
                 <a th:href="@{/workouts}" class="btn btn-outline rounded-full">Annuler</a>
-                <button type="submit" class="btn btn-primary rounded-full px-6">
-                  Enregistrer
-                </button>
+                <button type="submit" class="btn btn-primary rounded-full px-6">Enregistrer</button>
               </div>
             </div>
 
@@ -333,7 +331,9 @@
                               >
                                 Course continue
                               </button>
-                              <p class="exercise-empty hidden px-3 py-2 text-sm text-base-content/50">
+                              <p
+                                class="exercise-empty hidden px-3 py-2 text-sm text-base-content/50"
+                              >
                                 Choisis un sport ou ajuste ta recherche.
                               </p>
                             </div>
@@ -527,14 +527,24 @@
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Séries
                   </label>
-                  <input type="number" name="sets" min="0" class="input input-bordered rounded-lg" />
+                  <input
+                    type="number"
+                    name="sets"
+                    min="0"
+                    class="input input-bordered rounded-lg"
+                  />
                 </div>
 
                 <div class="form-control exercise-field" data-field-group="strength">
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Répétitions
                   </label>
-                  <input type="number" name="reps" min="0" class="input input-bordered rounded-lg" />
+                  <input
+                    type="number"
+                    name="reps"
+                    min="0"
+                    class="input input-bordered rounded-lg"
+                  />
                 </div>
 
                 <div class="form-control exercise-field" data-field-group="strength">
@@ -619,7 +629,8 @@
           let visibleCount = 0;
 
           row.querySelectorAll(".exercise-choice").forEach((choice) => {
-            const visible = choiceMatchesSport(choice, profile) && choiceMatchesSearch(choice, query);
+            const visible =
+              choiceMatchesSport(choice, profile) && choiceMatchesSearch(choice, query);
             choice.classList.toggle("hidden", !visible);
             if (visible) visibleCount += 1;
           });
