@@ -177,6 +177,9 @@ public class Workout {
   }
 
   public Double getDurationMin() {
+    if (durationSec == null) {
+      return 0.0;
+    }
     return durationSec / 60;
   }
 
@@ -209,7 +212,7 @@ public class Workout {
   }
 
   public Double getCalorieBurn() {
-    if (sport == null || sport.getMET() == null) {
+    if (sport == null || sport.getMET() == null || durationSec == null) {
       return 0.0;
     }
     return durationSec / 60;
@@ -220,6 +223,10 @@ public class Workout {
   }
 
   public void setDurationMin(Double durationMin) {
+    if (durationMin == null) {
+      this.durationSec = null;
+      return;
+    }
     this.durationSec = durationMin * 60;
   }
 
