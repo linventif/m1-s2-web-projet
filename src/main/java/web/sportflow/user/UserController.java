@@ -120,6 +120,7 @@ public class UserController {
             ? null
             : userService.getUserById(currentUser.getId()).orElse(currentUser);
     populateProfileView(model, profileUser);
+    populateProfileFriendshipContext(currentUser, profileUser, model);
     model.addAttribute("canEditProfile", true);
     return "user-profile";
   }
@@ -139,6 +140,7 @@ public class UserController {
         .map(
             user -> {
               populateProfileView(model, user);
+              populateProfileFriendshipContext(currentUser, user, model);
               model.addAttribute("canEditProfile", false);
               return "user-profile";
             })
