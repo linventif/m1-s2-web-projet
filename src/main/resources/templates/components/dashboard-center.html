@@ -421,17 +421,26 @@
         <div class="flex items-center gap-2" th:if="${isOwner}">
           <a
             th:href="@{/workouts/{id}/edit(id=${workout.id})}"
-            class="btn btn-sm btn-outline rounded-full"
+            class="btn btn-sm btn-outline btn-square rounded-full"
+            title="Modifier"
+            aria-label="Modifier"
           >
-            Modifier
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span class="sr-only">Modifier</span>
           </a>
           <form
             th:action="@{/workouts/{id}/delete(id=${workout.id})}"
             method="post"
             onsubmit="return confirm('Supprimer cette activité ?');"
           >
-            <button type="submit" class="btn btn-sm btn-error rounded-full text-white">
-              Supprimer
+            <button
+              type="submit"
+              class="btn btn-sm btn-error btn-square rounded-full text-white"
+              title="Supprimer"
+              aria-label="Supprimer"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+              <span class="sr-only">Supprimer</span>
             </button>
           </form>
         </div>
