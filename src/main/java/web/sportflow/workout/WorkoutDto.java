@@ -12,7 +12,7 @@ public class WorkoutDto {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private LocalDateTime date;
-
+  private Double rating;
   private Double duration;
   private Double distance;
   private String address;
@@ -31,6 +31,7 @@ public class WorkoutDto {
       String name,
       Sport sport,
       LocalDateTime date,
+      Double rating,
       Double duration,
       Double distance,
       String address,
@@ -40,6 +41,7 @@ public class WorkoutDto {
     this.name = name;
     this.sport = sport;
     this.date = date;
+    this.rating = rating;
     this.duration = duration;
     this.distance = distance;
     this.address = address;
@@ -77,6 +79,14 @@ public class WorkoutDto {
 
   public void setDate(LocalDateTime date) {
     this.date = date;
+  }
+
+  public Double getRating() {
+    return rating;
+  }
+
+  public void setRating(Double rating) {
+    this.rating = rating;
   }
 
   public Double getDuration() {

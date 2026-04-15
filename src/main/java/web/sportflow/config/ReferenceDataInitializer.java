@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,10 @@ import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutRepository;
 
 @Component
+@ConditionalOnProperty(
+    name = "app.data-initializer.enabled",
+    havingValue = "true",
+    matchIfMissing = false)
 public class ReferenceDataInitializer implements CommandLineRunner {
 
   private final WorkoutRepository workoutRepository;

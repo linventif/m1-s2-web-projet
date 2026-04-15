@@ -92,6 +92,11 @@ public class WorkoutController {
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
     Workout workout = workoutService.findById(workoutId).orElseThrow();
     populateWorkoutForm(model, workout);
+    if (!isWorkoutOwner(workout, currentUser)) {
+      return "redirect:/dashboard";
+    }
+    model.addAttribute("workout", workout);
+    model.addAttribute("sports", sportService.findAll());
     return "user-workout-form";
   }
 
@@ -109,7 +114,7 @@ public class WorkoutController {
     Workout workout;
     if (workoutDto.getId() != null) {
       Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
-      if (!existingWorkout.getUser().getEmail().equals(currentUser.getEmail())) {
+      if (!isWorkoutOwner(existingWorkout, currentUser)) {
         return "redirect:/dashboard";
       }
       workout = existingWorkout;
@@ -120,6 +125,7 @@ public class WorkoutController {
     workout.setName(resolveWorkoutName(workoutDto));
     workout.setSport(workoutDto.getSport());
     workout.setDate(workoutDto.getDate() == null ? LocalDateTime.now() : workoutDto.getDate());
+    workout.setRating(normalizeRating(workoutDto.getRating()));
     workout.setWeather(workoutDto.getWeather());
     workout.setAddress(workoutDto.getAddress());
     workout.setRating(workoutDto.getRating());

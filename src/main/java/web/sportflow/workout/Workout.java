@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class Workout {
   private String address;
 
   @Column(name = "rating", nullable = true)
-  private Integer rating; // note de 1 à 5 par exemple
+  private Double rating; // note de 0.5 a 5.0
 
   @Embedded private WeatherStatsDTO weather;
 
@@ -126,7 +128,7 @@ public class Workout {
       LocalDateTime date,
       String address,
       Double durationSec,
-      Integer rating,
+      Double rating,
       Sport sport,
       WeatherStatsDTO weather,
       List<WorkoutExercise> exercises,
@@ -175,6 +177,9 @@ public class Workout {
   }
 
   public Double getDurationMin() {
+    if (durationSec == null) {
+      return 0.0;
+    }
     return durationSec / 60;
   }
 
@@ -207,7 +212,7 @@ public class Workout {
   }
 
   public Double getCalorieBurn() {
-    if (sport == null || sport.getMET() == null) {
+    if (sport == null || sport.getMET() == null || durationSec == null) {
       return 0.0;
     }
     return durationSec / 60;
@@ -218,6 +223,10 @@ public class Workout {
   }
 
   public void setDurationMin(Double durationMin) {
+    if (durationMin == null) {
+      this.durationSec = null;
+      return;
+    }
     this.durationSec = durationMin * 60;
   }
 
@@ -229,11 +238,11 @@ public class Workout {
     this.address = address;
   }
 
-  public Integer getRating() {
+  public Double getRating() {
     return rating;
   }
 
-  public void setRating(Integer rating) {
+  public void setRating(Double rating) {
     this.rating = rating;
   }
 
@@ -317,5 +326,16 @@ public class Workout {
   public void addComment(Comment comment) {
     this.comments.add(comment);
     comment.setWorkout(this);
+  }
+
+  @PrePersist
+  @PreUpdate
+  private void applyDefaults() {
+    if (date == null) {
+      date = LocalDateTime.now();
+    }
+    if (name == null || name.isBlank()) {
+      name = "Workout du " + date.toLocalDate();
+    }
   }
 }
