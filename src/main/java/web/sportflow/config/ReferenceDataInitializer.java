@@ -705,6 +705,9 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutKudo.addComment(new Comment("Belle sortie, bon rythme.", workoutKudo, userAdmin));
     workoutKudo.addComment(
         new Comment("Impressionnant, continue comme ca.", workoutKudo, userNick));
+    workoutKudo.addComment(new Comment("Tres bon cardio aujourd'hui.", workoutKudo, userAlice));
+    workoutKudo.addComment(new Comment("Ca donne envie de courir aussi.", workoutKudo, userBenoit));
+    workoutKudo.addComment(new Comment("Allure solide du debut a la fin.", workoutKudo, userOwen));
 
     Workout workoutCourseCanalJudy =
         createWorkout(
@@ -723,6 +726,12 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     workoutCourseCanalJudy.addComment(
         new Comment(
             "Exemple parfait pour les tests de commentaires.", workoutCourseCanalJudy, userAdmin));
+    workoutCourseCanalJudy.addComment(
+        new Comment("Belle gestion du rythme sur les sprints.", workoutCourseCanalJudy, userNick));
+    workoutCourseCanalJudy.addComment(
+        new Comment("Parcours propre et bien tenu.", workoutCourseCanalJudy, userHiccup));
+    workoutCourseCanalJudy.addComment(
+        new Comment("Session validee, continue comme ca.", workoutCourseCanalJudy, userAstrid));
 
     Workout workoutSprintNick =
         createWorkout(
@@ -738,6 +747,12 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userNick);
     workoutSprintNick.addComment(
         new Comment("Super effort sur les cotes, propre.", workoutSprintNick, userAdmin));
+    workoutSprintNick.addComment(
+        new Comment("Bonne intensite sur les intervalles.", workoutSprintNick, userJudy));
+    workoutSprintNick.addComment(
+        new Comment("Joli travail de regularite.", workoutSprintNick, userRodney));
+    workoutSprintNick.addComment(
+        new Comment("On voit une vraie progression.", workoutSprintNick, userPo));
 
     // Workouts
     workoutRepository.saveAll(
