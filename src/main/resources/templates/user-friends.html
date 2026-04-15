@@ -204,7 +204,10 @@
                       th:classappend="${!userPage.hasPrevious() ? 'btn-disabled' : ''}"
                       >«</a
                     >
-                    <button class="join-item btn btn-xs" th:text="${userPage.number + 1}"></button>
+                    <button
+                      class="join-item btn btn-xs"
+                      th:text="${(userPage.number + 1) + '/' + userPage.totalPages}"
+                    ></button>
                     <a
                       th:href="@{/users/friends(q=${query}, page=${userPage.number + 1})}"
                       class="join-item btn btn-xs"
