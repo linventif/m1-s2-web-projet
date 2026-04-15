@@ -33,3 +33,32 @@ if (typeof postCommentAjax !== 'function') {
         .catch(err => console.error('Erreur AJAX:', err));
     };
 }
+
+if (typeof deleteCommentAjax !== "function") {
+    window.deleteCommentAjax = function(workoutId, commentId) {
+        const token = document.querySelector('meta[name="_csrf"]').content;
+        const header = document.querySelector('meta[name="_csrf_header"]').content;
+
+        fetch(`/workouts/${workoutId}/comments/${commentId}/delete`, {
+            method: "POST",
+            headers: {
+                [header]: token,
+                Accept: "text/html"
+            }
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Erreur");
+                return res.text();
+            })
+            .then((html) => {
+                const wrapper = document.getElementById("comment-wrapper-" + workoutId);
+                if (!wrapper) return;
+                wrapper.outerHTML = html;
+
+                const newWrapper = document.getElementById("comment-wrapper-" + workoutId);
+                const checkbox = newWrapper ? newWrapper.querySelector('input[type="checkbox"]') : null;
+                if (checkbox) checkbox.checked = true;
+            })
+            .catch((err) => console.error("Erreur AJAX:", err));
+    };
+}

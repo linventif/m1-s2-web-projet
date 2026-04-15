@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import web.sportflow.sport.SportService;
+import web.sportflow.user.Role;
 import web.sportflow.user.User;
 import web.sportflow.workout.comment.CommentService;
 
@@ -52,6 +53,17 @@ public class WorkoutController {
       @AuthenticationPrincipal User currentUser,
       Model model) {
     commentService.addComment(workoutId, currentUser.getEmail(), content);
+    model.addAttribute("workout", workoutService.findById(workoutId).orElseThrow());
+    return "components/comment-section :: comment-section";
+  }
+
+  @PostMapping("/{id}/comments/{commentId}/delete")
+  public String deleteComment(
+      @PathVariable("id") Long workoutId,
+      @PathVariable Long commentId,
+      @AuthenticationPrincipal User currentUser,
+      Model model) {
+    commentService.deleteComment(workoutId, commentId, currentUser);
     model.addAttribute("workout", workoutService.findById(workoutId).orElseThrow());
     return "components/comment-section :: comment-section";
   }
@@ -103,7 +115,7 @@ public class WorkoutController {
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
     Workout workout = workoutService.findById(workoutId).orElseThrow();
-    if (!isWorkoutOwner(workout, currentUser)) {
+    if (!isWorkoutOwner(workout, currentUser) && !isAdmin(currentUser)) {
       return "redirect:/dashboard";
     }
     workoutService.deleteWorkout(workout);
@@ -117,6 +129,10 @@ public class WorkoutController {
         && currentUser != null
         && currentUser.getId() != null
         && Objects.equals(workout.getUser().getId(), currentUser.getId());
+  }
+
+  private boolean isAdmin(User currentUser) {
+    return currentUser != null && currentUser.getRole() == Role.ADMIN;
   }
 
   private Double normalizeRating(Double rating) {

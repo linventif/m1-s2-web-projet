@@ -47,7 +47,7 @@
 
     <article
       th:each="display : ${workoutDisplays}"
-      th:with="workout=${display.workout}, type=${display.sportType}, isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}"
+      th:with="workout=${display.workout}, type=${display.sportType}, isOwner=${#authentication.principal != null and workout.user != null and workout.user.id != null and #authentication.principal.id != null and workout.user.id == #authentication.principal.id}, isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}, canDeleteWorkout=${isOwner or isAdmin}"
       th:attr="data-sport=${workout.sport.name}"
       class="workout-card card overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
     >
@@ -418,8 +418,9 @@
         </details>
       </div>
       <div class="card-actions flex-wrap justify-between gap-3">
-        <div class="flex items-center gap-2" th:if="${isOwner}">
+        <div class="flex items-center gap-2" th:if="${canDeleteWorkout}">
           <a
+            th:if="${isOwner}"
             th:href="@{/workouts/{id}/edit(id=${workout.id})}"
             class="btn btn-sm btn-outline btn-square rounded-full"
             title="Modifier"
@@ -429,6 +430,7 @@
             <span class="sr-only">Modifier</span>
           </a>
           <form
+            th:if="${canDeleteWorkout}"
             th:action="@{/workouts/{id}/delete(id=${workout.id})}"
             method="post"
             onsubmit="return confirm('Supprimer cette activité ?');"
