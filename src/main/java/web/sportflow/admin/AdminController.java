@@ -1028,13 +1028,13 @@ public class AdminController {
 
   private List<WorkoutExercise> loadWorkoutExercises() {
     List<WorkoutExercise> workoutExercises =
-        workoutExerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+        workoutExerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "workout.date"));
     workoutExercises.removeIf(Objects::isNull);
     return workoutExercises;
   }
 
   private List<Exercise> loadExercises() {
-    List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+    List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     exercises.removeIf(Objects::isNull);
     return exercises;
   }
