@@ -50,7 +50,7 @@ public class Workout {
   private String address;
 
   @Column(name = "rating", nullable = true)
-  private Integer rating; // note de 1 à 5 par exemple
+  private Double rating; // note de 0.5 a 5.0
 
   @Embedded private WeatherStatsDTO weather;
 
@@ -126,7 +126,7 @@ public class Workout {
       LocalDateTime date,
       String address,
       Double durationSec,
-      Integer rating,
+      Double rating,
       Sport sport,
       WeatherStatsDTO weather,
       List<WorkoutExercise> exercises,
@@ -229,11 +229,11 @@ public class Workout {
     this.address = address;
   }
 
-  public Integer getRating() {
+  public Double getRating() {
     return rating;
   }
 
-  public void setRating(Integer rating) {
+  public void setRating(Double rating) {
     this.rating = rating;
   }
 
