@@ -158,7 +158,7 @@ public class WorkoutController {
       return workoutDto.getName().trim();
     }
   }
-  
+
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
