@@ -12,6 +12,7 @@ public class WorkoutDto {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private LocalDateTime date;
+
   private Double rating;
   private Double duration;
   private Double distance;
