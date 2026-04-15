@@ -218,41 +218,41 @@
     <script src="/js/workout_weather.js"></script>
     <script>
       function formatDateTimeLocal(date) {
-        const twoDigits = value => String(value).padStart(2, '0')
+        const twoDigits = (value) => String(value).padStart(2, "0");
         return (
           date.getFullYear() +
-          '-' +
+          "-" +
           twoDigits(date.getMonth() + 1) +
-          '-' +
+          "-" +
           twoDigits(date.getDate()) +
-          'T' +
+          "T" +
           twoDigits(date.getHours()) +
-          ':' +
+          ":" +
           twoDigits(date.getMinutes())
-        )
+        );
       }
 
       function setWorkoutDateNow() {
-        const input = document.getElementById('workout-date-input')
+        const input = document.getElementById("workout-date-input");
         if (!input) {
-          return
+          return;
         }
-        input.value = formatDateTimeLocal(new Date())
-        input.dispatchEvent(new Event('input', { bubbles: true }))
-        input.dispatchEvent(new Event('change', { bubbles: true }))
+        input.value = formatDateTimeLocal(new Date());
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
       }
 
       function openWorkoutDatePicker() {
-        const input = document.getElementById('workout-date-input')
+        const input = document.getElementById("workout-date-input");
         if (!input) {
-          return
+          return;
         }
-        if (typeof input.showPicker === 'function') {
-          input.showPicker()
-          return
+        if (typeof input.showPicker === "function") {
+          input.showPicker();
+          return;
         }
-        input.focus()
-        input.click()
+        input.focus();
+        input.click();
       }
     </script>
   </body>
