@@ -1,12 +1,12 @@
 package web.sportflow;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Tag(name = "Navigation")
 @Controller
@@ -37,16 +37,16 @@ public class HomeController {
       description =
           "Intercepte la route generique `/dashboard` puis redirige vers `/user/dashboard`, qui correspond au tableau de bord principal de l'espace utilisateur.")
   @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /user/dashboard",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "redirect:/user/dashboard")))
+      responseCode = "302",
+      description = "Redirection vers /user/dashboard",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples = @ExampleObject(value = "redirect:/user/dashboard")))
   @ApiResponse(
-        responseCode = "500",
-        description = "Erreur interne lors de la redirection vers le dashboard utilisateur",
-        content = @Content)
+      responseCode = "500",
+      description = "Erreur interne lors de la redirection vers le dashboard utilisateur",
+      content = @Content)
   @GetMapping("/dashboard")
   public String redirectToDashboard() {
     return "redirect:/user/dashboard";
@@ -57,16 +57,16 @@ public class HomeController {
       description =
           "Capture la variante erronee `/dashbord` puis redirige vers `/dashboard` afin de conserver une navigation tolerante aux fautes de saisie.")
   @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /dashboard",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "redirect:/dashboard")))
+      responseCode = "302",
+      description = "Redirection vers /dashboard",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples = @ExampleObject(value = "redirect:/dashboard")))
   @ApiResponse(
-        responseCode = "500",
-        description = "Erreur interne lors de la redirection de l'URL mal orthographiee",
-        content = @Content)
+      responseCode = "500",
+      description = "Erreur interne lors de la redirection de l'URL mal orthographiee",
+      content = @Content)
   @GetMapping("/dashbord")
   public String redirectTypoDashbord() {
     return "redirect:/dashboard";
