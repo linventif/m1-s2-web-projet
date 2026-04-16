@@ -1095,14 +1095,18 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       LocalDate startDate,
       LocalDate endDate,
       User creator) {
-    return new Challenge(
-        title + " (" + sport.getName() + ")",
-        description,
-        type,
-        targetValue,
-        startDate,
-        endDate,
-        creator);
+    Challenge challenge =
+        new Challenge(
+            title + " (" + sport.getName() + ")",
+            description,
+            type,
+            targetValue,
+            startDate,
+            endDate,
+            creator,
+            true);
+    challenge.getSports().add(sport);
+    return challenge;
   }
 
   private void assignDemoAvatars(Map<User, String> avatarByUser) {

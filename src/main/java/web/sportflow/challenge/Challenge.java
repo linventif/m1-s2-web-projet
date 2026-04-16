@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import web.sportflow.badge.Badge;
+import web.sportflow.sport.Sport;
 import web.sportflow.user.User;
 
 @Entity
@@ -50,6 +51,16 @@ public class Challenge {
   @JoinColumn(name = "creator_id")
   private User creator;
 
+  @Column(nullable = false)
+  private boolean official = false;
+
+  @ManyToMany
+  @JoinTable(
+      name = "challenge_sport",
+      joinColumns = @JoinColumn(name = "challenge_id"),
+      inverseJoinColumns = @JoinColumn(name = "sport_id"))
+  private List<Sport> sports = new ArrayList<>();
+
   @ManyToMany
   @JoinTable(
       name = "challenge_badge",
@@ -74,6 +85,18 @@ public class Challenge {
       LocalDate startDate,
       LocalDate endDate,
       User creator) {
+    this(title, description, type, targetValue, startDate, endDate, creator, false);
+  }
+
+  public Challenge(
+      String title,
+      String description,
+      ChallengeType type,
+      Double targetValue,
+      LocalDate startDate,
+      LocalDate endDate,
+      User creator,
+      boolean official) {
     this.title = title;
     this.description = description;
     this.type = type;
@@ -81,6 +104,7 @@ public class Challenge {
     this.startDate = startDate;
     this.endDate = endDate;
     this.creator = creator;
+    this.official = official;
   }
 
   public Long getId() {
@@ -115,6 +139,14 @@ public class Challenge {
     return creator;
   }
 
+  public boolean isOfficial() {
+    return official;
+  }
+
+  public List<Sport> getSports() {
+    return sports;
+  }
+
   public List<Badge> getBadges() {
     return badges;
   }
@@ -144,6 +176,39 @@ public class Challenge {
         .map(user -> user.getFirstname() + " " + user.getLastname())
         .reduce((first, second) -> first + ", " + second)
         .orElse("");
+  }
+
+  public String getSportNames() {
+    if (sports == null || sports.isEmpty()) {
+      return "";
+    }
+    return sports.stream()
+        .filter(Objects::nonNull)
+        .map(sport -> sport.getName() == null ? null : sport.getName().name())
+        .filter(Objects::nonNull)
+        .reduce((first, second) -> first + ", " + second)
+        .orElse("");
+  }
+
+  public boolean hasSportId(Long sportId) {
+    if (sportId == null || sports == null || sports.isEmpty()) {
+      return false;
+    }
+    return sports.stream().anyMatch(sport -> sport != null && sportId.equals(sport.getId()));
+  }
+
+  public boolean hasBadgeId(Long badgeId) {
+    if (badgeId == null || badges == null || badges.isEmpty()) {
+      return false;
+    }
+    return badges.stream().anyMatch(badge -> badge != null && badgeId.equals(badge.getId()));
+  }
+
+  public boolean hasParticipantId(Long userId) {
+    if (userId == null || participants == null || participants.isEmpty()) {
+      return false;
+    }
+    return participants.stream().anyMatch(user -> user != null && userId.equals(user.getId()));
   }
 
   public boolean isActive() {
@@ -181,6 +246,14 @@ public class Challenge {
 
   public void setCreator(User creator) {
     this.creator = creator;
+  }
+
+  public void setOfficial(boolean official) {
+    this.official = official;
+  }
+
+  public void setSports(List<Sport> sports) {
+    this.sports = sports;
   }
 
   public void setBadges(List<Badge> badges) {
