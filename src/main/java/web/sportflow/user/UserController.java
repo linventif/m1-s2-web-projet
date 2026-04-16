@@ -37,6 +37,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import web.sportflow.openapi.BadRequestApiDoc;
+import web.sportflow.openapi.ForbiddenApiDoc;
+import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.NotFoundApiDoc;
+import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.Challenge;
@@ -90,7 +95,7 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML du menu utilisateur",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Menu utilisateur</h1></body></html>")))
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du menu", content = @Content)
+  @InternalServerErrorApiDoc
   @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
@@ -103,7 +108,7 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML du formulaire de creation",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Creation de compte</h1></body></html>")))
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du formulaire", content = @Content)
+  @InternalServerErrorApiDoc
   @GetMapping("/create")
   public String showCreateForm(Model model) {
     populateUserCreationForm(model, new User());
@@ -118,8 +123,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML retournee apres traitement, succes ou erreur",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Compte cree</h1></body></html>")))
-  @ApiResponse(responseCode = "400", description = "Donnees utilisateur invalides", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation de l'utilisateur", content = @Content)
+  @BadRequestApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/create")
   public String createUser(
       @ModelAttribute User user,
@@ -157,8 +162,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML du profil utilisateur",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Mon profil</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du profil", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     User profileUser =
@@ -184,8 +189,8 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers /user/profile ou /user/friends selon le contexte",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/user/profile")))
-  @ApiResponse(responseCode = "404", description = "Utilisateur cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du profil public", content = @Content)
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
   public String showUserProfile(
       @AuthenticationPrincipal User currentUser,
@@ -220,8 +225,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML du formulaire d'edition de profil",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Modifier mon profil</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du formulaire d'edition", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/profile/edit")
   public String showEditProfile(@AuthenticationPrincipal User currentUser, Model model) {
     populateProfileEditForm(model, currentUser);
@@ -240,9 +245,9 @@ public class UserController {
         responseCode = "200",
         description = "Formulaire retourne en cas d'erreur de validation",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Modifier mon profil</h1></body></html>")))
-  @ApiResponse(responseCode = "400", description = "Donnees de profil ou avatar invalides", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour du profil", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
@@ -355,8 +360,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML retournee apres traitement de l'inscription",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Connexion</h1></body></html>")))
-  @ApiResponse(responseCode = "400", description = "Donnees d'inscription invalides", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'inscription", content = @Content)
+  @BadRequestApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/register")
   public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
     try {
@@ -377,8 +382,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML de gestion des amis",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Mes amis</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des amis", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/friends")
   public String manageFriends(
       @AuthenticationPrincipal User currentUser,
@@ -406,8 +411,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML des challenges",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Challenges</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement des challenges", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/challenges")
   public String showChallenges(
       @AuthenticationPrincipal User currentUser,
@@ -439,10 +444,10 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/challenges")))
-  @ApiResponse(responseCode = "400", description = "Challenge invalide ou inscription impossible", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Challenge cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'inscription au challenge", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/challenges/{challengeId}/join")
   public String joinChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -466,10 +471,10 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/challenges")))
-  @ApiResponse(responseCode = "400", description = "Desinscription impossible", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Challenge cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la desinscription du challenge", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/challenges/{challengeId}/leave")
   public String leaveChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -536,10 +541,10 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/friends")))
-  @ApiResponse(responseCode = "400", description = "Demande d'amitie invalide", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Utilisateur cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'envoi de la demande d'amitie", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/friends/request")
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -567,11 +572,11 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/friends")))
-  @ApiResponse(responseCode = "400", description = "Acceptation impossible", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Operation interdite pour cet utilisateur", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Demande d'amitie introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'acceptation de la demande", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/friends/accept")
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -595,11 +600,11 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/friends")))
-  @ApiResponse(responseCode = "400", description = "Refus impossible", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Operation interdite pour cet utilisateur", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Demande d'amitie introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du refus de la demande", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/friends/refuse")
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -623,10 +628,10 @@ public class UserController {
         responseCode = "302",
         description = "Redirection vers la page de retour autorisee",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/friends")))
-  @ApiResponse(responseCode = "400", description = "Suppression de l'amitie impossible", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Ami ou relation introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de l'amitie", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/friends/unfriend")
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
@@ -713,7 +718,7 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML des activites",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Activites</h1></body></html>")))
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement des activites", content = @Content)
+  @InternalServerErrorApiDoc
   @GetMapping("/workout")
   public String showWorkout(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -748,8 +753,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML du tableau de bord",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Dashboard</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du tableau de bord", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
@@ -806,8 +811,8 @@ public class UserController {
         responseCode = "200",
         description = "Vue HTML des statistiques utilisateur",
         content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Statistiques</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement des statistiques", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
     double distanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);

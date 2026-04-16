@@ -21,6 +21,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import web.sportflow.openapi.BadRequestApiDoc;
+import web.sportflow.openapi.ForbiddenApiDoc;
+import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.NotFoundApiDoc;
+import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.badge.Badge;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
@@ -62,7 +67,7 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "<html><body><h1>Mes activites</h1></body></html>")))
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement des activites", content = @Content)
+  @InternalServerErrorApiDoc
   @GetMapping({"", "/"})
   public String listWorkouts(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -88,9 +93,9 @@ public class WorkoutController {
             @Content(
                 mediaType = "application/json",
                 examples = @ExampleObject(value = "{\"newCount\":12,\"isKudoed\":true}")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour du kudo", content = @Content)
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/{id}/kudo")
   @ResponseBody
   public Map<String, Object> toggleKudo(
@@ -115,9 +120,9 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "<div id=\"comment-section\">Commentaire ajoute</div>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'ajout du commentaire", content = @Content)
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/{id}/comments")
   public String postComment(
       @PathVariable("id") Long workoutId,
@@ -140,10 +145,10 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "<div id=\"comment-section\">Commentaire supprime</div>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Suppression interdite pour cet utilisateur", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite ou commentaire introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression du commentaire", content = @Content)
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/{id}/comments/{commentId}/delete")
   public String deleteComment(
       @PathVariable("id") Long workoutId,
@@ -166,8 +171,8 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "<html><body><h1>Nouvelle activite</h1></body></html>")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du formulaire", content = @Content)
+  @UnauthorizedApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/new")
   public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
     populateWorkoutForm(model, new Workout());
@@ -191,10 +196,10 @@ public class WorkoutController {
         content = @Content(
             mediaType = "text/html",
             examples = @ExampleObject(value = "redirect:/dashboard")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Acces refuse a une activite possedee par un autre utilisateur", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du formulaire d'edition", content = @Content)
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @GetMapping("/{id}/edit")
   public String editWorkoutForm(
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
@@ -219,11 +224,11 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "redirect:/dashboard")))
-  @ApiResponse(responseCode = "400", description = "Donnees d'activite invalides", content = @Content)
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Modification interdite sur une activite non possedee", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite a modifier introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de l'enregistrement de l'activite", content = @Content)
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/save")
   public String saveWorkout(
       @ModelAttribute WorkoutDto workoutDto,
@@ -290,10 +295,10 @@ public class WorkoutController {
             @Content(
                 mediaType = "text/html",
                 examples = @ExampleObject(value = "redirect:/dashboard")))
-  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
-  @ApiResponse(responseCode = "403", description = "Suppression interdite pour cet utilisateur", content = @Content)
-  @ApiResponse(responseCode = "404", description = "Activite cible introuvable", content = @Content)
-  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de l'activite", content = @Content)
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
+  @InternalServerErrorApiDoc
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
