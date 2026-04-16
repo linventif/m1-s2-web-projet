@@ -533,6 +533,172 @@
                               placeholder="bpm"
                             />
                           </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Dénivelé
+                            </label>
+                            <input
+                              type="number"
+                              name="elevationGainM"
+                              th:value="${workoutExercise.elevationGainM}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Vitesse max
+                            </label>
+                            <input
+                              type="number"
+                              name="maxSpeedKmh"
+                              th:value="${workoutExercise.maxSpeedKmh}"
+                              min="0"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="km/h"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Score
+                            </label>
+                            <input
+                              type="number"
+                              name="score"
+                              th:value="${workoutExercise.score}"
+                              min="0"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Tentatives
+                            </label>
+                            <input
+                              type="number"
+                              name="attempts"
+                              th:value="${workoutExercise.attempts}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Réussites
+                            </label>
+                            <input
+                              type="number"
+                              name="successfulAttempts"
+                              th:value="${workoutExercise.successfulAttempts}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Précision
+                            </label>
+                            <input
+                              type="number"
+                              name="accuracyPercent"
+                              th:value="${workoutExercise.accuracyPercent}"
+                              min="0"
+                              max="100"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="%"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Hauteur
+                            </label>
+                            <input
+                              type="number"
+                              name="heightM"
+                              th:value="${workoutExercise.heightM}"
+                              min="0"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Profondeur
+                            </label>
+                            <input
+                              type="number"
+                              name="depthM"
+                              th:value="${workoutExercise.depthM}"
+                              min="0"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Tours
+                            </label>
+                            <input
+                              type="number"
+                              name="laps"
+                              th:value="${workoutExercise.laps}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="advanced">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Rounds
+                            </label>
+                            <input
+                              type="number"
+                              name="rounds"
+                              th:value="${workoutExercise.rounds}"
+                              min="0"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -667,6 +833,142 @@
                     step="1"
                     class="input input-bordered rounded-lg"
                     placeholder="bpm"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Dénivelé
+                  </label>
+                  <input
+                    type="number"
+                    name="elevationGainM"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Vitesse max
+                  </label>
+                  <input
+                    type="number"
+                    name="maxSpeedKmh"
+                    min="0"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="km/h"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Score
+                  </label>
+                  <input
+                    type="number"
+                    name="score"
+                    min="0"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Tentatives
+                  </label>
+                  <input
+                    type="number"
+                    name="attempts"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Réussites
+                  </label>
+                  <input
+                    type="number"
+                    name="successfulAttempts"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Précision
+                  </label>
+                  <input
+                    type="number"
+                    name="accuracyPercent"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="%"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Hauteur
+                  </label>
+                  <input
+                    type="number"
+                    name="heightM"
+                    min="0"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Profondeur
+                  </label>
+                  <input
+                    type="number"
+                    name="depthM"
+                    min="0"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Tours
+                  </label>
+                  <input
+                    type="number"
+                    name="laps"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="advanced">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Rounds
+                  </label>
+                  <input
+                    type="number"
+                    name="rounds"
+                    min="0"
+                    step="1"
+                    class="input input-bordered rounded-lg"
                   />
                 </div>
               </div>

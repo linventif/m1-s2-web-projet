@@ -123,6 +123,16 @@ public class WorkoutController {
       @RequestParam(name = "durationMin", required = false) List<String> durationMin,
       @RequestParam(name = "distanceM", required = false) List<String> distanceM,
       @RequestParam(name = "averageBpm", required = false) List<String> averageBpm,
+      @RequestParam(name = "elevationGainM", required = false) List<String> elevationGainM,
+      @RequestParam(name = "maxSpeedKmh", required = false) List<String> maxSpeedKmh,
+      @RequestParam(name = "score", required = false) List<String> score,
+      @RequestParam(name = "attempts", required = false) List<String> attempts,
+      @RequestParam(name = "successfulAttempts", required = false) List<String> successfulAttempts,
+      @RequestParam(name = "accuracyPercent", required = false) List<String> accuracyPercent,
+      @RequestParam(name = "heightM", required = false) List<String> heightM,
+      @RequestParam(name = "depthM", required = false) List<String> depthM,
+      @RequestParam(name = "laps", required = false) List<String> laps,
+      @RequestParam(name = "rounds", required = false) List<String> rounds,
       @AuthenticationPrincipal User currentUser) {
     Workout workout;
     if (workoutDto.getId() != null) {
@@ -149,7 +159,24 @@ public class WorkoutController {
     }
     workout.setWorkoutExercises(
         buildWorkoutExercises(
-            workout, exerciseIds, sets, reps, weightKg, durationMin, distanceM, averageBpm));
+            workout,
+            exerciseIds,
+            sets,
+            reps,
+            weightKg,
+            durationMin,
+            distanceM,
+            averageBpm,
+            elevationGainM,
+            maxSpeedKmh,
+            score,
+            attempts,
+            successfulAttempts,
+            accuracyPercent,
+            heightM,
+            depthM,
+            laps,
+            rounds));
     workoutService.saveWorkout(workout, currentUser);
     return "redirect:/dashboard";
   }
@@ -183,7 +210,17 @@ public class WorkoutController {
       List<String> weightKg,
       List<String> durationMin,
       List<String> distanceM,
-      List<String> averageBpm) {
+      List<String> averageBpm,
+      List<String> elevationGainM,
+      List<String> maxSpeedKmh,
+      List<String> score,
+      List<String> attempts,
+      List<String> successfulAttempts,
+      List<String> accuracyPercent,
+      List<String> heightM,
+      List<String> depthM,
+      List<String> laps,
+      List<String> rounds) {
     if (exerciseIds == null) {
       return List.of();
     }
@@ -199,7 +236,17 @@ public class WorkoutController {
                     valueAt(weightKg, index),
                     valueAt(durationMin, index),
                     valueAt(distanceM, index),
-                    valueAt(averageBpm, index)))
+                    valueAt(averageBpm, index),
+                    valueAt(elevationGainM, index),
+                    valueAt(maxSpeedKmh, index),
+                    valueAt(score, index),
+                    valueAt(attempts, index),
+                    valueAt(successfulAttempts, index),
+                    valueAt(accuracyPercent, index),
+                    valueAt(heightM, index),
+                    valueAt(depthM, index),
+                    valueAt(laps, index),
+                    valueAt(rounds, index)))
         .flatMap(java.util.Optional::stream)
         .toList();
   }
@@ -212,7 +259,17 @@ public class WorkoutController {
       String weightKg,
       String durationMin,
       String distanceM,
-      String averageBpm) {
+      String averageBpm,
+      String elevationGainM,
+      String maxSpeedKmh,
+      String score,
+      String attempts,
+      String successfulAttempts,
+      String accuracyPercent,
+      String heightM,
+      String depthM,
+      String laps,
+      String rounds) {
     Long parsedExerciseId = parseLong(exerciseId);
     if (parsedExerciseId == null) {
       return java.util.Optional.empty();
@@ -237,6 +294,16 @@ public class WorkoutController {
               }
               workoutExercise.setDistanceM(parseDouble(distanceM));
               workoutExercise.setAverageBpm(parseDouble(averageBpm));
+              workoutExercise.setElevationGainM(parseDouble(elevationGainM));
+              workoutExercise.setMaxSpeedKmh(parseDouble(maxSpeedKmh));
+              workoutExercise.setScore(parseDouble(score));
+              workoutExercise.setAttempts(parseInteger(attempts));
+              workoutExercise.setSuccessfulAttempts(parseInteger(successfulAttempts));
+              workoutExercise.setAccuracyPercent(parseDouble(accuracyPercent));
+              workoutExercise.setHeightM(parseDouble(heightM));
+              workoutExercise.setDepthM(parseDouble(depthM));
+              workoutExercise.setLaps(parseInteger(laps));
+              workoutExercise.setRounds(parseInteger(rounds));
               return workoutExercise;
             });
   }
