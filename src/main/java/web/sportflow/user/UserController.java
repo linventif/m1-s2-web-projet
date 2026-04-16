@@ -88,34 +88,37 @@ public class UserController {
     this.friendshipService = friendshipService;
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le menu utilisateur",
       description = "Retourne la vue HTML du menu principal utilisateur.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le formulaire de creation d'utilisateur",
       description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/create")
   public String showCreateForm(Model model) {
     populateUserCreationForm(model, new User());
     return "user-create";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un utilisateur",
       description =
           "Traite la creation d'un utilisateur depuis le formulaire dedie. En cas d'erreur fonctionnelle, la meme vue de creation est retournee avec le message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
+  // CPD-ON
   @PostMapping("/create")
   public String createUser(
       @ModelAttribute User user,
@@ -145,13 +148,14 @@ public class UserController {
     }
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le profil de l'utilisateur connecte",
       description =
           "Retourne la vue de profil du compte connecte avec ses objectifs, sports, badges et indicateurs personnalises.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
+  // CPD-ON
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     User profileUser =
@@ -165,7 +169,7 @@ public class UserController {
     return "user-profile";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le profil public d'un utilisateur",
       description =
@@ -173,6 +177,7 @@ public class UserController {
   @HtmlViewApiDoc
   @HtmlRedirectApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
   public String showUserProfile(
       @AuthenticationPrincipal User currentUser,
@@ -200,7 +205,7 @@ public class UserController {
             });
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le formulaire d'edition du profil",
       description =
@@ -213,7 +218,7 @@ public class UserController {
     return "user-profile-edit";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour le profil de l'utilisateur connecte",
       description =
@@ -222,6 +227,7 @@ public class UserController {
   @HtmlViewApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
+  // CPD-ON
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
@@ -314,23 +320,25 @@ public class UserController {
     }
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Redirige vers la page des amis",
       description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
   @HtmlRedirectApiDoc
+  // CPD-ON
   @GetMapping("/users")
   public String redirectUsersPage() {
     return "redirect:/users/friends";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Enregistre un nouveau compte",
       description =
           "Traite l'inscription publique d'un utilisateur a partir du DTO d'inscription. En cas d'echec, la vue de creation de compte est retournee avec un message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
+  // CPD-ON
   @PostMapping("/register")
   public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
     try {
@@ -343,13 +351,14 @@ public class UserController {
     }
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche la gestion des amis",
       description =
           "Retourne la vue HTML de gestion des amis avec pagination des utilisateurs, recherche textuelle, demandes en attente et relations acceptees.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
+  // CPD-ON
   @GetMapping("/friends")
   public String manageFriends(
       @AuthenticationPrincipal User currentUser,
@@ -369,13 +378,14 @@ public class UserController {
     return "user-friends";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche les challenges disponibles",
       description =
           "Retourne la vue HTML des challenges avec recherche eventuelle, challenges deja rejoints par l'utilisateur et participation de ses amis.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
+  // CPD-ON
   @GetMapping("/challenges")
   public String showChallenges(
       @AuthenticationPrincipal User currentUser,
@@ -399,7 +409,7 @@ public class UserController {
     return "user-challenges";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Rejoint un challenge",
       description =
@@ -408,6 +418,7 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/challenges/{challengeId}/join")
   public String joinChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -423,7 +434,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Quitte un challenge",
       description =
@@ -432,6 +443,7 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/challenges/{challengeId}/leave")
   public String leaveChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -490,7 +502,7 @@ public class UserController {
     model.addAttribute("currentUserId", currentUser.getId());
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Envoie une demande d'amitie",
       description =
@@ -499,6 +511,7 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friends/request")
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -518,7 +531,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Accepte une demande d'amitie",
       description =
@@ -528,6 +541,7 @@ public class UserController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friends/accept")
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -543,7 +557,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Refuse une demande d'amitie",
       description =
@@ -553,6 +567,7 @@ public class UserController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friends/refuse")
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -568,7 +583,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Retire un ami",
       description =
@@ -577,6 +592,7 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friends/unfriend")
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
@@ -655,12 +671,13 @@ public class UserController {
     return null;
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche les activites",
       description =
           "Retourne la vue HTML listant les activites avec leurs badges debloques pour l'utilisateur.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/workout")
   public String showWorkout(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -675,17 +692,18 @@ public class UserController {
     return "user-workout";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Redirige vers les objectifs du profil",
       description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
   @HtmlRedirectApiDoc
+  // CPD-ON
   @GetMapping({"/goal", "/goals"})
   public String redirectGoalsPage() {
     return "redirect:/users/profile#goals";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche le tableau de bord utilisateur",
       description =
@@ -740,13 +758,14 @@ public class UserController {
     return "dashboard";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Affiche les statistiques utilisateur",
       description =
           "Retourne la vue HTML des statistiques avec distances hebdomadaires, mensuelles et annuelles, courbes, indicateurs corporels et recommandations d'entrainement.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
+  // CPD-ON
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
     double distanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
