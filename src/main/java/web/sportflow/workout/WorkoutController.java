@@ -1,5 +1,11 @@
 package web.sportflow.workout;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,18 +21,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
+import web.sportflow.openapi.BadRequestApiDoc;
+import web.sportflow.openapi.ForbiddenApiDoc;
+import web.sportflow.openapi.HtmlFragmentApiDoc;
+import web.sportflow.openapi.HtmlRedirectApiDoc;
+import web.sportflow.openapi.HtmlViewApiDoc;
+import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.JsonSuccessApiDoc;
+import web.sportflow.openapi.NotFoundApiDoc;
+import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.sport.Sport;
 import web.sportflow.sport.SportService;
 import web.sportflow.user.Role;
 import web.sportflow.user.User;
 import web.sportflow.workout.comment.CommentService;
 
+@Tag(name = "Activités")
 @Controller
 @RequestMapping("/workouts")
+@InternalServerErrorApiDoc
 public class WorkoutController {
 
   private final WorkoutService workoutService;
@@ -45,6 +61,11 @@ public class WorkoutController {
     this.exerciseService = exerciseService;
   }
 
+  @Operation(
+      summary = "Liste les activites",
+      description =
+          "Retourne la vue HTML listant les activites sportives visibles, avec les badges debloques par activite et les objets d'affichage utilises par l'interface utilisateur.")
+  @HtmlViewApiDoc
   @GetMapping({"", "/"})
   public String listWorkouts(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -59,6 +80,13 @@ public class WorkoutController {
     return "user-workout";
   }
 
+  @Operation(
+      summary = "Ajoute ou retire un kudo sur une activite",
+      description =
+          "Bascule l'etat du kudo de l'utilisateur connecte pour une activite donnee et retourne un payload JSON contenant le nouveau compteur et l'etat courant du kudo.")
+  @JsonSuccessApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/{id}/kudo")
   @ResponseBody
   public Map<String, Object> toggleKudo(
@@ -72,6 +100,13 @@ public class WorkoutController {
         "isKudoed", isKudoed);
   }
 
+  @Operation(
+      summary = "Ajoute un commentaire a une activite",
+      description =
+          "Enregistre un commentaire pour l'activite cible puis retourne le fragment Thymeleaf de la section commentaires afin de mettre a jour l'interface.")
+  @HtmlFragmentApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/{id}/comments")
   public String postComment(
       @PathVariable("id") Long workoutId,
@@ -83,6 +118,14 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
+  @Operation(
+      summary = "Supprime un commentaire d'une activite",
+      description =
+          "Supprime un commentaire existant sur l'activite cible, sous reserve des droits applicables, puis retourne le fragment HTML actualise des commentaires.")
+  @HtmlFragmentApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @PostMapping("/{id}/comments/{commentId}/delete")
   public String deleteComment(
       @PathVariable("id") Long workoutId,
@@ -94,12 +137,27 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
+  @Operation(
+      summary = "Affiche le formulaire de creation d'une activite",
+      description =
+          "Retourne la vue HTML du formulaire de creation d'activite avec les sports, exercices et profils de champs necessaires au rendu dynamique du formulaire.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/new")
   public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
     populateWorkoutForm(model, new Workout());
     return "user-workout-form";
   }
 
+  @Operation(
+      summary = "Affiche le formulaire de modification d'une activite",
+      description =
+          "Charge une activite existante dans le formulaire d'edition. Si l'utilisateur connecte n'est pas proprietaire de l'activite, une redirection vers le tableau de bord est retournee.")
+  @HtmlViewApiDoc
+  @HtmlRedirectApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @GetMapping("/{id}/edit")
   public String editWorkoutForm(
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
@@ -113,6 +171,15 @@ public class WorkoutController {
     return "user-workout-form";
   }
 
+  @Operation(
+      summary = "Cree ou met a jour une activite",
+      description =
+          "Traite le formulaire de creation ou d'edition d'activite. L'operation reconstruit les exercices associes, applique les informations du workout puis redirige vers le tableau de bord.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @PostMapping("/save")
   public String saveWorkout(
       @ModelAttribute WorkoutDto workoutDto,
@@ -123,26 +190,7 @@ public class WorkoutController {
       @RequestParam(name = "durationMin", required = false) List<String> durationMin,
       @RequestParam(name = "distanceM", required = false) List<String> distanceM,
       @RequestParam(name = "averageBpm", required = false) List<String> averageBpm,
-      @RequestParam(name = "elevationGainM", required = false) List<String> elevationGainM,
-      @RequestParam(name = "maxSpeedKmh", required = false) List<String> maxSpeedKmh,
-      @RequestParam(name = "score", required = false) List<String> score,
-      @RequestParam(name = "attempts", required = false) List<String> attempts,
-      @RequestParam(name = "successfulAttempts", required = false) List<String> successfulAttempts,
-      @RequestParam(name = "accuracyPercent", required = false) List<String> accuracyPercent,
-      @RequestParam(name = "heightM", required = false) List<String> heightM,
-      @RequestParam(name = "depthM", required = false) List<String> depthM,
-      @RequestParam(name = "laps", required = false) List<String> laps,
-      @RequestParam(name = "rounds", required = false) List<String> rounds,
-      @RequestParam(name = "submitAction", defaultValue = "draft") String submitAction,
-      @AuthenticationPrincipal User currentUser,
-      RedirectAttributes redirectAttributes) {
-    if (workoutDto.getDate() == null) {
-      redirectAttributes.addFlashAttribute("errorMessage", "La date de la seance est obligatoire.");
-      return workoutDto.getId() == null
-          ? "redirect:/workouts/new"
-          : "redirect:/workouts/" + workoutDto.getId() + "/edit";
-    }
-
+      @AuthenticationPrincipal User currentUser) {
     Workout workout;
     if (workoutDto.getId() != null) {
       Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
@@ -213,6 +261,19 @@ public class WorkoutController {
     return null;
   }
 
+  @Operation(
+      summary = "Supprime une activite",
+      description =
+          "Supprime une activite existante si l'utilisateur connecte en est proprietaire ou administrateur. Dans le cas contraire, une redirection vers le tableau de bord est retournee.")
+  @ApiResponse(
+      responseCode = "200",
+      description = "Confirmation textuelle retournee par l'implementation courante",
+      content =
+          @Content(mediaType = "text/plain", examples = @ExampleObject(value = "Seance Course")))
+  @HtmlRedirectApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
@@ -482,7 +543,7 @@ public class WorkoutController {
     model.addAttribute("sports", sports);
     model.addAttribute("exercises", exercises);
     model.addAttribute("exerciseSportNames", buildExerciseSportNames(exercises));
-    model.addAttribute("sportFieldProfiles", sportService.buildFieldProfiles(sports));
+    model.addAttribute("sportFieldProfiles", buildSportFieldProfiles(sports));
   }
 
   private Map<Long, String> buildExerciseSportNames(List<Exercise> exercises) {
@@ -491,7 +552,7 @@ public class WorkoutController {
       String sportNames =
           exercise.getSports().stream()
               .filter(sport -> sport != null && sport.getName() != null)
-              .map(Sport::getName)
+              .map(sport -> sport.getName().name())
               .distinct()
               .collect(Collectors.joining(","));
       exerciseSportNames.put(exercise.getId(), sportNames);

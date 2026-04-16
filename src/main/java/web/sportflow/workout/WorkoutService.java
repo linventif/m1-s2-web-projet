@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.sportflow.friendship.FriendshipService;
+import web.sportflow.notification.NotificationService;
 import web.sportflow.user.User;
 import web.sportflow.weather.WeatherService;
 import web.sportflow.weather.WeatherStatsDTO;
@@ -19,14 +20,17 @@ public class WorkoutService {
   private final WorkoutRepository workoutRepository;
   private final WeatherService weatherService;
   private final FriendshipService friendshipService;
+  private final NotificationService notificationService;
 
   public WorkoutService(
       WorkoutRepository workoutRepository,
       WeatherService weatherService,
-      FriendshipService friendshipService) {
+      FriendshipService friendshipService,
+      NotificationService notificationService) {
     this.workoutRepository = workoutRepository;
     this.weatherService = weatherService;
     this.friendshipService = friendshipService;
+    this.notificationService = notificationService;
   }
 
   @Transactional
@@ -445,6 +449,7 @@ public class WorkoutService {
       workout.removeKudo(currentUser);
     } else {
       workout.addKudo(currentUser);
+      notificationService.notifyKudoOnWorkout(workout, currentUser);
     }
 
     workoutRepository.save(workout);

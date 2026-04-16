@@ -66,6 +66,10 @@
                   class="rounded-2xl bg-base-200 p-4"
                 >
                   <h3 class="mb-3 text-lg font-bold">Créer un défi</h3>
+                  <label class="mb-3 flex items-center gap-3 rounded-xl bg-base-100 p-3">
+                    <input name="official" type="checkbox" class="checkbox checkbox-primary" />
+                    <span class="text-sm font-semibold">Challenge officiel (global pour tous)</span>
+                  </label>
                   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                       name="title"
@@ -118,7 +122,19 @@
                       ></option>
                     </select>
                     <select
+                      name="sportIds"
+                      multiple
+                      class="select select-bordered h-32 md:col-span-2"
+                    >
+                      <option
+                        th:each="sport : ${sports}"
+                        th:value="${sport.id}"
+                        th:text="${sport.name}"
+                      ></option>
+                    </select>
+                    <select
                       name="participantIds"
+                      data-field="participants"
                       multiple
                       class="select select-bordered h-32 md:col-span-2"
                     >
@@ -130,6 +146,7 @@
                     </select>
                     <select
                       name="badgeIds"
+                      data-field="badges"
                       multiple
                       class="select select-bordered h-32 md:col-span-2"
                     >
@@ -146,6 +163,10 @@
                       maxlength="500"
                     />
                   </div>
+                  <p class="mt-2 text-xs text-base-content/60">
+                    Les badges sont réservés aux challenges officiels. Les challenges officiels sont
+                    automatiquement actifs pour tous les utilisateurs.
+                  </p>
                   <button type="submit" class="btn btn-primary mt-4">Créer</button>
                 </form>
 
@@ -160,6 +181,12 @@
                     <summary class="collapse-title font-semibold">
                       #<span th:text="${challenge.id}">1</span> -
                       <span th:text="${challenge.title}">Challenge</span>
+                      <span
+                        class="badge badge-sm ml-2"
+                        th:classappend="${challenge.official} ? ' badge-primary' : ' badge-outline'"
+                        th:text="${challenge.official} ? 'Officiel' : 'Communauté'"
+                        >Officiel</span
+                      >
                       (<span
                         th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'Créateur inconnu'}"
                         >Créateur</span
@@ -167,8 +194,20 @@
                     </summary>
                     <div class="collapse-content space-y-3">
                       <p class="text-sm text-base-content/60">
+                        Sports liés :
+                        <span th:if="${#lists.isEmpty(challenge.sports)}" class="italic">Tous</span>
+                        <span
+                          th:unless="${#lists.isEmpty(challenge.sports)}"
+                          th:text="${challenge.sportNames}"
+                          >Course, Natation</span
+                        >
+                      </p>
+                      <p class="text-sm text-base-content/60">
                         Participants :
-                        <span th:if="${#lists.isEmpty(challenge.participants)}" class="italic"
+                        <span
+                          th:if="${#lists.isEmpty(challenge.participants)}"
+                          class="italic"
+                          th:text="${challenge.official} ? 'Global (tous les utilisateurs)' : 'Aucun'"
                           >Aucun</span
                         >
                         <span
@@ -193,6 +232,15 @@
                         method="post"
                         class="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
                       >
+                        <label class="flex items-center gap-3 md:col-span-2 xl:col-span-4">
+                          <input
+                            name="official"
+                            type="checkbox"
+                            class="checkbox checkbox-primary"
+                            th:checked="${challenge.official}"
+                          />
+                          <span class="text-sm font-semibold">Challenge officiel</span>
+                        </label>
                         <input
                           name="title"
                           class="input input-bordered md:col-span-2"
@@ -245,7 +293,20 @@
                           ></option>
                         </select>
                         <select
+                          name="sportIds"
+                          multiple
+                          class="select select-bordered h-32 md:col-span-2"
+                        >
+                          <option
+                            th:each="sport : ${sports}"
+                            th:value="${sport.id}"
+                            th:text="${sport.name}"
+                            th:selected="${challenge.hasSportId(sport.id)}"
+                          ></option>
+                        </select>
+                        <select
                           name="participantIds"
+                          data-field="participants"
                           multiple
                           class="select select-bordered h-32 md:col-span-2"
                         >
@@ -253,11 +314,12 @@
                             th:each="user : ${users}"
                             th:value="${user.id}"
                             th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
-                            th:selected="${challenge.participants != null and challenge.participants.contains(user)}"
+                            th:selected="${challenge.hasParticipantId(user.id)}"
                           ></option>
                         </select>
                         <select
                           name="badgeIds"
+                          data-field="badges"
                           multiple
                           class="select select-bordered h-32 md:col-span-2"
                         >
@@ -265,7 +327,7 @@
                             th:each="badge : ${badges}"
                             th:value="${badge.id}"
                             th:text="${badge.name}"
-                            th:selected="${challenge.badges != null and challenge.badges.contains(badge)}"
+                            th:selected="${challenge.hasBadgeId(badge.id)}"
                           ></option>
                         </select>
                         <input
@@ -274,6 +336,9 @@
                           th:value="${challenge.description}"
                           maxlength="500"
                         />
+                        <p class="text-xs text-base-content/60 md:col-span-2 xl:col-span-4">
+                          Badges = uniquement challenge officiel.
+                        </p>
                         <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </form>
                       <form
@@ -293,5 +358,41 @@
         <div th:replace="~{components/layout::footer}"></div>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const challengeForms = document.querySelectorAll('form[action*="/admin/challenges/"]');
+        for (const form of challengeForms) {
+          const officialInput = form.querySelector('input[name="official"]');
+          if (!officialInput) {
+            continue;
+          }
+          const participantSelect = form.querySelector('select[data-field="participants"]');
+          const badgeSelect = form.querySelector('select[data-field="badges"]');
+
+          const refreshFormState = () => {
+            const isOfficial = officialInput.checked;
+            if (participantSelect) {
+              participantSelect.disabled = isOfficial;
+              if (isOfficial) {
+                for (const option of participantSelect.options) {
+                  option.selected = false;
+                }
+              }
+            }
+            if (badgeSelect) {
+              badgeSelect.disabled = !isOfficial;
+              if (!isOfficial) {
+                for (const option of badgeSelect.options) {
+                  option.selected = false;
+                }
+              }
+            }
+          };
+
+          refreshFormState();
+          officialInput.addEventListener("change", refreshFormState);
+        }
+      });
+    </script>
   </body>
 </html>

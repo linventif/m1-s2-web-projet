@@ -27,7 +27,6 @@ public class ErrorController {
     return "error";
   }
 
-  @ExceptionHandler(Throwable.class)
   public String handleException(
       final Throwable throwable, final Model model, HttpServletResponse response) {
     logger.error("Unexpected error", throwable);

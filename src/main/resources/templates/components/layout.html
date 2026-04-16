@@ -70,22 +70,100 @@
       </div>
 
       <div class="flex flex-none items-center gap-2 sm:gap-3">
-        <button class="btn btn-circle btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <div class="dropdown dropdown-end" th:with="unreadCount=${headerUnreadNotificationsCount}">
+          <div tabindex="0" role="button" class="btn btn-circle btn-ghost relative">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
+              />
+            </svg>
+            <span
+              th:if="${unreadCount != null and unreadCount > 0}"
+              class="badge badge-error badge-xs absolute -top-0.5 -right-0.5 text-[10px] text-white"
+              th:text="${unreadCount > 99 ? '99+' : unreadCount}"
+            >
+              0
+            </span>
+          </div>
+
+          <div
+            tabindex="0"
+            class="dropdown-content z-[70] mt-3 w-[22rem] rounded-3xl border border-base-300 bg-base-100 p-3 shadow-xl"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
-            />
-          </svg>
-        </button>
+            <div class="flex items-center justify-between gap-2">
+              <p class="font-semibold">Notifications</p>
+              <form
+                method="post"
+                th:if="${headerUnreadNotificationsCount != null and headerUnreadNotificationsCount > 0}"
+                th:action="@{/users/notifications/read-all}"
+              >
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="returnTo" th:value="${notificationReturnTo}" />
+                <button type="submit" class="btn btn-ghost btn-xs">Tout marquer lu</button>
+              </form>
+            </div>
+
+            <div
+              class="mt-3 max-h-80 space-y-2 overflow-y-auto"
+              th:if="${!#lists.isEmpty(headerNotifications)}"
+            >
+              <article
+                th:each="notification : ${headerNotifications}"
+                class="rounded-2xl border p-3"
+                th:classappend="${notification.read} ? ' border-base-300 bg-base-100' : ' border-warning/50 bg-warning/10'"
+              >
+                <div class="flex items-start justify-between gap-2">
+                  <a
+                    th:href="${notification.targetUrl != null and !notification.targetUrl.isBlank() ? notification.targetUrl : '/users/workout'}"
+                    class="min-w-0 flex-1"
+                  >
+                    <p class="text-sm leading-snug" th:text="${notification.message}">
+                      Nouvelle notification
+                    </p>
+                    <p
+                      class="mt-1 text-xs text-base-content/60"
+                      th:text="${notification.createdAt != null ? #temporals.format(notification.createdAt, 'dd/MM HH:mm') : 'Maintenant'}"
+                    >
+                      Maintenant
+                    </p>
+                  </a>
+
+                  <form
+                    method="post"
+                    th:if="${!notification.read}"
+                    th:action="@{/users/notifications/{id}/read(id=${notification.id})}"
+                  >
+                    <input
+                      type="hidden"
+                      th:name="${_csrf.parameterName}"
+                      th:value="${_csrf.token}"
+                    />
+                    <input type="hidden" name="returnTo" th:value="${notificationReturnTo}" />
+                    <button type="submit" class="btn btn-ghost btn-xs" aria-label="Marquer lu">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </form>
+                </div>
+              </article>
+            </div>
+
+            <div
+              th:if="${#lists.isEmpty(headerNotifications)}"
+              class="mt-3 rounded-2xl border border-dashed border-base-300 p-4 text-sm text-base-content/60"
+            >
+              Aucune notification pour le moment.
+            </div>
+          </div>
+        </div>
 
         <div class="dropdown dropdown-end">
           <div
@@ -126,12 +204,6 @@
                   <p class="truncate font-semibold">
                     <span sec:authentication="principal.firstname">Prénom</span>
                     <span sec:authentication="principal.lastname">Nom</span>
-                  </p>
-                  <p
-                    class="truncate text-xs text-base-content/60"
-                    sec:authentication="principal.email"
-                  >
-                    user@email.com
                   </p>
                 </div>
               </div>

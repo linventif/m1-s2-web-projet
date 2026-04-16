@@ -1,5 +1,7 @@
 package web.sportflow.admin;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +35,13 @@ import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
 import web.sportflow.goal.GoalType;
+import web.sportflow.openapi.AdminForbiddenApiDoc;
+import web.sportflow.openapi.BadRequestApiDoc;
+import web.sportflow.openapi.HtmlRedirectApiDoc;
+import web.sportflow.openapi.HtmlViewApiDoc;
+import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.NotFoundApiDoc;
+import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.sport.Sport;
 import web.sportflow.sport.SportRepository;
 import web.sportflow.sport.SportService;
@@ -46,8 +55,12 @@ import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutExerciseRepository;
 import web.sportflow.workout.WorkoutRepository;
 
+@Tag(name = "Administration")
 @Controller
 @RequestMapping("/admin")
+@UnauthorizedApiDoc
+@AdminForbiddenApiDoc
+@InternalServerErrorApiDoc
 public class AdminController {
 
   private static final String DEFAULT_BADGE_ICON = "/images/badge/running_5km.png";
@@ -89,6 +102,12 @@ public class AdminController {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Operation(
+      summary = "Accès au panel d'administration",
+      description =
+          "Retourne la vue Thymeleaf du tableau de bord administrateur. "
+              + "La page centralise les compteurs globaux sur les utilisateurs, sports, activites, badges, objectifs, challenges et relations d'amitie.")
+  @HtmlViewApiDoc
   @GetMapping({"", "/", "/panel"})
   public String showPanel(Model model) {
     List<User> users = loadUsers();
@@ -112,6 +131,12 @@ public class AdminController {
     return "admin-index";
   }
 
+  @Operation(
+      summary = "Liste les utilisateurs dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des utilisateurs avec les collections necessaires a l'administration : "
+              + "liste des utilisateurs, sports, badges, roles, sexes et niveaux de pratique.")
+  @HtmlViewApiDoc
   @GetMapping("/users")
   public String showUsersPage(Model model) {
     model.addAttribute("users", loadUsers());
@@ -124,6 +149,11 @@ public class AdminController {
     return "admin-users";
   }
 
+  @Operation(
+      summary = "Liste les sports dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des sports avec les sports en base et les valeurs possibles de l'enumeration des noms de sport.")
+  @HtmlViewApiDoc
   @GetMapping("/sports")
   public String showSportsPage(Model model) {
     model.addAttribute("sports", loadSports());
@@ -132,6 +162,11 @@ public class AdminController {
     return "admin-sports";
   }
 
+  @Operation(
+      summary = "Liste les activites dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des activites avec les workouts, les utilisateurs, les sports et la date courante pre-remplie pour les formulaires.")
+  @HtmlViewApiDoc
   @GetMapping("/workouts")
   public String showWorkoutsPage(Model model) {
     model.addAttribute("workouts", loadWorkouts());
@@ -142,6 +177,11 @@ public class AdminController {
     return "admin-workouts";
   }
 
+  @Operation(
+      summary = "Liste les badges dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des badges avec la liste complete des badges disponibles.")
+  @HtmlViewApiDoc
   @GetMapping("/badges")
   public String showBadgesPage(Model model) {
     model.addAttribute("badges", loadBadges());
@@ -149,6 +189,11 @@ public class AdminController {
     return "admin-badges";
   }
 
+  @Operation(
+      summary = "Liste les objectifs dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des objectifs avec les objectifs existants, les utilisateurs selectionnables et les types d'objectif autorises.")
+  @HtmlViewApiDoc
   @GetMapping("/goals")
   public String showGoalsPage(Model model) {
     model.addAttribute("goals", loadGoals());
@@ -158,17 +203,28 @@ public class AdminController {
     return "admin-goals";
   }
 
+  @Operation(
+      summary = "Liste les challenges dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des challenges avec les challenges existants, les utilisateurs, les badges, les types de challenge et la date du jour.")
+  @HtmlViewApiDoc
   @GetMapping("/challenges")
   public String showChallengesPage(Model model) {
     model.addAttribute("challenges", loadChallenges());
     model.addAttribute("users", loadUsers());
     model.addAttribute("badges", loadBadges());
+    model.addAttribute("sports", loadSports());
     model.addAttribute("challengeTypes", ChallengeType.values());
     model.addAttribute("today", LocalDate.now());
     model.addAttribute("activeAdminPage", "challenges");
     return "admin-challenges";
   }
 
+  @Operation(
+      summary = "Liste les relations d'amitie dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des relations d'amitie avec les relations existantes, les utilisateurs disponibles et les statuts applicables.")
+  @HtmlViewApiDoc
   @GetMapping("/friendships")
   public String showFriendshipsPage(Model model) {
     model.addAttribute("friendships", loadFriendships());
@@ -178,6 +234,13 @@ public class AdminController {
     return "admin-friendships";
   }
 
+  @Operation(
+      summary = "Cree un utilisateur depuis l'administration",
+      description =
+          "Traite la soumission du formulaire de creation d'utilisateur. "
+              + "L'operation valide les informations principales, verifie l'unicite de l'email, associe les sports et badges selectionnes, puis redirige vers la section utilisateurs avec message de succes ou d'erreur.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
   @PostMapping("/users/create")
   @Transactional
   public String createUser(
@@ -230,6 +293,14 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Met a jour un utilisateur depuis l'administration",
+      description =
+          "Traite la modification d'un utilisateur existant. "
+              + "L'operation verifie l'existence de l'utilisateur, controle l'unicite de l'email, met a jour les informations personnelles, le mot de passe si fourni, puis resynchronise les sports et badges associes.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/users/{userId}/update")
   @Transactional
   public String updateUser(
@@ -290,6 +361,15 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Supprime un utilisateur depuis l'administration",
+      description =
+          "Supprime un utilisateur existant ainsi que ses dependances fonctionnelles directes gerees par le controleur : "
+              + "objectifs possedes, activites, challenges crees et relations d'amitie liees. "
+              + "L'operation interdit la suppression de son propre compte administrateur connecte.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/users/{userId}/delete")
   @Transactional
   public String deleteUser(
@@ -347,6 +427,13 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Cree un sport depuis l'administration",
+      description =
+          "Ajoute un nouveau sport avec son nom et sa valeur metabolique. "
+              + "L'operation verifie qu'aucun sport du meme type n'existe deja avant la creation.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
   @PostMapping("/sports/create")
   @Transactional
   public String createSport(
@@ -374,6 +461,14 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Met a jour un sport depuis l'administration",
+      description =
+          "Modifie un sport existant. "
+              + "L'operation controle l'existence du sport cible, l'unicite du nom et la validite de la valeur metabolique avant sauvegarde.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/sports/{sportId}/update")
   @Transactional
   public String updateSport(
@@ -404,6 +499,13 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Supprime un sport depuis l'administration",
+      description =
+          "Supprime un sport existant, retire ses associations avec les utilisateurs et supprime les activites rattachees a ce sport avant redirection.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/sports/{sportId}/delete")
   @Transactional
   public String deleteSport(@PathVariable Long sportId, RedirectAttributes redirectAttributes) {
@@ -434,6 +536,13 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Cree un badge depuis l'administration",
+      description =
+          "Ajoute un badge avec son nom, sa description et son icone. "
+              + "L'operation normalise les valeurs saisies, applique une icone par defaut si necessaire et controle l'unicite du nom.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
   @PostMapping("/badges/create")
   @Transactional
   public String createBadge(
@@ -460,6 +569,14 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Met a jour un badge depuis l'administration",
+      description =
+          "Modifie un badge existant en mettant a jour son nom, sa description et son icone. "
+              + "L'operation verifie l'existence du badge et l'unicite de son nom avant sauvegarde.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/badges/{badgeId}/update")
   @Transactional
   public String updateBadge(
@@ -491,6 +608,13 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Supprime un badge depuis l'administration",
+      description =
+          "Supprime un badge existant et retire ce badge de tous les utilisateurs qui le possedent avant redirection vers la liste des badges.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/badges/{badgeId}/delete")
   @Transactional
   public String deleteBadge(@PathVariable Long badgeId, RedirectAttributes redirectAttributes) {
@@ -513,6 +637,14 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Cree un objectif depuis l'administration",
+      description =
+          "Ajoute un objectif a un utilisateur. "
+              + "L'operation valide le libelle, le type, les valeurs numeriques, l'unite et l'utilisateur proprietaire, puis synchronise l'appartenance de l'objectif.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/goals/create")
   @Transactional
   public String createGoal(
@@ -544,6 +676,14 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Met a jour un objectif depuis l'administration",
+      description =
+          "Modifie un objectif existant et resynchronise son rattachement utilisateur. "
+              + "Les valeurs cibles et de progression sont controlees avant la sauvegarde.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/goals/{goalId}/update")
   @Transactional
   public String updateGoal(
@@ -576,6 +716,13 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Supprime un objectif depuis l'administration",
+      description =
+          "Supprime un objectif existant apres l'avoir retire des collections utilisateur qui y font reference.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/goals/{goalId}/delete")
   @Transactional
   public String deleteGoal(@PathVariable Long goalId, RedirectAttributes redirectAttributes) {
@@ -590,6 +737,14 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Cree une activite depuis l'administration",
+      description =
+          "Ajoute une activite sportive associee a un utilisateur et a un sport. "
+              + "L'operation enregistre les informations generales du workout, la note eventuelle, la liste des exercices lies et declenche le calcul de calories avant sauvegarde.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/workouts/create")
   @Transactional
   public String createWorkout(
@@ -622,6 +777,13 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Met a jour une activite depuis l'administration",
+      description =
+          "Modifie une activite existante, remplace ses proprietes principales, met a jour ses exercices associes et recalcule les donnees derivees si necessaire.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/workouts/{workoutId}/update")
   @Transactional
   public String updateWorkout(
@@ -655,6 +817,13 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Supprime une activite depuis l'administration",
+      description =
+          "Supprime un workout existant depuis l'espace d'administration puis redirige vers la liste des activites.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/workouts/{workoutId}/delete")
   @Transactional
   public String deleteWorkout(@PathVariable Long workoutId, RedirectAttributes redirectAttributes) {
@@ -668,6 +837,14 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Cree un challenge depuis l'administration",
+      description =
+          "Ajoute un challenge avec titre, type, valeur cible, dates, createur, participants et badges associes. "
+              + "L'operation valide la coherence des dates et les references selectionnees avant enregistrement.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/challenges/create")
   @Transactional
   public String createChallenge(
@@ -678,6 +855,8 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(defaultValue = "false") boolean official,
+      @RequestParam(name = "sportIds", required = false) List<Long> sportIds,
       @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
@@ -692,8 +871,10 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
-      challenge.setParticipants(resolveUsers(participantIds));
-      challenge.setBadges(resolveBadges(badgeIds));
+      challenge.setOfficial(official);
+      challenge.setSports(resolveSports(sportIds));
+      challenge.setParticipants(official ? new ArrayList<>() : resolveUsers(participantIds));
+      challenge.setBadges(resolveChallengeBadges(official, badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge cree avec succes.");
@@ -703,6 +884,14 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Met a jour un challenge depuis l'administration",
+      description =
+          "Modifie un challenge existant en mettant a jour ses informations principales, ses participants et ses badges. "
+              + "Les collections associees sont remplacees par les selections transmises.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/update")
   @Transactional
   public String updateChallenge(
@@ -714,6 +903,8 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(defaultValue = "false") boolean official,
+      @RequestParam(name = "sportIds", required = false) List<Long> sportIds,
       @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
@@ -728,10 +919,13 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.setOfficial(official);
+      challenge.getSports().clear();
+      challenge.getSports().addAll(resolveSports(sportIds));
       challenge.getParticipants().clear();
-      challenge.getParticipants().addAll(resolveUsers(participantIds));
+      challenge.getParticipants().addAll(official ? List.of() : resolveUsers(participantIds));
       challenge.getBadges().clear();
-      challenge.getBadges().addAll(resolveBadges(badgeIds));
+      challenge.getBadges().addAll(resolveChallengeBadges(official, badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge mis a jour.");
@@ -741,6 +935,13 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Supprime un challenge depuis l'administration",
+      description =
+          "Supprime un challenge existant et redirige vers la page de gestion des challenges avec un message flash de succes ou d'erreur.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/delete")
   @Transactional
   public String deleteChallenge(
@@ -755,6 +956,14 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Cree une relation d'amitie depuis l'administration",
+      description =
+          "Ajoute ou met a jour une relation d'amitie entre deux utilisateurs a partir du statut fourni. "
+              + "Si une relation existe deja entre les deux utilisateurs, elle est reutilisee puis mise a jour.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friendships/create")
   @Transactional
   public String createFriendship(
@@ -783,6 +992,13 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  @Operation(
+      summary = "Met a jour une relation d'amitie depuis l'administration",
+      description =
+          "Modifie une relation d'amitie existante en redefinissant le demandeur, le destinataire et le statut de la relation.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friendships/{friendshipId}/update")
   @Transactional
   public String updateFriendship(
@@ -806,6 +1022,13 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  @Operation(
+      summary = "Supprime une relation d'amitie depuis l'administration",
+      description =
+          "Supprime une relation d'amitie existante puis redirige vers la page de gestion des relations.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friendships/{friendshipId}/delete")
   @Transactional
   public String deleteFriendship(
@@ -983,6 +1206,13 @@ public class AdminController {
     return badgeRepository.findAllById(badgeIds);
   }
 
+  private List<Badge> resolveChallengeBadges(boolean official, List<Long> badgeIds) {
+    if (!official) {
+      return new ArrayList<>();
+    }
+    return resolveBadges(badgeIds);
+  }
+
   private List<User> resolveUsers(List<Long> userIds) {
     if (userIds == null || userIds.isEmpty()) {
       return new ArrayList<>();
@@ -1095,6 +1325,7 @@ public class AdminController {
     challenges.removeIf(Objects::isNull);
     challenges.forEach(
         challenge -> {
+          challenge.getSports().removeIf(Objects::isNull);
           challenge.getBadges().removeIf(Objects::isNull);
           challenge.getParticipants().removeIf(Objects::isNull);
         });

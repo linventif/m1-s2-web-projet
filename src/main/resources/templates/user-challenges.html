@@ -10,6 +10,17 @@
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
+    <style>
+      .time-progress::-webkit-progress-bar {
+        background-image: repeating-linear-gradient(
+          135deg,
+          hsl(var(--b3)) 0px,
+          hsl(var(--b3)) 8px,
+          hsl(var(--b2)) 8px,
+          hsl(var(--b2)) 16px
+        );
+      }
+    </style>
     <div th:insert="~{components/layout::header}"></div>
 
     <main class="mx-auto w-full max-w-7xl px-4 pb-8 pt-24 sm:px-6 lg:px-8">
@@ -27,8 +38,8 @@
           <div>
             <h1 class="text-3xl font-black">Challenges</h1>
             <p class="mt-2 max-w-2xl text-sm text-base-content/70">
-              Trouve un challenge, inscris-toi, puis annule ta participation tant que la date de fin
-              n'est pas depassee.
+              Les challenges officiels sont globaux (pas d'inscription). Les challenges
+              communautaires se rejoignent manuellement.
             </p>
           </div>
 
@@ -37,7 +48,7 @@
               type="text"
               name="q"
               th:value="${query}"
-              placeholder="Rechercher par titre, type ou description"
+              placeholder="Rechercher par titre, sport, type ou description"
               class="input input-bordered w-full lg:w-96"
               maxlength="100"
             />
@@ -49,135 +60,352 @@
           <span>Aucun challenge ne correspond a ta recherche.</span>
         </div>
 
-        <div
-          th:unless="${#lists.isEmpty(challenges)}"
-          class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-        >
-          <article
-            th:each="challenge : ${challenges}"
-            th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}"
-            class="card border border-base-300 bg-base-100 shadow-sm"
-          >
-            <div class="card-body gap-4">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <h2 class="card-title break-words" th:text="${challenge.title}">Challenge</h2>
-                  <p class="text-sm text-base-content/60">
-                    Par
-                    <span
-                      th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'SportFlow'}"
-                      >SportFlow</span
-                    >
-                  </p>
-                </div>
-                <span
-                  class="badge shrink-0"
-                  th:classappend="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? ' badge-ghost' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? ' badge-info' : ' badge-success')"
-                  th:text="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? 'Termine' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? 'A venir' : 'En cours')"
-                  >En cours</span
-                >
-              </div>
-
-              <p
-                class="min-h-12 text-sm text-base-content/75"
-                th:text="${challenge.description != null and !challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
+        <div class="space-y-6" th:unless="${#lists.isEmpty(challenges)}">
+          <section class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-2xl font-black">Challenges Officiels</h2>
+              <span class="badge badge-primary" th:text="${#lists.size(officialChallenges)}"
+                >0</span
               >
-                Description
-              </p>
+            </div>
 
-              <div class="grid grid-cols-2 gap-3 text-sm">
-                <div class="rounded-lg bg-base-200 p-3">
-                  <p class="text-xs uppercase text-base-content/50">Type</p>
-                  <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
-                </div>
-                <div class="rounded-lg bg-base-200 p-3">
-                  <p class="text-xs uppercase text-base-content/50">Objectif</p>
-                  <p class="font-semibold" th:text="${challenge.targetValue}">10</p>
-                </div>
-                <div class="rounded-lg bg-base-200 p-3">
-                  <p class="text-xs uppercase text-base-content/50">Debut</p>
-                  <p class="font-semibold" th:text="${challenge.startDate}">2026-04-01</p>
-                </div>
-                <div class="rounded-lg bg-base-200 p-3">
-                  <p class="text-xs uppercase text-base-content/50">Fin</p>
-                  <p class="font-semibold" th:text="${challenge.endDate}">2026-04-30</p>
-                </div>
-              </div>
+            <div th:if="${#lists.isEmpty(officialChallenges)}" class="alert">
+              <span>Aucun challenge officiel disponible.</span>
+            </div>
 
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <span class="badge badge-outline">
-                  <span th:text="${#lists.size(challenge.participants)}">0</span>
-                  participant(s)
-                </span>
-                <span
-                  th:if="${#sets.contains(joinedChallengeIds, challenge.id)}"
-                  class="badge badge-primary"
-                  >Inscrit</span
-                >
-              </div>
+            <div
+              th:unless="${#lists.isEmpty(officialChallenges)}"
+              class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+            >
+              <article
+                th:each="challenge : ${officialChallenges}"
+                th:with="progress=${challengeProgressById[challenge.id]}, unlockedBadgeIds=${unlockedChallengeBadgeIdsByChallengeId[challenge.id]}, isTemporary=${challenge.startDate != null or challenge.endDate != null}"
+                class="card border bg-base-100 shadow-sm"
+                th:classappend="${isTemporary} ? ' border-warning/40' : ' border-primary/25'"
+              >
+                <div class="card-body gap-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h3 class="card-title break-words" th:text="${challenge.title}">Challenge</h3>
+                      <p class="text-sm text-base-content/60">
+                        Par
+                        <span>SportFlow</span>
+                      </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                      <span class="badge badge-outline badge-primary">Officiel</span>
+                      <span
+                        class="badge badge-outline"
+                        th:classappend="${isTemporary} ? ' badge-warning' : ' badge-info'"
+                        th:text="${isTemporary} ? 'Temporaire' : 'Statique'"
+                        >Statique</span
+                      >
+                    </div>
+                  </div>
 
-              <div class="space-y-2">
-                <p class="text-sm font-semibold">Amis participants</p>
-                <div
-                  th:if="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
-                  class="flex flex-wrap gap-2"
-                >
-                  <a
-                    th:each="friend : ${friendParticipants}"
-                    th:href="@{/users/profile/{id}(id=${friend.id})}"
-                    class="tooltip"
-                    th:attr="data-tip=${friend.firstname + ' ' + friend.lastname}"
+                  <p
+                    class="text-sm text-base-content/75"
+                    th:text="${challenge.description != null and !challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
                   >
-                    <div class="avatar">
-                      <div class="w-10 rounded-full border border-base-300 bg-base-200">
-                        <img
-                          th:src="${friend.profileImagePath}"
-                          th:alt="${friend.firstname + ' ' + friend.lastname}"
-                          class="h-full w-full object-cover"
-                        />
+                    Description
+                  </p>
+
+                  <div class="flex flex-wrap gap-2">
+                    <span class="badge badge-outline" th:if="${#lists.isEmpty(challenge.sports)}"
+                      >Tous sports</span
+                    >
+                    <span
+                      th:each="sport : ${challenge.sports}"
+                      class="badge badge-outline"
+                      th:text="${sport.name}"
+                      >Course</span
+                    >
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTemporary}">
+                    <div class="rounded-lg bg-base-200 p-3">
+                      <p class="text-xs uppercase text-base-content/50">Type</p>
+                      <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
+                    </div>
+                    <div class="rounded-lg bg-base-200 p-3">
+                      <p class="text-xs uppercase text-base-content/50">Objectif</p>
+                      <p class="font-semibold">
+                        <span th:text="${challenge.targetValue}">10</span>
+                        <span
+                          th:text="${progress != null and progress.unitLabel != null ? progress.unitLabel : ''}"
+                        ></span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2 rounded-lg bg-base-200 p-3 text-sm" th:if="${isTemporary}">
+                    <div class="flex items-center justify-between">
+                      <span class="font-semibold" th:text="${challenge.startDateShortUs}"
+                        >04/15</span
+                      >
+                      <span class="text-base-content/50">→</span>
+                      <span class="font-semibold" th:text="${challenge.endDateShortUs}">04/26</span>
+                    </div>
+                    <progress
+                      class="progress progress-warning time-progress w-full"
+                      max="100"
+                      th:value="${challenge.remainingTimePercent}"
+                    ></progress>
+                    <div class="flex items-center justify-between text-xs text-base-content/60">
+                      <span
+                        th:text="${challenge.remainingDays > 0 ? challenge.remainingDays + ' j restants' : 'Termine'}"
+                        >Termine</span
+                      >
+                      <span th:text="${challenge.remainingTimePercent + '%'}">0%</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2 rounded-lg bg-base-200 p-3">
+                    <div class="flex items-center justify-between text-sm">
+                      <span>Ta progression</span>
+                      <span
+                        th:text="${progress != null ? progress.currentValue + ' / ' + progress.targetValue + ' ' + progress.unitLabel : '0 / 0'}"
+                        >0 / 0</span
+                      >
+                    </div>
+                    <progress
+                      class="progress progress-primary w-full"
+                      max="100"
+                      th:value="${progress != null ? progress.percentage : 0}"
+                    ></progress>
+                    <span
+                      th:if="${#sets.contains(completedChallengeIds, challenge.id)}"
+                      class="badge badge-success badge-sm"
+                      >Challenge valide</span
+                    >
+                  </div>
+
+                  <div class="space-y-2">
+                    <p class="text-sm font-semibold">Badges officiels</p>
+                    <div
+                      th:if="${#lists.isEmpty(challenge.badges)}"
+                      class="text-sm text-base-content/60"
+                    >
+                      Aucun badge associe.
+                    </div>
+                    <div th:unless="${#lists.isEmpty(challenge.badges)}" class="space-y-2">
+                      <div
+                        th:each="badge : ${challenge.badges}"
+                        class="flex items-center justify-between rounded-lg border border-base-300 bg-base-100 p-2"
+                      >
+                        <div class="flex items-center gap-3">
+                          <img
+                            th:src="${badge.iconPath}"
+                            th:alt="${badge.name}"
+                            class="h-10 w-10 rounded-lg border border-base-300 object-cover"
+                          />
+                          <div>
+                            <p class="text-sm font-semibold" th:text="${badge.name}">Badge</p>
+                            <p class="text-xs text-base-content/60" th:text="${badge.description}">
+                              Description
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          class="badge badge-sm"
+                          th:classappend="${unlockedBadgeIds != null and #sets.contains(unlockedBadgeIds, badge.id)} ? ' badge-success' : ' badge-ghost'"
+                          th:text="${unlockedBadgeIds != null and #sets.contains(unlockedBadgeIds, badge.id)} ? 'Debloque' : 'A debloquer'"
+                          >A debloquer</span
+                        >
                       </div>
                     </div>
-                  </a>
+                  </div>
+
+                  <div class="card-actions justify-end">
+                    <span class="badge badge-outline badge-primary">Actif pour tous</span>
+                  </div>
                 </div>
-                <p
-                  th:unless="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
-                  class="text-sm text-base-content/60"
-                >
-                  Aucun ami inscrit pour le moment.
-                </p>
-              </div>
-
-              <div class="card-actions justify-end">
-                <form
-                  method="post"
-                  th:action="@{/users/challenges/{id}/leave(id=${challenge.id})}"
-                  th:if="${#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
-                >
-                  <input type="hidden" name="returnTo" value="/users/challenges" />
-                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                  <button type="submit" class="btn btn-outline btn-error">
-                    Annuler ma participation
-                  </button>
-                </form>
-
-                <form
-                  method="post"
-                  th:action="@{/users/challenges/{id}/join(id=${challenge.id})}"
-                  th:if="${!#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
-                >
-                  <input type="hidden" name="returnTo" value="/users/challenges" />
-                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                  <button type="submit" class="btn btn-primary">M'inscrire</button>
-                </form>
-
-                <span
-                  class="text-sm text-base-content/60"
-                  th:if="${challenge.endDate != null and today.isAfter(challenge.endDate)}"
-                  >Inscriptions fermees</span
-                >
-              </div>
+              </article>
             </div>
-          </article>
+          </section>
+
+          <section class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-2xl font-black">Challenges Communauté</h2>
+              <span class="badge badge-outline" th:text="${#lists.size(communityChallenges)}"
+                >0</span
+              >
+            </div>
+
+            <div th:if="${#lists.isEmpty(communityChallenges)}" class="alert">
+              <span>Aucun challenge communautaire pour le moment.</span>
+            </div>
+
+            <div
+              th:unless="${#lists.isEmpty(communityChallenges)}"
+              class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+            >
+              <article
+                th:each="challenge : ${communityChallenges}"
+                th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}, progress=${challengeProgressById[challenge.id]}, isTimed=${challenge.startDate != null or challenge.endDate != null}"
+                class="card border border-base-300 bg-base-100 shadow-sm"
+              >
+                <div class="card-body gap-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h3 class="card-title break-words" th:text="${challenge.title}">Challenge</h3>
+                      <p class="text-sm text-base-content/60">
+                        Par
+                        <span
+                          th:text="${challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'SportFlow'}"
+                          >SportFlow</span
+                        >
+                      </p>
+                    </div>
+                    <span
+                      class="badge shrink-0"
+                      th:classappend="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? ' badge-ghost' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? ' badge-info' : ' badge-success')"
+                      th:text="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? 'Termine' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? 'A venir' : 'En cours')"
+                      >En cours</span
+                    >
+                  </div>
+
+                  <p
+                    class="text-sm text-base-content/75"
+                    th:text="${challenge.description != null and !challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
+                  >
+                    Description
+                  </p>
+
+                  <div class="flex flex-wrap gap-2">
+                    <span class="badge badge-outline" th:if="${#lists.isEmpty(challenge.sports)}"
+                      >Tous sports</span
+                    >
+                    <span
+                      th:each="sport : ${challenge.sports}"
+                      class="badge badge-outline"
+                      th:text="${sport.name}"
+                      >Course</span
+                    >
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTimed}">
+                    <div class="rounded-lg bg-base-200 p-3">
+                      <p class="text-xs uppercase text-base-content/50">Type</p>
+                      <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
+                    </div>
+                    <div class="rounded-lg bg-base-200 p-3">
+                      <p class="text-xs uppercase text-base-content/50">Objectif</p>
+                      <p class="font-semibold">
+                        <span th:text="${challenge.targetValue}">10</span>
+                        <span
+                          th:text="${progress != null and progress.unitLabel != null ? progress.unitLabel : ''}"
+                        ></span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2 rounded-lg bg-base-200 p-3 text-sm" th:if="${isTimed}">
+                    <div class="flex items-center justify-between">
+                      <span class="font-semibold" th:text="${challenge.startDateShortUs}"
+                        >04/15</span
+                      >
+                      <span class="text-base-content/50">→</span>
+                      <span class="font-semibold" th:text="${challenge.endDateShortUs}">04/26</span>
+                    </div>
+                    <progress
+                      class="progress progress-info time-progress w-full"
+                      max="100"
+                      th:value="${challenge.remainingTimePercent}"
+                    ></progress>
+                    <div class="flex items-center justify-between text-xs text-base-content/60">
+                      <span
+                        th:text="${challenge.remainingDays > 0 ? challenge.remainingDays + ' j restants' : 'Termine'}"
+                        >Termine</span
+                      >
+                      <span th:text="${challenge.remainingTimePercent + '%'}">0%</span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <span class="badge badge-outline">
+                      <span th:text="${#lists.size(challenge.participants)}">0</span>
+                      participant(s)
+                    </span>
+                    <span
+                      th:if="${#sets.contains(joinedChallengeIds, challenge.id)}"
+                      class="badge badge-primary"
+                      >Inscrit</span
+                    >
+                  </div>
+
+                  <div class="space-y-2">
+                    <p class="text-sm font-semibold">Amis participants</p>
+                    <div
+                      th:if="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
+                      class="flex flex-wrap gap-2"
+                    >
+                      <a
+                        th:each="friend : ${friendParticipants}"
+                        th:href="@{/users/profile/{id}(id=${friend.id})}"
+                        class="tooltip"
+                        th:attr="data-tip=${friend.firstname + ' ' + friend.lastname}"
+                      >
+                        <div class="avatar">
+                          <div class="w-10 rounded-full border border-base-300 bg-base-200">
+                            <img
+                              th:src="${friend.profileImagePath}"
+                              th:alt="${friend.firstname + ' ' + friend.lastname}"
+                              class="h-full w-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                    <p
+                      th:unless="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
+                      class="text-sm text-base-content/60"
+                    >
+                      Aucun ami inscrit pour le moment.
+                    </p>
+                  </div>
+
+                  <div class="card-actions justify-end">
+                    <form
+                      method="post"
+                      th:action="@{/users/challenges/{id}/leave(id=${challenge.id})}"
+                      th:if="${#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
+                    >
+                      <input type="hidden" name="returnTo" value="/users/challenges" />
+                      <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                      />
+                      <button type="submit" class="btn btn-outline btn-error">
+                        Annuler ma participation
+                      </button>
+                    </form>
+
+                    <form
+                      method="post"
+                      th:action="@{/users/challenges/{id}/join(id=${challenge.id})}"
+                      th:if="${!#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
+                    >
+                      <input type="hidden" name="returnTo" value="/users/challenges" />
+                      <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                      />
+                      <button type="submit" class="btn btn-primary">M'inscrire</button>
+                    </form>
+
+                    <span
+                      class="text-sm text-base-content/60"
+                      th:if="${challenge.endDate != null and today.isAfter(challenge.endDate)}"
+                      >Inscriptions fermees</span
+                    >
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
         </div>
       </section>
     </main>
