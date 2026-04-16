@@ -1,7 +1,5 @@
 package web.sportflow.user;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -18,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.Challenge;
@@ -745,9 +747,9 @@ public class UserController {
     double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
 
     int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int totalMinutes = (int) Math.round(totalDurationThisWeek);
-    int hoursPart = totalMinutes / 60;
-    int minutesPart = totalMinutes % 60;
+    int totalSeconds = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalSeconds / 3600;
+    int minutesPart = (totalSeconds % 3600) / 60;
 
     List<Friendship> acceptedFriendships =
         currentUser != null && currentUser.getId() != null
@@ -801,9 +803,9 @@ public class UserController {
     double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
 
     int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int totalMinutes = (int) Math.round(totalDurationThisWeek);
-    int hoursPart = totalMinutes / 60;
-    int minutesPart = totalMinutes % 60;
+    int totalSeconds = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalSeconds / 3600;
+    int minutesPart = (totalSeconds % 3600) / 60;
 
     double averageMonthlyDistanceThisYear =
         workoutService.getAverageMonthlyDistanceThisYear(currentUser);
