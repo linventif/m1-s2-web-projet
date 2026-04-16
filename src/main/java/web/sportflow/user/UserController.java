@@ -1,5 +1,7 @@
 package web.sportflow.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -41,13 +43,22 @@ import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipService;
 import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.goal.GoalService;
+import web.sportflow.openapi.BadRequestApiDoc;
+import web.sportflow.openapi.ForbiddenApiDoc;
+import web.sportflow.openapi.HtmlRedirectApiDoc;
+import web.sportflow.openapi.HtmlViewApiDoc;
+import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.NotFoundApiDoc;
+import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.sport.Sport;
 import web.sportflow.workout.Workout;
 import web.sportflow.workout.WorkoutDashboardDisplay;
 import web.sportflow.workout.WorkoutService;
 
+@Tag(name = "Utilisateurs")
 @Controller
 @RequestMapping({"/users", "/user"})
+@InternalServerErrorApiDoc
 public class UserController {
 
   private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
@@ -78,17 +89,31 @@ public class UserController {
     this.friendshipService = friendshipService;
   }
 
+  @Operation(
+      summary = "Affiche le menu utilisateur",
+      description = "Retourne la vue HTML du menu principal utilisateur.")
+  @HtmlViewApiDoc
   @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
   }
 
+  @Operation(
+      summary = "Affiche le formulaire de creation d'utilisateur",
+      description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
+  @HtmlViewApiDoc
   @GetMapping("/create")
   public String showCreateForm(Model model) {
     populateUserCreationForm(model, new User());
     return "user-create";
   }
 
+  @Operation(
+      summary = "Cree un utilisateur",
+      description =
+          "Traite la creation d'un utilisateur depuis le formulaire dedie. En cas d'erreur fonctionnelle, la meme vue de creation est retournee avec le message d'erreur.")
+  @HtmlViewApiDoc
+  @BadRequestApiDoc
   @PostMapping("/create")
   public String createUser(
       @ModelAttribute User user,
@@ -118,6 +143,12 @@ public class UserController {
     }
   }
 
+  @Operation(
+      summary = "Affiche le profil de l'utilisateur connecte",
+      description =
+          "Retourne la vue de profil du compte connecte avec ses objectifs, sports, badges et indicateurs personnalises.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     User profileUser =
@@ -131,6 +162,13 @@ public class UserController {
     return "user-profile";
   }
 
+  @Operation(
+      summary = "Affiche le profil public d'un utilisateur",
+      description =
+          "Retourne le profil public d'un utilisateur cible. Si l'identifiant correspond a l'utilisateur connecte, une redirection vers le profil personnel est effectuee.")
+  @HtmlViewApiDoc
+  @HtmlRedirectApiDoc
+  @NotFoundApiDoc
   @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
   public String showUserProfile(
       @AuthenticationPrincipal User currentUser,
@@ -158,12 +196,26 @@ public class UserController {
             });
   }
 
+  @Operation(
+      summary = "Affiche le formulaire d'edition du profil",
+      description =
+          "Retourne la vue HTML du formulaire d'edition du profil de l'utilisateur connecte.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/profile/edit")
   public String showEditProfile(@AuthenticationPrincipal User currentUser, Model model) {
     populateProfileEditForm(model, currentUser);
     return "user-profile-edit";
   }
 
+  @Operation(
+      summary = "Met a jour le profil de l'utilisateur connecte",
+      description =
+          "Traite la mise a jour du profil personnel, y compris l'upload d'avatar si un fichier image valide est fourni. En cas d'erreur, le formulaire d'edition est retourne avec le message associe.")
+  @HtmlRedirectApiDoc
+  @HtmlViewApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
@@ -256,11 +308,21 @@ public class UserController {
     }
   }
 
+  @Operation(
+      summary = "Redirige vers la page des amis",
+      description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
+  @HtmlRedirectApiDoc
   @GetMapping("/users")
   public String redirectUsersPage() {
     return "redirect:/users/friends";
   }
 
+  @Operation(
+      summary = "Enregistre un nouveau compte",
+      description =
+          "Traite l'inscription publique d'un utilisateur a partir du DTO d'inscription. En cas d'echec, la vue de creation de compte est retournee avec un message d'erreur.")
+  @HtmlViewApiDoc
+  @BadRequestApiDoc
   @PostMapping("/register")
   public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
     try {
@@ -273,6 +335,12 @@ public class UserController {
     }
   }
 
+  @Operation(
+      summary = "Affiche la gestion des amis",
+      description =
+          "Retourne la vue HTML de gestion des amis avec pagination des utilisateurs, recherche textuelle, demandes en attente et relations acceptees.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/friends")
   public String manageFriends(
       @AuthenticationPrincipal User currentUser,
@@ -292,6 +360,12 @@ public class UserController {
     return "user-friends";
   }
 
+  @Operation(
+      summary = "Affiche les challenges disponibles",
+      description =
+          "Retourne la vue HTML des challenges avec recherche eventuelle, challenges deja rejoints par l'utilisateur et participation de ses amis.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/challenges")
   public String showChallenges(
       @AuthenticationPrincipal User currentUser,
@@ -344,6 +418,14 @@ public class UserController {
     return "user-challenges";
   }
 
+  @Operation(
+      summary = "Rejoint un challenge",
+      description =
+          "Inscrit l'utilisateur connecte au challenge cible puis redirige vers l'URL de retour autorisee, avec message flash de succes ou d'erreur.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/join")
   public String joinChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -359,6 +441,14 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  @Operation(
+      summary = "Quitte un challenge",
+      description =
+          "Retire l'utilisateur connecte des participants du challenge cible puis redirige vers l'URL de retour autorisee.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/leave")
   public String leaveChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -417,6 +507,14 @@ public class UserController {
     model.addAttribute("currentUserId", currentUser.getId());
   }
 
+  @Operation(
+      summary = "Envoie une demande d'amitie",
+      description =
+          "Cree une demande d'amitie vers un utilisateur cible, ou accepte automatiquement la relation si les conditions metier le permettent.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friends/request")
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -436,6 +534,15 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  @Operation(
+      summary = "Accepte une demande d'amitie",
+      description =
+          "Accepte une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friends/accept")
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -451,6 +558,15 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  @Operation(
+      summary = "Refuse une demande d'amitie",
+      description =
+          "Refuse une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @ForbiddenApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friends/refuse")
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -466,6 +582,14 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  @Operation(
+      summary = "Retire un ami",
+      description =
+          "Supprime la relation d'amitie entre l'utilisateur connecte et l'ami cible puis redirige vers l'URL de retour autorisee.")
+  @HtmlRedirectApiDoc
+  @BadRequestApiDoc
+  @UnauthorizedApiDoc
+  @NotFoundApiDoc
   @PostMapping("/friends/unfriend")
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
@@ -580,6 +704,11 @@ public class UserController {
     return null;
   }
 
+  @Operation(
+      summary = "Affiche les activites",
+      description =
+          "Retourne la vue HTML listant les activites avec leurs badges debloques pour l'utilisateur.")
+  @HtmlViewApiDoc
   @GetMapping("/workout")
   public String showWorkout(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -594,11 +723,21 @@ public class UserController {
     return "user-workout";
   }
 
+  @Operation(
+      summary = "Redirige vers les objectifs du profil",
+      description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
+  @HtmlRedirectApiDoc
   @GetMapping({"/goal", "/goals"})
   public String redirectGoalsPage() {
     return "redirect:/users/profile#goals";
   }
 
+  @Operation(
+      summary = "Affiche le tableau de bord utilisateur",
+      description =
+          "Retourne la vue HTML du tableau de bord personnel avec objectifs visibles, activites d'amis, challenges actifs et statistiques hebdomadaires.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/dashboard")
   public String showDashboard(@AuthenticationPrincipal User currentUser, Model model) {
     double totalDistanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
@@ -647,6 +786,12 @@ public class UserController {
     return "dashboard";
   }
 
+  @Operation(
+      summary = "Affiche les statistiques utilisateur",
+      description =
+          "Retourne la vue HTML des statistiques avec distances hebdomadaires, mensuelles et annuelles, courbes, indicateurs corporels et recommandations d'entrainement.")
+  @HtmlViewApiDoc
+  @UnauthorizedApiDoc
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
     double distanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
