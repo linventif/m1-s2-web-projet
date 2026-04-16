@@ -392,10 +392,10 @@ public class UserController {
             .map(Challenge::getId)
             .filter(id -> id != null)
             .collect(Collectors.toSet());
-    Map<Long, ChallengeDto> ChallengeDtoById =
+    Map<Long, ChallengeDto> challengeDtoById =
         challengeService.buildProgressByChallenge(challenges, activeUser);
     Set<Long> completedChallengeIds =
-        ChallengeDtoById.entrySet().stream()
+        challengeDtoById.entrySet().stream()
             .filter(entry -> entry.getValue() != null && entry.getValue().completed())
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
@@ -408,7 +408,7 @@ public class UserController {
     model.addAttribute("officialChallenges", officialChallenges);
     model.addAttribute("communityChallenges", communityChallenges);
     model.addAttribute("joinedChallengeIds", joinedChallengeIds);
-    model.addAttribute("ChallengeDtoById", ChallengeDtoById);
+    model.addAttribute("challengeDtoById", challengeDtoById);
     model.addAttribute("completedChallengeIds", completedChallengeIds);
     model.addAttribute(
         "unlockedChallengeBadgeIdsByChallengeId", unlockedChallengeBadgeIdsByChallengeId);
