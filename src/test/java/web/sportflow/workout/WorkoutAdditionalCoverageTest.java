@@ -12,7 +12,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -23,7 +22,7 @@ class WorkoutAdditionalCoverageTest {
   @Test
   void constructors_kudos_and_defaults_coverAdditionalBranches() {
     User owner = user(1L, 70.0);
-    Sport sport = new Sport(SportName.Course, 9.0);
+    Sport sport = new Sport("Course", 9.0);
 
     Workout withGeneratedName =
         new Workout(null, LocalDateTime.of(2026, 4, 16, 8, 0), "Paris", null, sport, owner);
@@ -50,7 +49,7 @@ class WorkoutAdditionalCoverageTest {
   @Test
   void calories_and_exercises_coverAdditionalBranches() {
     User owner = user(10L, 72.0);
-    Sport sport = new Sport(SportName.Course, 10.0);
+    Sport sport = new Sport("Course", 10.0);
 
     Workout workout = new Workout();
     workout.setSport(sport);
