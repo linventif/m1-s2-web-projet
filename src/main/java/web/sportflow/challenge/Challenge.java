@@ -187,7 +187,7 @@ public class Challenge {
     }
     return sports.stream()
         .filter(Objects::nonNull)
-        .map(sport -> sport.getName() == null ? null : sport.getName().name())
+        .map(Sport::getName)
         .filter(Objects::nonNull)
         .reduce((first, second) -> first + ", " + second)
         .orElse("");

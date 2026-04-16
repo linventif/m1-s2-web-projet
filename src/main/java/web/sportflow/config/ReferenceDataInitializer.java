@@ -1,46 +1,19 @@
 package web.sportflow.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeRepository;
-import web.sportflow.challenge.Challenge;
 import web.sportflow.challenge.ChallengeRepository;
-import web.sportflow.challenge.ChallengeType;
-import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseRepository;
 import web.sportflow.friendship.FriendshipService;
-import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
-import web.sportflow.goal.GoalType;
-import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
-import web.sportflow.user.PracticeLevel;
-import web.sportflow.user.Role;
-import web.sportflow.user.Sex;
-import web.sportflow.user.User;
 import web.sportflow.user.UserRepository;
-import web.sportflow.weather.WeatherStatsDTO;
-import web.sportflow.workout.Workout;
-import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutRepository;
 
 @Component

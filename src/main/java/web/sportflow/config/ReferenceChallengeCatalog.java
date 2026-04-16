@@ -114,7 +114,147 @@ final class ReferenceChallengeCatalog {
               -2,
               26,
               List.of("plongee", "natation"),
-              List.of("stoick", "fender", "cappy", "owen")));
+              List.of("stoick", "fender", "cappy", "owen")),
+          new ChallengeDto(
+              "Course",
+              "Defi Rookie 5K",
+              "Atteindre 5 km cumules.",
+              ChallengeType.DISTANCE,
+              5.0,
+              null,
+              null,
+              true,
+              List.of("rookie5k"),
+              List.of()),
+          new ChallengeDto(
+              "Course",
+              "Defi Semi Marathon",
+              "Atteindre 21 km cumules.",
+              ChallengeType.DISTANCE,
+              21.0,
+              null,
+              null,
+              true,
+              List.of("marathonHerbe"),
+              List.of()),
+          new ChallengeDto(
+              "Course",
+              "Defi Marathon 42K",
+              "Atteindre 42 km cumules.",
+              ChallengeType.DISTANCE,
+              42.0,
+              null,
+              null,
+              true,
+              List.of("marathonien"),
+              List.of()),
+          new ChallengeDto(
+              "Natation",
+              "Defi Natation Endurance",
+              "Cumuler 180 minutes.",
+              ChallengeType.DUREE,
+              180.0,
+              null,
+              null,
+              true,
+              List.of("natation"),
+              List.of()),
+          new ChallengeDto(
+              "Cyclisme",
+              "Defi Cyclisme 80K",
+              "Atteindre 80 km cumules.",
+              ChallengeType.DISTANCE,
+              80.0,
+              null,
+              null,
+              true,
+              List.of("cyclisme"),
+              List.of()),
+          new ChallengeDto(
+              "Escalade",
+              "Defi Escalade Focus",
+              "Cumuler 1500 calories.",
+              ChallengeType.CALORIE,
+              1500.0,
+              null,
+              null,
+              true,
+              List.of("escalade"),
+              List.of()),
+          new ChallengeDto(
+              "Yoga",
+              "Defi Yoga Flow",
+              "Cumuler 120 minutes.",
+              ChallengeType.DUREE,
+              120.0,
+              null,
+              null,
+              true,
+              List.of("yoga"),
+              List.of()),
+          new ChallengeDto(
+              "Course",
+              "Run Flash 7 jours",
+              "Atteindre 15 km avant la fin de la semaine.",
+              ChallengeType.DISTANCE,
+              15.0,
+              -1L,
+              6L,
+              true,
+              List.of(),
+              List.of()),
+          new ChallengeDto(
+              "CrossFit",
+              "Cardio Week",
+              "Cumuler 500 kcal pendant cette semaine.",
+              ChallengeType.CALORIE,
+              500.0,
+              0L,
+              7L,
+              true,
+              List.of(),
+              List.of()),
+          new ChallengeDto(
+              "Natation",
+              "Natation Express",
+              "Cumuler 60 minutes avant la date de fin.",
+              ChallengeType.DUREE,
+              60.0,
+              -2L,
+              5L,
+              true,
+              List.of(),
+              List.of()),
+          new ChallengeDto(
+              "Course",
+              "Run entre amis",
+              "Cumuler 20 km pendant la periode.",
+              ChallengeType.DISTANCE,
+              20.0,
+              -1,
+              10,
+              List.of(),
+              List.of("judy", "nick", "alice")),
+          new ChallengeDto(
+              "CrossFit",
+              "Cardio de quartier",
+              "Cumuler 120 minutes pendant la periode.",
+              ChallengeType.DUREE,
+              120.0,
+              -4,
+              12,
+              List.of(),
+              List.of("rodney", "benoit", "hiccup")),
+          new ChallengeDto(
+              "Yoga",
+              "Mobilite crew",
+              "Valider 3 seances pendant la periode.",
+              ChallengeType.REPETITION,
+              3.0,
+              -2,
+              14,
+              List.of(),
+              List.of("cappy", "astrid", "fishlegs")));
 
   private ReferenceChallengeCatalog() {}
 
@@ -135,9 +275,10 @@ final class ReferenceChallengeCatalog {
               String.format(dto.descriptionTemplate(), sport.getName()),
               dto.type(),
               dto.targetValue(),
-              today.plusDays(dto.startOffsetDays()),
-              today.plusDays(dto.endOffsetDays()),
-              creator);
+              dateFromOffset(today, dto.startOffsetDays()),
+              dateFromOffset(today, dto.endOffsetDays()),
+              creator,
+              dto.official());
       addBadges(challenge, badgesByKey, dto.badgeKeys());
       addParticipants(challenge, usersByKey, dto.participantKeys());
       challenges.add(challenge);
@@ -187,14 +328,43 @@ final class ReferenceChallengeCatalog {
     return badge;
   }
 
+  private static LocalDate dateFromOffset(LocalDate today, Long offsetDays) {
+    return offsetDays == null ? null : today.plusDays(offsetDays);
+  }
+
   private record ChallengeDto(
       String sportName,
       String title,
       String descriptionTemplate,
       ChallengeType type,
       Double targetValue,
-      long startOffsetDays,
-      long endOffsetDays,
+      Long startOffsetDays,
+      Long endOffsetDays,
+      boolean official,
       List<String> badgeKeys,
-      List<String> participantKeys) {}
+      List<String> participantKeys) {
+
+    private ChallengeDto(
+        String sportName,
+        String title,
+        String descriptionTemplate,
+        ChallengeType type,
+        Double targetValue,
+        long startOffsetDays,
+        long endOffsetDays,
+        List<String> badgeKeys,
+        List<String> participantKeys) {
+      this(
+          sportName,
+          title,
+          descriptionTemplate,
+          type,
+          targetValue,
+          startOffsetDays,
+          endOffsetDays,
+          false,
+          badgeKeys,
+          participantKeys);
+    }
+  }
 }

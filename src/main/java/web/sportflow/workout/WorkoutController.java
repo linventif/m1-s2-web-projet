@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
@@ -190,7 +190,19 @@ public class WorkoutController {
       @RequestParam(name = "durationMin", required = false) List<String> durationMin,
       @RequestParam(name = "distanceM", required = false) List<String> distanceM,
       @RequestParam(name = "averageBpm", required = false) List<String> averageBpm,
-      @AuthenticationPrincipal User currentUser) {
+      @RequestParam(name = "elevationGainM", required = false) List<String> elevationGainM,
+      @RequestParam(name = "maxSpeedKmh", required = false) List<String> maxSpeedKmh,
+      @RequestParam(name = "score", required = false) List<String> score,
+      @RequestParam(name = "attempts", required = false) List<String> attempts,
+      @RequestParam(name = "successfulAttempts", required = false) List<String> successfulAttempts,
+      @RequestParam(name = "accuracyPercent", required = false) List<String> accuracyPercent,
+      @RequestParam(name = "heightM", required = false) List<String> heightM,
+      @RequestParam(name = "depthM", required = false) List<String> depthM,
+      @RequestParam(name = "laps", required = false) List<String> laps,
+      @RequestParam(name = "rounds", required = false) List<String> rounds,
+      @RequestParam(name = "submitAction", defaultValue = "draft") String submitAction,
+      @AuthenticationPrincipal User currentUser,
+      RedirectAttributes redirectAttributes) {
     Workout workout;
     if (workoutDto.getId() != null) {
       Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
@@ -543,7 +555,7 @@ public class WorkoutController {
     model.addAttribute("sports", sports);
     model.addAttribute("exercises", exercises);
     model.addAttribute("exerciseSportNames", buildExerciseSportNames(exercises));
-    model.addAttribute("sportFieldProfiles", buildSportFieldProfiles(sports));
+    model.addAttribute("sportFieldProfiles", sportService.buildFieldProfiles(sports));
   }
 
   private Map<Long, String> buildExerciseSportNames(List<Exercise> exercises) {
@@ -552,7 +564,7 @@ public class WorkoutController {
       String sportNames =
           exercise.getSports().stream()
               .filter(sport -> sport != null && sport.getName() != null)
-              .map(sport -> sport.getName().name())
+              .map(Sport::getName)
               .distinct()
               .collect(Collectors.joining(","));
       exerciseSportNames.put(exercise.getId(), sportNames);
