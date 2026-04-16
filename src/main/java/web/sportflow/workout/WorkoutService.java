@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.sportflow.friendship.FriendshipService;
@@ -66,8 +67,10 @@ public class WorkoutService {
     List<Workout> workouts = workoutRepository.findAllByOrderByDateDesc();
     workouts.forEach(
         workout -> {
-          workout.getWorkoutExercises().size();
-          workout.getUser().getBadges().size();
+          Hibernate.initialize(workout.getWorkoutExercises());
+          if (workout.getUser() != null) {
+            Hibernate.initialize(workout.getUser().getBadges());
+          }
         });
     return workouts;
   }
@@ -423,7 +426,7 @@ public class WorkoutService {
         .findById(id)
         .map(
             workout -> {
-              workout.getWorkoutExercises().size();
+              Hibernate.initialize(workout.getWorkoutExercises());
               return workout;
             });
   }
