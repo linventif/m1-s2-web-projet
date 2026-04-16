@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.sportflow.badge.Badge;
@@ -30,10 +31,10 @@ public class ChallengeService {
   private final WorkoutRepository workoutRepository;
 
   public ChallengeService(
-      ChallengeRepository challengeRepository,
-      FriendshipService friendshipService,
-      UserRepository userRepository,
-      WorkoutRepository workoutRepository) {
+    ChallengeRepository challengeRepository,
+    FriendshipService friendshipService,
+    UserRepository userRepository,
+    WorkoutRepository workoutRepository) {
     this.challengeRepository = challengeRepository;
     this.friendshipService = friendshipService;
     this.userRepository = userRepository;
@@ -43,23 +44,23 @@ public class ChallengeService {
   @Transactional
   public Challenge createChallenge(Challenge challenge) {
     Challenge newChallenge =
-        new Challenge(
-            challenge.getTitle(),
-            challenge.getDescription(),
-            challenge.getType(),
-            challenge.getTargetValue(),
-            challenge.getStartDate(),
-            challenge.getEndDate(),
-            challenge.getCreator(),
-            challenge.isOfficial());
+      new Challenge(
+        challenge.getTitle(),
+        challenge.getDescription(),
+        challenge.getType(),
+        challenge.getTargetValue(),
+        challenge.getStartDate(),
+        challenge.getEndDate(),
+        challenge.getCreator(),
+        challenge.isOfficial());
     newChallenge.setSports(
-        challenge.getSports() == null ? new ArrayList<>() : new ArrayList<>(challenge.getSports()));
+      challenge.getSports() == null ? new ArrayList<>() : new ArrayList<>(challenge.getSports()));
     newChallenge.setBadges(
-        challenge.getBadges() == null ? new ArrayList<>() : new ArrayList<>(challenge.getBadges()));
+      challenge.getBadges() == null ? new ArrayList<>() : new ArrayList<>(challenge.getBadges()));
     newChallenge.setParticipants(
-        challenge.getParticipants() == null
-            ? new ArrayList<>()
-            : new ArrayList<>(challenge.getParticipants()));
+      challenge.getParticipants() == null
+        ? new ArrayList<>()
+        : new ArrayList<>(challenge.getParticipants()));
 
     if (!newChallenge.isOfficial()) {
       newChallenge.getBadges().clear();
@@ -79,21 +80,21 @@ public class ChallengeService {
   public List<Challenge> searchChallenges(String query) {
     String normalizedQuery = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
     return challengeRepository.findAll().stream()
-        .peek(
-            challenge -> {
-              challenge.getSports().size();
-              challenge.getBadges().size();
-              challenge.getParticipants().size();
-            })
-        .filter(challenge -> normalizedQuery.isBlank() || matchesQuery(challenge, normalizedQuery))
-        .sorted(
-            Comparator.comparing(
-                    Challenge::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(
-                    Challenge::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(
-                    Challenge::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
-        .toList();
+      .peek(
+        challenge -> {
+          challenge.getSports().size();
+          challenge.getBadges().size();
+          challenge.getParticipants().size();
+        })
+      .filter(challenge -> normalizedQuery.isBlank() || matchesQuery(challenge, normalizedQuery))
+      .sorted(
+        Comparator.comparing(
+            Challenge::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
+          .thenComparing(
+            Challenge::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
+          .thenComparing(
+            Challenge::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+      .toList();
   }
 
   @Transactional
@@ -101,15 +102,15 @@ public class ChallengeService {
     Challenge challenge = requireChallenge(challengeId);
     if (challenge.isOfficial()) {
       throw new IllegalArgumentException(
-          "Ce challenge est officiel : il est automatiquement actif pour tout le monde.");
+        "Ce challenge est officiel : il est automatiquement actif pour tout le monde.");
     }
 
     User participant = requireUser(currentUser);
     ensureChallengeIsOpen(challenge, "La date de fin du challenge est depassee.");
 
     boolean alreadyParticipating =
-        challenge.getParticipants().stream()
-            .anyMatch(user -> user != null && participant.getId().equals(user.getId()));
+      challenge.getParticipants().stream()
+        .anyMatch(user -> user != null && participant.getId().equals(user.getId()));
     if (!alreadyParticipating) {
       challenge.getParticipants().add(participant);
       challengeRepository.save(challenge);
@@ -125,12 +126,12 @@ public class ChallengeService {
 
     User participant = requireUser(currentUser);
     ensureChallengeIsOpen(
-        challenge, "La participation ne peut plus etre annulee apres la date de fin.");
+      challenge, "La participation ne peut plus etre annulee apres la date de fin.");
 
     boolean removed =
-        challenge
-            .getParticipants()
-            .removeIf(user -> user != null && participant.getId().equals(user.getId()));
+      challenge
+        .getParticipants()
+        .removeIf(user -> user != null && participant.getId().equals(user.getId()));
     if (!removed) {
       throw new IllegalArgumentException("Vous ne participez pas a ce challenge.");
     }
@@ -142,34 +143,34 @@ public class ChallengeService {
     List<Challenge> allChallenges = challengeRepository.findAll();
     List<User> visibleUsers = friendshipService.getCurrentUserAndFriend(currentUser);
     Set<Long> visibleCreatorIds =
-        visibleUsers.stream()
-            .map(User::getId)
-            .filter(id -> id != null)
-            .collect(LinkedHashSet::new, Set::add, Set::addAll);
+      visibleUsers.stream()
+        .map(User::getId)
+        .filter(id -> id != null)
+        .collect(LinkedHashSet::new, Set::add, Set::addAll);
 
     return allChallenges.stream()
-        .filter(
-            challenge ->
-                challenge != null
-                    && (challenge.isOfficial()
-                        || (challenge.getCreator() != null
-                            && challenge.getCreator().getId() != null
-                            && visibleCreatorIds.contains(challenge.getCreator().getId()))))
-        .toList();
+      .filter(
+        challenge ->
+          challenge != null
+            && (challenge.isOfficial()
+            || (challenge.getCreator() != null
+            && challenge.getCreator().getId() != null
+            && visibleCreatorIds.contains(challenge.getCreator().getId()))))
+      .toList();
   }
 
   @Transactional(readOnly = true)
-  public Map<Long, ChallengeProgress> buildProgressByChallenge(
-      List<Challenge> challenges, User currentUser) {
+  public Map<Long, ChallengeDto> buildProgressByChallenge(
+    List<Challenge> challenges, User currentUser) {
     if (currentUser == null
-        || currentUser.getId() == null
-        || challenges == null
-        || challenges.isEmpty()) {
+      || currentUser.getId() == null
+      || challenges == null
+      || challenges.isEmpty()) {
       return Map.of();
     }
 
     User participant = requireUser(currentUser);
-    Map<Long, ChallengeProgress> progressByChallengeId = new LinkedHashMap<>();
+    Map<Long, ChallengeDto> progressByChallengeId = new LinkedHashMap<>();
     for (Challenge challenge : challenges) {
       if (challenge == null || challenge.getId() == null) {
         continue;
@@ -182,9 +183,9 @@ public class ChallengeService {
   @Transactional
   public Set<Long> syncChallengeBadgesForUser(List<Challenge> challenges, User currentUser) {
     if (currentUser == null
-        || currentUser.getId() == null
-        || challenges == null
-        || challenges.isEmpty()) {
+      || currentUser.getId() == null
+      || challenges == null
+      || challenges.isEmpty()) {
       return Set.of();
     }
 
@@ -194,15 +195,15 @@ public class ChallengeService {
 
     for (Challenge challenge : challenges) {
       if (challenge == null
-          || challenge.getId() == null
-          || challenge.getBadges() == null
-          || challenge.getBadges().isEmpty()
-          || !challenge.isOfficial()
-          || !isEligibleForChallenge(challenge, participant)) {
+        || challenge.getId() == null
+        || challenge.getBadges() == null
+        || challenge.getBadges().isEmpty()
+        || !challenge.isOfficial()
+        || !isEligibleForChallenge(challenge, participant)) {
         continue;
       }
 
-      ChallengeProgress progress = computeProgress(challenge, participant);
+      ChallengeDto progress = computeProgress(challenge, participant);
       if (!progress.completed()) {
         continue;
       }
@@ -231,17 +232,17 @@ public class ChallengeService {
       return List.of();
     }
     return challenges.stream()
-        .filter(Challenge::isOfficial)
-        .sorted(
-            Comparator.<Challenge, Boolean>comparing(this::isTimedOfficial)
-                .reversed()
-                .thenComparing(
-                    Challenge::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(
-                    Challenge::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(
-                    Challenge::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
-        .toList();
+      .filter(Challenge::isOfficial)
+      .sorted(
+        Comparator.<Challenge, Boolean>comparing(this::isTimedOfficial)
+          .reversed()
+          .thenComparing(
+            Challenge::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
+          .thenComparing(
+            Challenge::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
+          .thenComparing(
+            Challenge::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+      .toList();
   }
 
   @Transactional(readOnly = true)
@@ -252,11 +253,11 @@ public class ChallengeService {
     return challenges.stream().filter(challenge -> !challenge.isOfficial()).toList();
   }
 
-  private ChallengeProgress computeProgress(Challenge challenge, User participant) {
+  private ChallengeDto computeProgress(Challenge challenge, User participant) {
     if (challenge == null
-        || challenge.getType() == null
-        || !isEligibleForChallenge(challenge, participant)) {
-      return new ChallengeProgress(0.0, 0.0, 0, false, "");
+      || challenge.getType() == null
+      || !isEligibleForChallenge(challenge, participant)) {
+      return new ChallengeDto(0.0, 0.0, 0, false, "");
     }
 
     double targetValue = challenge.getTargetValue() == null ? 0.0 : challenge.getTargetValue();
@@ -265,12 +266,12 @@ public class ChallengeService {
     int percentage = computePercentage(currentValue, targetValue);
     boolean completed = targetValue <= 0 || currentValue >= targetValue;
 
-    return new ChallengeProgress(
-        roundOneDecimal(currentValue),
-        roundOneDecimal(targetValue),
-        percentage,
-        completed,
-        resolveUnitLabel(challenge.getType()));
+    return new ChallengeDto(
+      roundOneDecimal(currentValue),
+      roundOneDecimal(targetValue),
+      percentage,
+      completed,
+      resolveUnitLabel(challenge.getType()));
   }
 
   private boolean isEligibleForChallenge(Challenge challenge, User participant) {
@@ -284,12 +285,12 @@ public class ChallengeService {
       return false;
     }
     return challenge.getParticipants().stream()
-        .anyMatch(user -> user != null && participant.getId().equals(user.getId()));
+      .anyMatch(user -> user != null && participant.getId().equals(user.getId()));
   }
 
   private List<Workout> loadWorkoutsForChallenge(Challenge challenge, User participant) {
     LocalDate startDate =
-        challenge.getStartDate() == null ? LocalDate.of(1970, 1, 1) : challenge.getStartDate();
+      challenge.getStartDate() == null ? LocalDate.of(1970, 1, 1) : challenge.getStartDate();
     LocalDate endDate = challenge.getEndDate() == null ? LocalDate.now() : challenge.getEndDate();
     if (endDate.isBefore(startDate)) {
       return List.of();
@@ -303,21 +304,21 @@ public class ChallengeService {
       return workouts;
     }
     Set<Long> sportIds =
-        challenge.getSports().stream()
-            .map(Sport::getId)
-            .filter(id -> id != null)
-            .collect(LinkedHashSet::new, Set::add, Set::addAll);
+      challenge.getSports().stream()
+        .map(Sport::getId)
+        .filter(id -> id != null)
+        .collect(LinkedHashSet::new, Set::add, Set::addAll);
     if (sportIds.isEmpty()) {
       return workouts;
     }
     return workouts.stream()
-        .filter(
-            workout ->
-                workout != null
-                    && workout.getSport() != null
-                    && workout.getSport().getId() != null
-                    && sportIds.contains(workout.getSport().getId()))
-        .toList();
+      .filter(
+        workout ->
+          workout != null
+            && workout.getSport() != null
+            && workout.getSport().getId() != null
+            && sportIds.contains(workout.getSport().getId()))
+      .toList();
   }
 
   private double computeCurrentValue(ChallengeType type, List<Workout> workouts) {
@@ -339,10 +340,10 @@ public class ChallengeService {
       return 0.0;
     }
     return workout.getWorkoutExercises().stream()
-            .filter(exercise -> exercise != null && exercise.getDistanceM() != null)
-            .mapToDouble(WorkoutExercise::getDistanceM)
-            .sum()
-        / 1000.0;
+      .filter(exercise -> exercise != null && exercise.getDistanceM() != null)
+      .mapToDouble(WorkoutExercise::getDistanceM)
+      .sum()
+      / 1000.0;
   }
 
   private double getWorkoutDurationMinutes(Workout workout) {
@@ -356,10 +357,10 @@ public class ChallengeService {
       return 0.0;
     }
     return workout.getWorkoutExercises().stream()
-            .filter(exercise -> exercise != null && exercise.getDurationSec() != null)
-            .mapToDouble(WorkoutExercise::getDurationSec)
-            .sum()
-        / 60.0;
+      .filter(exercise -> exercise != null && exercise.getDurationSec() != null)
+      .mapToDouble(WorkoutExercise::getDurationSec)
+      .sum()
+      / 60.0;
   }
 
   private double getWorkoutCalories(Workout workout) {
@@ -372,22 +373,22 @@ public class ChallengeService {
 
   private double getWorkoutRepetitions(Workout workout) {
     if (workout == null
-        || workout.getWorkoutExercises() == null
-        || workout.getWorkoutExercises().isEmpty()) {
+      || workout.getWorkoutExercises() == null
+      || workout.getWorkoutExercises().isEmpty()) {
       return 0.0;
     }
 
     double repetitions =
-        workout.getWorkoutExercises().stream()
-            .filter(
-                exercise ->
-                    exercise != null && exercise.getReps() != null && exercise.getReps() > 0)
-            .mapToDouble(
-                exercise ->
-                    exercise.getSets() != null && exercise.getSets() > 0
-                        ? exercise.getReps() * exercise.getSets()
-                        : exercise.getReps())
-            .sum();
+      workout.getWorkoutExercises().stream()
+        .filter(
+          exercise ->
+            exercise != null && exercise.getReps() != null && exercise.getReps() > 0)
+        .mapToDouble(
+          exercise ->
+            exercise.getSets() != null && exercise.getSets() > 0
+              ? exercise.getReps() * exercise.getSets()
+              : exercise.getReps())
+        .sum();
 
     if (repetitions > 0) {
       return repetitions;
@@ -397,13 +398,13 @@ public class ChallengeService {
 
   private boolean matchesQuery(Challenge challenge, String normalizedQuery) {
     return contains(challenge.getTitle(), normalizedQuery)
-        || contains(challenge.getDescription(), normalizedQuery)
-        || (challenge.getType() != null
-            && (contains(challenge.getType().name(), normalizedQuery)
-                || contains(challenge.getType().getLabelFr(), normalizedQuery)))
-        || contains(challenge.getSportNames(), normalizedQuery)
-        || (challenge.isOfficial() && contains("officiel", normalizedQuery))
-        || (!challenge.isOfficial() && contains("communaute", normalizedQuery));
+      || contains(challenge.getDescription(), normalizedQuery)
+      || (challenge.getType() != null
+      && (contains(challenge.getType().name(), normalizedQuery)
+      || contains(challenge.getType().getLabelFr(), normalizedQuery)))
+      || contains(challenge.getSportNames(), normalizedQuery)
+      || (challenge.isOfficial() && contains("officiel", normalizedQuery))
+      || (!challenge.isOfficial() && contains("communaute", normalizedQuery));
   }
 
   private boolean contains(String value, String normalizedQuery) {
@@ -437,7 +438,7 @@ public class ChallengeService {
       return false;
     }
     return user.getBadges().stream()
-        .anyMatch(currentBadge -> currentBadge != null && badgeId.equals(currentBadge.getId()));
+      .anyMatch(currentBadge -> currentBadge != null && badgeId.equals(currentBadge.getId()));
   }
 
   private boolean isTimedOfficial(Challenge challenge) {
@@ -449,8 +450,8 @@ public class ChallengeService {
 
   private Challenge requireChallenge(Long challengeId) {
     return challengeRepository
-        .findById(challengeId)
-        .orElseThrow(() -> new IllegalArgumentException("Challenge introuvable."));
+      .findById(challengeId)
+      .orElseThrow(() -> new IllegalArgumentException("Challenge introuvable."));
   }
 
   private User requireUser(User currentUser) {
@@ -458,8 +459,8 @@ public class ChallengeService {
       throw new IllegalArgumentException("Utilisateur connecte introuvable.");
     }
     return userRepository
-        .findById(currentUser.getId())
-        .orElseThrow(() -> new IllegalArgumentException("Utilisateur connecte introuvable."));
+      .findById(currentUser.getId())
+      .orElseThrow(() -> new IllegalArgumentException("Utilisateur connecte introuvable."));
   }
 
   private void ensureChallengeIsOpen(Challenge challenge, String message) {
