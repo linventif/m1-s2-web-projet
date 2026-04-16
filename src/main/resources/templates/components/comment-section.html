@@ -1,35 +1,35 @@
 <!doctype html>
 <div th:fragment="comment-section(workout)" th:id="'comment-wrapper-' + ${workout.id}">
   <div class="collapse collapse-arrow bg-base-100 border-t border-base-300 rounded-none">
-    <input type="checkbox" class="peer" />
+    <input type="checkbox" class="peer" th:id="'comments-toggle-' + ${workout.id}" />
 
     <div
-      class="collapse-title font-semibold after:start-4 after:end-auto ps-12 pe-4 flex items-center justify-between"
+      class="collapse-title font-semibold after:hidden ps-3 pe-3 py-2 flex items-center justify-end"
     >
-      <div class="flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4 text-primary"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-          />
-        </svg>
-        <span class="text-sm">
-          Commentaires (<span
-            th:text="${workout.comments != null ? #lists.size(workout.comments) : 0}"
-            >0</span
-          >)
-        </span>
-      </div>
-
       <div class="flex items-center gap-1 relative z-20">
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm px-2 gap-1 text-base-content/70"
+          th:onclick="|event.stopPropagation(); event.preventDefault(); const toggle = document.getElementById('comments-toggle-' + ${workout.id}); if (toggle) { toggle.checked = !toggle.checked; }|"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+            />
+          </svg>
+          <span class="font-bold text-sm" th:text="${workout.comments != null ? #lists.size(workout.comments) : 0}"
+            >0</span
+          >
+        </button>
         <div
           th:replace="~{components/kudo-toggle :: kudo(workout=${workout}, currentUser=${#authentication.principal})}"
         ></div>
