@@ -108,7 +108,7 @@
                     >
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 text-sm">
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTemporary}">
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Type</p>
                       <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
@@ -263,7 +263,7 @@
                     >
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 text-sm">
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTimed}">
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Type</p>
                       <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
