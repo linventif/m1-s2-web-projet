@@ -12,6 +12,7 @@ import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 
+
 class EnumCoverageTest {
 
   @Test
@@ -70,13 +71,13 @@ class EnumCoverageTest {
     assertEquals(NotificationType.KUDO, NotificationType.valueOf("KUDO"));
     assertEquals(NotificationType.COMMENT, NotificationType.valueOf("COMMENT"));
     assertEquals(
-        NotificationType.FRIEND_REQUEST_RECEIVED,
-        NotificationType.valueOf("FRIEND_REQUEST_RECEIVED"));
+      NotificationType.FRIEND_REQUEST_RECEIVED,
+      NotificationType.valueOf("FRIEND_REQUEST_RECEIVED"));
     assertEquals(
-        NotificationType.FRIEND_REQUEST_ACCEPTED,
-        NotificationType.valueOf("FRIEND_REQUEST_ACCEPTED"));
+      NotificationType.FRIEND_REQUEST_ACCEPTED,
+      NotificationType.valueOf("FRIEND_REQUEST_ACCEPTED"));
     assertEquals(
-        NotificationType.FRIEND_REQUEST_REFUSED,
-        NotificationType.valueOf("FRIEND_REQUEST_REFUSED"));
+      NotificationType.FRIEND_REQUEST_REFUSED,
+      NotificationType.valueOf("FRIEND_REQUEST_REFUSED"));
   }
 }
