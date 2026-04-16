@@ -21,14 +21,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import web.sportflow.openapi.BadRequestApiDoc;
 import web.sportflow.openapi.ForbiddenApiDoc;
+import web.sportflow.openapi.HtmlFragmentApiDoc;
+import web.sportflow.openapi.HtmlRedirectApiDoc;
+import web.sportflow.openapi.HtmlViewApiDoc;
 import web.sportflow.openapi.InternalServerErrorApiDoc;
+import web.sportflow.openapi.JsonSuccessApiDoc;
 import web.sportflow.openapi.NotFoundApiDoc;
 import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.badge.Badge;
@@ -43,6 +42,7 @@ import web.sportflow.workout.comment.CommentService;
 @Tag(name = "Activités")
 @Controller
 @RequestMapping("/workouts")
+@InternalServerErrorApiDoc
 public class WorkoutController {
 
   private final WorkoutService workoutService;
@@ -65,14 +65,7 @@ public class WorkoutController {
       summary = "Liste les activites",
       description =
           "Retourne la vue HTML listant les activites sportives visibles, avec les badges debloques par activite et les objets d'affichage utilises par l'interface utilisateur.")
-  @ApiResponse(
-        responseCode = "200",
-        description = "Vue HTML de liste des activites",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "<html><body><h1>Mes activites</h1></body></html>")))
-  @InternalServerErrorApiDoc
+  @HtmlViewApiDoc
   @GetMapping({"", "/"})
   public String listWorkouts(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -91,16 +84,9 @@ public class WorkoutController {
       summary = "Ajoute ou retire un kudo sur une activite",
       description =
           "Bascule l'etat du kudo de l'utilisateur connecte pour une activite donnee et retourne un payload JSON contenant le nouveau compteur et l'etat courant du kudo.")
-  @ApiResponse(
-        responseCode = "200",
-        description = "Kudo mis a jour avec succes",
-        content =
-            @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(value = "{\"newCount\":12,\"isKudoed\":true}")))
+  @JsonSuccessApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @PostMapping("/{id}/kudo")
   @ResponseBody
   public Map<String, Object> toggleKudo(
@@ -118,16 +104,9 @@ public class WorkoutController {
       summary = "Ajoute un commentaire a une activite",
       description =
           "Enregistre un commentaire pour l'activite cible puis retourne le fragment Thymeleaf de la section commentaires afin de mettre a jour l'interface.")
-  @ApiResponse(
-        responseCode = "200",
-        description = "Fragment HTML de commentaires retourne apres ajout",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "<div id=\"comment-section\">Commentaire ajoute</div>")))
+  @HtmlFragmentApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @PostMapping("/{id}/comments")
   public String postComment(
       @PathVariable("id") Long workoutId,
@@ -143,17 +122,10 @@ public class WorkoutController {
       summary = "Supprime un commentaire d'une activite",
       description =
           "Supprime un commentaire existant sur l'activite cible, sous reserve des droits applicables, puis retourne le fragment HTML actualise des commentaires.")
-  @ApiResponse(
-        responseCode = "200",
-        description = "Fragment HTML de commentaires retourne apres suppression",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "<div id=\"comment-section\">Commentaire supprime</div>")))
+  @HtmlFragmentApiDoc
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @PostMapping("/{id}/comments/{commentId}/delete")
   public String deleteComment(
       @PathVariable("id") Long workoutId,
@@ -169,15 +141,8 @@ public class WorkoutController {
       summary = "Affiche le formulaire de creation d'une activite",
       description =
           "Retourne la vue HTML du formulaire de creation d'activite avec les sports, exercices et profils de champs necessaires au rendu dynamique du formulaire.")
-  @ApiResponse(
-        responseCode = "200",
-        description = "Vue HTML du formulaire de creation d'activite",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "<html><body><h1>Nouvelle activite</h1></body></html>")))
+  @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  @InternalServerErrorApiDoc
   @GetMapping("/new")
   public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
     populateWorkoutForm(model, new Workout());
@@ -188,25 +153,11 @@ public class WorkoutController {
       summary = "Affiche le formulaire de modification d'une activite",
       description =
           "Charge une activite existante dans le formulaire d'edition. Si l'utilisateur connecte n'est pas proprietaire de l'activite, une redirection vers le tableau de bord est retournee.")
-  @ApiResponse(
-      responseCode = "200",
-      description = "Vue HTML du formulaire d'edition d'activite",
-      content =
-          @Content(
-              mediaType = "text/html",
-              examples =
-                  @ExampleObject(
-                      value = "<html><body><h1>Modifier une activite</h1></body></html>")))
-  @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /dashboard si l'utilisateur n'est pas autorise",
-        content = @Content(
-            mediaType = "text/html",
-            examples = @ExampleObject(value = "redirect:/dashboard")))
+  @HtmlViewApiDoc
+  @HtmlRedirectApiDoc
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @GetMapping("/{id}/edit")
   public String editWorkoutForm(
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
@@ -224,18 +175,11 @@ public class WorkoutController {
       summary = "Cree ou met a jour une activite",
       description =
           "Traite le formulaire de creation ou d'edition d'activite. L'operation reconstruit les exercices associes, applique les informations du workout puis redirige vers le tableau de bord.")
-  @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /dashboard apres creation ou mise a jour",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "redirect:/dashboard")))
+  @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @PostMapping("/save")
   public String saveWorkout(
       @ModelAttribute WorkoutDto workoutDto,
@@ -293,17 +237,10 @@ public class WorkoutController {
       description = "Confirmation textuelle retournee par l'implementation courante",
       content =
           @Content(mediaType = "text/plain", examples = @ExampleObject(value = "Seance Course")))
-  @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /dashboard en cas de refus d'autorisation",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "redirect:/dashboard")))
+  @HtmlRedirectApiDoc
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  @InternalServerErrorApiDoc
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {
