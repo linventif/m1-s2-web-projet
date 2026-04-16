@@ -168,7 +168,6 @@
                       #<span th:text="${user.id}">1</span> -
                       <span th:text="${user.firstname}">Prénom</span>
                       <span th:text="${user.lastname}">Nom</span>
-                      (<span th:text="${user.email}">email@demo.local</span>)
                     </summary>
                     <div class="collapse-content space-y-4">
                       <form th:action="@{/admin/users/{id}/update(id=${user.id})}" method="post">
