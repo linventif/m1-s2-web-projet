@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.sportflow.notification.NotificationService;
 import web.sportflow.user.User;
 import web.sportflow.user.UserRepository;
 
@@ -13,11 +14,15 @@ public class FriendshipService {
 
   private final FriendshipRepository friendshipRepository;
   private final UserRepository userRepository;
+  private final NotificationService notificationService;
 
   public FriendshipService(
-      FriendshipRepository friendshipRepository, UserRepository userRepository) {
+      FriendshipRepository friendshipRepository,
+      UserRepository userRepository,
+      NotificationService notificationService) {
     this.friendshipRepository = friendshipRepository;
     this.userRepository = userRepository;
+    this.notificationService = notificationService;
   }
 
   @Transactional
@@ -43,17 +48,23 @@ public class FriendshipService {
 
         // Opposite pending request already exists, so accept it.
         existing.setStatus(FriendshipStatus.ACCEPTED);
-        return friendshipRepository.save(existing);
+        Friendship savedExisting = friendshipRepository.save(existing);
+        notificationService.notifyFriendRequestAccepted(savedExisting, requester);
+        return savedExisting;
       }
 
       existing.setRequester(requester);
       existing.setAddressee(addressee);
       existing.setStatus(FriendshipStatus.PENDING);
-      return friendshipRepository.save(existing);
+      Friendship savedExisting = friendshipRepository.save(existing);
+      notificationService.notifyFriendRequestReceived(savedExisting);
+      return savedExisting;
     }
 
     Friendship friendship = new Friendship(requester, addressee, FriendshipStatus.PENDING);
-    return friendshipRepository.save(friendship);
+    Friendship savedFriendship = friendshipRepository.save(friendship);
+    notificationService.notifyFriendRequestReceived(savedFriendship);
+    return savedFriendship;
   }
 
   @Transactional
@@ -66,7 +77,10 @@ public class FriendshipService {
       throw new IllegalArgumentException("Only pending requests can be accepted.");
     }
     friendship.setStatus(FriendshipStatus.ACCEPTED);
-    return friendshipRepository.save(friendship);
+    Friendship savedFriendship = friendshipRepository.save(friendship);
+    User acceptedByUser = findUserOrThrow(currentUserId);
+    notificationService.notifyFriendRequestAccepted(savedFriendship, acceptedByUser);
+    return savedFriendship;
   }
 
   @Transactional
@@ -79,7 +93,10 @@ public class FriendshipService {
       throw new IllegalArgumentException("Only pending requests can be refused.");
     }
     friendship.setStatus(FriendshipStatus.REFUSED);
-    return friendshipRepository.save(friendship);
+    Friendship savedFriendship = friendshipRepository.save(friendship);
+    User refusedByUser = findUserOrThrow(currentUserId);
+    notificationService.notifyFriendRequestRefused(savedFriendship, refusedByUser);
+    return savedFriendship;
   }
 
   @Transactional

@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.sportflow.friendship.Friendship;
 import web.sportflow.user.User;
 import web.sportflow.workout.Workout;
 
@@ -84,6 +85,51 @@ public class NotificationService {
     String message = actorName + " a commenté ta séance " + workoutName + ".";
     createNotification(
         workout.getUser(), actor, NotificationType.COMMENT, message, DEFAULT_TARGET_URL);
+  }
+
+  @Transactional
+  public void notifyFriendRequestReceived(Friendship friendship) {
+    if (friendship == null || friendship.getAddressee() == null) {
+      return;
+    }
+    User recipient = friendship.getAddressee();
+    User actor = friendship.getRequester();
+    String actorName = resolveActorName(actor);
+    String message = actorName + " t'a envoyé une demande d'ami.";
+    createNotification(
+        recipient, actor, NotificationType.FRIEND_REQUEST_RECEIVED, message, "/users/friends");
+  }
+
+  @Transactional
+  public void notifyFriendRequestAccepted(Friendship friendship, User acceptedByUser) {
+    if (friendship == null || friendship.getRequester() == null) {
+      return;
+    }
+    User recipient = friendship.getRequester();
+    String actorName = resolveActorName(acceptedByUser);
+    String message = actorName + " a accepté ta demande d'ami.";
+    createNotification(
+        recipient,
+        acceptedByUser,
+        NotificationType.FRIEND_REQUEST_ACCEPTED,
+        message,
+        "/users/friends");
+  }
+
+  @Transactional
+  public void notifyFriendRequestRefused(Friendship friendship, User refusedByUser) {
+    if (friendship == null || friendship.getRequester() == null) {
+      return;
+    }
+    User recipient = friendship.getRequester();
+    String actorName = resolveActorName(refusedByUser);
+    String message = actorName + " a refusé ta demande d'ami.";
+    createNotification(
+        recipient,
+        refusedByUser,
+        NotificationType.FRIEND_REQUEST_REFUSED,
+        message,
+        "/users/friends");
   }
 
   private void createNotification(
