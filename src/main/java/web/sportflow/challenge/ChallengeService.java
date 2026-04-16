@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.sportflow.badge.Badge;
@@ -81,9 +82,9 @@ public class ChallengeService {
     return challengeRepository.findAll().stream()
         .peek(
             challenge -> {
-              challenge.getSports().size();
-              challenge.getBadges().size();
-              challenge.getParticipants().size();
+              Hibernate.initialize(challenge.getSports());
+              Hibernate.initialize(challenge.getBadges());
+              Hibernate.initialize(challenge.getParticipants());
             })
         .filter(challenge -> normalizedQuery.isBlank() || matchesQuery(challenge, normalizedQuery))
         .sorted(

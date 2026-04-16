@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -43,8 +44,8 @@ public class UserService implements UserDetailsService {
         .map(
             user -> {
               // Initialize lazy collections needed by Thymeleaf views.
-              user.getBadges().size();
-              user.getGoals().size();
+              Hibernate.initialize(user.getBadges());
+              Hibernate.initialize(user.getGoals());
               return user;
             });
   }
