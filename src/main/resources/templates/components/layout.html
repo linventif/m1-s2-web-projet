@@ -107,7 +107,7 @@
                 th:action="@{/users/notifications/read-all}"
               >
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <input type="hidden" name="returnTo" th:value="${#httpServletRequest.requestURI}" />
+                <input type="hidden" name="returnTo" th:value="${notificationReturnTo}" />
                 <button type="submit" class="btn btn-ghost btn-xs">Tout marquer lu</button>
               </form>
             </div>
@@ -147,11 +147,7 @@
                       th:name="${_csrf.parameterName}"
                       th:value="${_csrf.token}"
                     />
-                    <input
-                      type="hidden"
-                      name="returnTo"
-                      th:value="${#httpServletRequest.requestURI}"
-                    />
+                    <input type="hidden" name="returnTo" th:value="${notificationReturnTo}" />
                     <button type="submit" class="btn btn-ghost btn-xs" aria-label="Marquer lu">
                       <i class="fa-solid fa-check"></i>
                     </button>
