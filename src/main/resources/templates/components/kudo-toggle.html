@@ -42,7 +42,7 @@
     <button
       type="button"
       th:id="'kudo-btn-' + ${workout.id}"
-      th:onclick="|toggleKudo(${workout.id})|"
+      th:onclick="|event.stopPropagation(); event.preventDefault(); toggleKudo(${workout.id})|"
       class="btn btn-ghost btn-sm px-2 gap-1 transition-all"
       th:classappend="${isAlreadyKudoed} ? 'text-error' : 'text-base-content/50'"
     >

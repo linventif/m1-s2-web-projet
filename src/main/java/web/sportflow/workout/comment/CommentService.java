@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import web.sportflow.notification.NotificationService;
 import web.sportflow.user.Role;
 import web.sportflow.user.User;
 import web.sportflow.user.UserRepository;
@@ -16,13 +17,18 @@ public class CommentService {
   private final CommentRepository commentRepo;
   private final WorkoutRepository workoutRepo;
   private final UserRepository userRepo;
+  private final NotificationService notificationService;
 
   @Autowired
   public CommentService(
-      CommentRepository commentRepo, WorkoutRepository workoutRepo, UserRepository userRepo) {
+      CommentRepository commentRepo,
+      WorkoutRepository workoutRepo,
+      UserRepository userRepo,
+      NotificationService notificationService) {
     this.commentRepo = commentRepo;
     this.workoutRepo = workoutRepo;
     this.userRepo = userRepo;
+    this.notificationService = notificationService;
   }
 
   @Transactional
@@ -39,6 +45,7 @@ public class CommentService {
     Comment comment = new Comment(content, workout, user);
 
     commentRepo.save(comment);
+    notificationService.notifyCommentOnWorkout(workout, user);
   }
 
   public List<Comment> getCommentsForWorkout(Long workoutId) {
