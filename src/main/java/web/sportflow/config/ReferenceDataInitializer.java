@@ -612,13 +612,53 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userBogo);
     challengeMusculationRegulier.getBadges().add(badgeYoga);
 
+    // Challenges communautaires (pas de badge, participation manuelle)
+    Challenge challengeRunEntreAmis =
+        createCommunityChallenge(
+            sportCoursePied,
+            "Run entre amis",
+            "Cumuler 20 km pendant la periode.",
+            ChallengeType.DISTANCE,
+            20.0,
+            today.minusDays(1),
+            today.plusDays(10),
+            userJudy);
+    challengeRunEntreAmis.getParticipants().addAll(List.of(userJudy, userNick, userAlice));
+
+    Challenge challengeCardioQuartier =
+        createCommunityChallenge(
+            sportCircuitCardio,
+            "Cardio de quartier",
+            "Cumuler 120 minutes pendant la periode.",
+            ChallengeType.DUREE,
+            120.0,
+            today.minusDays(4),
+            today.plusDays(12),
+            userRodney);
+    challengeCardioQuartier.getParticipants().addAll(List.of(userRodney, userBenoit, userHiccup));
+
+    Challenge challengeMobiliteCrew =
+        createCommunityChallenge(
+            sportMobiliteActive,
+            "Mobilite crew",
+            "Valider 3 seances pendant la periode.",
+            ChallengeType.REPETITION,
+            3.0,
+            today.minusDays(2),
+            today.plusDays(14),
+            userCappy);
+    challengeMobiliteCrew.getParticipants().addAll(List.of(userCappy, userAstrid, userFishlegs));
+
     challengeRepository.saveAll(
         List.of(
             challengeRunning25k,
             challengeNatationEndurance,
             challengeCyclisme80k,
             challengeEscaladeVitesse,
-            challengeMusculationRegulier));
+            challengeMusculationRegulier,
+            challengeRunEntreAmis,
+            challengeCardioQuartier,
+            challengeMobiliteCrew));
 
     // Goals (associes a des personnes precises)
     Goal goalAliceCourse =
@@ -1097,6 +1137,21 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       User creator) {
     Challenge challenge =
         new Challenge(title, description, type, targetValue, startDate, endDate, creator, true);
+    challenge.getSports().add(sport);
+    return challenge;
+  }
+
+  private Challenge createCommunityChallenge(
+      Sport sport,
+      String title,
+      String description,
+      ChallengeType type,
+      Double targetValue,
+      LocalDate startDate,
+      LocalDate endDate,
+      User creator) {
+    Challenge challenge =
+        new Challenge(title, description, type, targetValue, startDate, endDate, creator, false);
     challenge.getSports().add(sport);
     return challenge;
   }

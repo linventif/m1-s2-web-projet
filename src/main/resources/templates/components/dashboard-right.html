@@ -95,7 +95,7 @@
           <div class="flex items-start justify-between gap-3">
             <div class="flex min-w-0 items-start gap-3">
               <a
-                th:if="${challenge.creator != null}"
+                th:if="${challenge.creator != null and !challenge.official}"
                 th:href="@{/users/profile/{id}(id=${challenge.creator.id})}"
                 class="avatar shrink-0"
               >
@@ -109,10 +109,22 @@
                   />
                 </span>
               </a>
+              <div
+                th:if="${challenge.official}"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-base-300 bg-base-100 text-xs font-bold text-primary"
+              >
+                SF
+              </div>
               <div class="min-w-0">
                 <h3 class="truncate font-semibold" th:text="${challenge.title}">
                   Challenge du mois
                 </h3>
+                <p
+                  class="mt-1 text-xs text-base-content/60"
+                  th:text="${challenge.official ? 'Officiel SportFlow' : (challenge.creator != null ? challenge.creator.firstname + ' ' + challenge.creator.lastname : 'Communauté')}"
+                >
+                  Officiel SportFlow
+                </p>
                 <p class="mt-1 text-xs text-base-content/60" th:text="${challenge.description}">
                   Description du challenge
                 </p>
