@@ -1,5 +1,10 @@
 package web.sportflow.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -182,9 +187,13 @@ public class UserController {
       description =
           "Retourne le profil public d'un utilisateur cible. Si l'identifiant correspond a l'utilisateur connecte, une redirection vers le profil personnel est effectuee.")
   @ApiResponse(
-        responseCode = "200",
-        description = "Vue HTML du profil public",
-        content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "<html><body><h1>Profil public</h1></body></html>")))
+      responseCode = "200",
+      description = "Vue HTML du profil public",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples =
+                  @ExampleObject(value = "<html><body><h1>Profil public</h1></body></html>")))
   @ApiResponse(
         responseCode = "302",
         description = "Redirection vers /user/profile ou /user/friends selon le contexte",
@@ -220,7 +229,8 @@ public class UserController {
 
   @Operation(
       summary = "Affiche le formulaire d'edition du profil",
-      description = "Retourne la vue HTML du formulaire d'edition du profil de l'utilisateur connecte.")
+      description =
+          "Retourne la vue HTML du formulaire d'edition du profil de l'utilisateur connecte.")
   @ApiResponse(
         responseCode = "200",
         description = "Vue HTML du formulaire d'edition de profil",
@@ -238,9 +248,12 @@ public class UserController {
       description =
           "Traite la mise a jour du profil personnel, y compris l'upload d'avatar si un fichier image valide est fourni. En cas d'erreur, le formulaire d'edition est retourne avec le message associe.")
   @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /user/profile apres mise a jour reussie",
-        content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/user/profile")))
+      responseCode = "302",
+      description = "Redirection vers /user/profile apres mise a jour reussie",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples = @ExampleObject(value = "redirect:/user/profile")))
   @ApiResponse(
         responseCode = "200",
         description = "Formulaire retourne en cas d'erreur de validation",
@@ -344,9 +357,12 @@ public class UserController {
       summary = "Redirige vers la page des amis",
       description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
   @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /users/friends",
-        content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/friends")))
+      responseCode = "302",
+      description = "Redirection vers /users/friends",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples = @ExampleObject(value = "redirect:/users/friends")))
   @GetMapping("/users")
   public String redirectUsersPage() {
     return "redirect:/users/friends";
@@ -737,9 +753,12 @@ public class UserController {
       summary = "Redirige vers les objectifs du profil",
       description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
   @ApiResponse(
-        responseCode = "302",
-        description = "Redirection vers /users/profile#goals",
-        content = @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/users/profile#goals")))
+      responseCode = "302",
+      description = "Redirection vers /users/profile#goals",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples = @ExampleObject(value = "redirect:/users/profile#goals")))
   @GetMapping({"/goal", "/goals"})
   public String redirectGoalsPage() {
     return "redirect:/users/profile#goals";

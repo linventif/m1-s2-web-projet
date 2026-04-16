@@ -1,5 +1,10 @@
 package web.sportflow.workout;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -184,12 +189,14 @@ public class WorkoutController {
       description =
           "Charge une activite existante dans le formulaire d'edition. Si l'utilisateur connecte n'est pas proprietaire de l'activite, une redirection vers le tableau de bord est retournee.")
   @ApiResponse(
-        responseCode = "200",
-        description = "Vue HTML du formulaire d'edition d'activite",
-        content =
-            @Content(
-                mediaType = "text/html",
-                examples = @ExampleObject(value = "<html><body><h1>Modifier une activite</h1></body></html>")))
+      responseCode = "200",
+      description = "Vue HTML du formulaire d'edition d'activite",
+      content =
+          @Content(
+              mediaType = "text/html",
+              examples =
+                  @ExampleObject(
+                      value = "<html><body><h1>Modifier une activite</h1></body></html>")))
   @ApiResponse(
         responseCode = "302",
         description = "Redirection vers /dashboard si l'utilisateur n'est pas autorise",
@@ -282,12 +289,10 @@ public class WorkoutController {
       description =
           "Supprime une activite existante si l'utilisateur connecte en est proprietaire ou administrateur. Dans le cas contraire, une redirection vers le tableau de bord est retournee.")
   @ApiResponse(
-        responseCode = "200",
-        description = "Confirmation textuelle retournee par l'implementation courante",
-        content =
-            @Content(
-                mediaType = "text/plain",
-                examples = @ExampleObject(value = "Seance Course")))
+      responseCode = "200",
+      description = "Confirmation textuelle retournee par l'implementation courante",
+      content =
+          @Content(mediaType = "text/plain", examples = @ExampleObject(value = "Seance Course")))
   @ApiResponse(
         responseCode = "302",
         description = "Redirection vers /dashboard en cas de refus d'autorisation",

@@ -1,5 +1,8 @@
 package web.sportflow.weather;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -9,9 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "API météo")
 @RestController
@@ -47,9 +47,7 @@ public class WeatherController {
       @Parameter(description = "Adresse ou localisation pour laquelle recuperer la meteo")
           @RequestParam
           String address,
-      @Parameter(description = "Duree analysee en minutes")
-          @RequestParam
-          Double duration) {
+      @Parameter(description = "Duree analysee en minutes") @RequestParam Double duration) {
     LocalDateTime startDateTime;
 
     if (date.length() == 10) {
@@ -75,8 +73,7 @@ public class WeatherController {
           "Retourne les informations meteo pour une adresse a la date specifiee au format ISO-8601.")
   @GetMapping("/at/{date}")
   public WeatherDTO getWeatherAtDate(
-      @Parameter(description = "Date au format ISO-8601, par exemple 2026-04-16")
-          @PathVariable
+      @Parameter(description = "Date au format ISO-8601, par exemple 2026-04-16") @PathVariable
           String date,
       @Parameter(description = "Adresse ou localisation ciblee") @RequestParam String address) {
     return weatherService.getWeather(address, LocalDate.parse(date));
@@ -84,8 +81,7 @@ public class WeatherController {
 
   @Operation(
       summary = "Recupere une ville a partir de coordonnees geographiques",
-      description =
-          "Retourne le nom de la ville associee a une latitude et une longitude donnees.")
+      description = "Retourne le nom de la ville associee a une latitude et une longitude donnees.")
   @GetMapping("/reverse-city")
   public Map<String, String> getCityFromCoordinates(
       @Parameter(description = "Latitude") @RequestParam Double lat,
