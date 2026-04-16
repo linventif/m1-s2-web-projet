@@ -13,8 +13,5 @@ import java.lang.annotation.Target;
 @ApiResponse(
     responseCode = "200",
     description = "Reponse JSON retournee avec succes",
-    content =
-        @Content(
-            mediaType = "application/json",
-            examples = @ExampleObject(value = "{}")))
+    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{}")))
 public @interface JsonSuccessApiDoc {}

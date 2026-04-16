@@ -14,7 +14,5 @@ import java.lang.annotation.Target;
     responseCode = "302",
     description = "Redirection HTML retournee avec succes",
     content =
-        @Content(
-            mediaType = "text/html",
-            examples = @ExampleObject(value = "redirect:/target")))
+        @Content(mediaType = "text/html", examples = @ExampleObject(value = "redirect:/target")))
 public @interface HtmlRedirectApiDoc {}
