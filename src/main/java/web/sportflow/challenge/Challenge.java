@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +25,7 @@ import web.sportflow.user.User;
 @Entity
 @Table(name = "challenge")
 public class Challenge {
+  private static final DateTimeFormatter SHORT_US_DATE = DateTimeFormatter.ofPattern("MM/dd");
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -216,6 +219,59 @@ public class Challenge {
     boolean started = startDate == null || !today.isBefore(startDate);
     boolean notEnded = endDate == null || !today.isAfter(endDate);
     return started && notEnded;
+  }
+
+  public String getStartDateShortUs() {
+    return formatShortDate(startDate);
+  }
+
+  public String getEndDateShortUs() {
+    return formatShortDate(endDate);
+  }
+
+  public int getRemainingTimePercent() {
+    if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
+      return 0;
+    }
+
+    long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+    if (totalDays <= 0) {
+      return 0;
+    }
+
+    LocalDate today = LocalDate.now();
+    long remainingDays;
+    if (today.isBefore(startDate)) {
+      remainingDays = totalDays;
+    } else if (today.isAfter(endDate)) {
+      remainingDays = 0;
+    } else {
+      remainingDays = ChronoUnit.DAYS.between(today, endDate) + 1;
+    }
+
+    double percent = (remainingDays * 100.0) / totalDays;
+    return (int) Math.max(0, Math.min(100, Math.round(percent)));
+  }
+
+  public long getRemainingDays() {
+    if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
+      return 0;
+    }
+    LocalDate today = LocalDate.now();
+    if (today.isBefore(startDate)) {
+      return ChronoUnit.DAYS.between(startDate, endDate) + 1;
+    }
+    if (today.isAfter(endDate)) {
+      return 0;
+    }
+    return ChronoUnit.DAYS.between(today, endDate) + 1;
+  }
+
+  private String formatShortDate(LocalDate date) {
+    if (date == null) {
+      return "--/--";
+    }
+    return date.format(SHORT_US_DATE);
   }
 
   public void setId(Long id) {
