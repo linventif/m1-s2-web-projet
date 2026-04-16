@@ -745,9 +745,9 @@ public class UserController {
     double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
 
     int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int totalMinutes = (int) Math.round(totalDurationThisWeek);
-    int hoursPart = totalMinutes / 60;
-    int minutesPart = totalMinutes % 60;
+    int totalSeconds = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalSeconds / 3600;
+    int minutesPart = (totalSeconds % 3600) / 60;
 
     List<Friendship> acceptedFriendships =
         currentUser != null && currentUser.getId() != null
@@ -801,9 +801,9 @@ public class UserController {
     double totalCaloriesThisWeek = workoutService.getTotalCaloriesThisWeek(currentUser);
 
     int todayIndex = java.time.LocalDate.now().getDayOfWeek().getValue() - 1;
-    int totalMinutes = (int) Math.round(totalDurationThisWeek);
-    int hoursPart = totalMinutes / 60;
-    int minutesPart = totalMinutes % 60;
+    int totalSeconds = (int) Math.round(totalDurationThisWeek);
+    int hoursPart = totalSeconds / 3600;
+    int minutesPart = (totalSeconds % 3600) / 60;
 
     double averageMonthlyDistanceThisYear =
         workoutService.getAverageMonthlyDistanceThisYear(currentUser);
