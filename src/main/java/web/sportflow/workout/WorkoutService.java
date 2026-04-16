@@ -66,9 +66,6 @@ public class WorkoutService {
   @Transactional(readOnly = true)
   public List<Workout> getAll() {
     List<Workout> workouts = workoutRepository.findAllByOrderByDateDesc();
-<<<<<<< 120-other-compléter-données-de-demo
-    return keepDisplayable(workouts);
-=======
     workouts.forEach(
         workout -> {
           Hibernate.initialize(workout.getWorkoutExercises());
@@ -77,7 +74,6 @@ public class WorkoutService {
           }
         });
     return workouts;
->>>>>>> main
   }
 
   @Transactional(readOnly = true)
