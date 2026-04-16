@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeRepository;
 import web.sportflow.challenge.Challenge;
@@ -46,6 +52,7 @@ import web.sportflow.workout.WorkoutExercise;
 import web.sportflow.workout.WorkoutExerciseRepository;
 import web.sportflow.workout.WorkoutRepository;
 
+@Tag(name = "Administration")
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -86,6 +93,22 @@ public class AdminController {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Operation(
+      summary = "Accès au panel d'administration",
+      description =
+          "Retourne la vue Thymeleaf du tableau de bord administrateur. "
+              + "La page centralise les compteurs globaux sur les utilisateurs, sports, activites, badges, objectifs, challenges et relations d'amitie.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue d'administration chargee avec succes",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Admin Dashboard</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement du tableau de bord", content = @Content)
   @GetMapping({"", "/", "/panel"})
   public String showPanel(Model model) {
     List<User> users = loadUsers();
@@ -109,6 +132,22 @@ public class AdminController {
     return "admin-index";
   }
 
+  @Operation(
+      summary = "Liste les utilisateurs dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des utilisateurs avec les collections necessaires a l'administration : "
+              + "liste des utilisateurs, sports, badges, roles, sexes et niveaux de pratique.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des utilisateurs",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des utilisateurs</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des utilisateurs", content = @Content)
   @GetMapping("/users")
   public String showUsersPage(Model model) {
     model.addAttribute("users", loadUsers());
@@ -121,6 +160,21 @@ public class AdminController {
     return "admin-users";
   }
 
+  @Operation(
+      summary = "Liste les sports dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des sports avec les sports en base et les valeurs possibles de l'enumeration des noms de sport.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des sports",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des sports</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des sports", content = @Content)
   @GetMapping("/sports")
   public String showSportsPage(Model model) {
     model.addAttribute("sports", loadSports());
@@ -129,6 +183,21 @@ public class AdminController {
     return "admin-sports";
   }
 
+  @Operation(
+      summary = "Liste les activites dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des activites avec les workouts, les utilisateurs, les sports et la date courante pre-remplie pour les formulaires.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des activites",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des activites</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des activites", content = @Content)
   @GetMapping("/workouts")
   public String showWorkoutsPage(Model model) {
     model.addAttribute("workouts", loadWorkouts());
@@ -139,6 +208,21 @@ public class AdminController {
     return "admin-workouts";
   }
 
+  @Operation(
+      summary = "Liste les badges dans l'espace admin",
+      description =
+          "Retourne la vue d'administration des badges avec la liste complete des badges disponibles.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des badges",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des badges</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des badges", content = @Content)
   @GetMapping("/badges")
   public String showBadgesPage(Model model) {
     model.addAttribute("badges", loadBadges());
@@ -146,6 +230,21 @@ public class AdminController {
     return "admin-badges";
   }
 
+  @Operation(
+      summary = "Liste les objectifs dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des objectifs avec les objectifs existants, les utilisateurs selectionnables et les types d'objectif autorises.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des objectifs",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des objectifs</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des objectifs", content = @Content)
   @GetMapping("/goals")
   public String showGoalsPage(Model model) {
     model.addAttribute("goals", loadGoals());
@@ -155,6 +254,21 @@ public class AdminController {
     return "admin-goals";
   }
 
+  @Operation(
+      summary = "Liste les challenges dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des challenges avec les challenges existants, les utilisateurs, les badges, les types de challenge et la date du jour.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des challenges",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des challenges</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des challenges", content = @Content)
   @GetMapping("/challenges")
   public String showChallengesPage(Model model) {
     model.addAttribute("challenges", loadChallenges());
@@ -166,6 +280,21 @@ public class AdminController {
     return "admin-challenges";
   }
 
+  @Operation(
+      summary = "Liste les relations d'amitie dans l'espace admin",
+      description =
+          "Retourne la vue de gestion des relations d'amitie avec les relations existantes, les utilisateurs disponibles et les statuts applicables.")
+  @ApiResponse(
+        responseCode = "200",
+        description = "Vue HTML de gestion des relations d'amitie",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "<html><body><h1>Gestion des relations d'amitie</h1></body></html>")))
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors du chargement de la gestion des relations d'amitie", content = @Content)
   @GetMapping("/friendships")
   public String showFriendshipsPage(Model model) {
     model.addAttribute("friendships", loadFriendships());
@@ -175,6 +304,26 @@ public class AdminController {
     return "admin-friendships";
   }
 
+  @Operation(
+      summary = "Cree un utilisateur depuis l'administration",
+      description =
+          "Traite la soumission du formulaire de creation d'utilisateur. "
+              + "L'operation valide les informations principales, verifie l'unicite de l'email, associe les sports et badges selectionnes, puis redirige vers la section utilisateurs avec message de succes ou d'erreur.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/users apres traitement",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "redirect:/admin/users")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Donnees invalides ou email deja utilise",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation de l'utilisateur", content = @Content)
   @PostMapping("/users/create")
   @Transactional
   public String createUser(
@@ -227,6 +376,27 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Met a jour un utilisateur depuis l'administration",
+      description =
+          "Traite la modification d'un utilisateur existant. "
+              + "L'operation verifie l'existence de l'utilisateur, controle l'unicite de l'email, met a jour les informations personnelles, le mot de passe si fourni, puis resynchronise les sports et badges associes.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/users apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "redirect:/admin/users")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Utilisateur introuvable ou donnees invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Utilisateur cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour de l'utilisateur", content = @Content)
   @PostMapping("/users/{userId}/update")
   @Transactional
   public String updateUser(
@@ -287,6 +457,28 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Supprime un utilisateur depuis l'administration",
+      description =
+          "Supprime un utilisateur existant ainsi que ses dependances fonctionnelles directes gerees par le controleur : "
+              + "objectifs possedes, activites, challenges crees et relations d'amitie liees. "
+              + "L'operation interdit la suppression de son propre compte administrateur connecte.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/users apres suppression ou echec",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples =
+                    @ExampleObject(value = "redirect:/admin/users")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Suppression refusee ou utilisateur introuvable",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Utilisateur cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de l'utilisateur", content = @Content)
   @PostMapping("/users/{userId}/delete")
   @Transactional
   public String deleteUser(
@@ -344,6 +536,25 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  @Operation(
+      summary = "Cree un sport depuis l'administration",
+      description =
+          "Ajoute un nouveau sport avec son nom et sa valeur metabolique. "
+              + "L'operation verifie qu'aucun sport du meme type n'existe deja avant la creation.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/sports apres creation",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/sports")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Sport deja existant ou valeur invalide",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation du sport", content = @Content)
   @PostMapping("/sports/create")
   @Transactional
   public String createSport(
@@ -369,6 +580,26 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Met a jour un sport depuis l'administration",
+      description =
+          "Modifie un sport existant. "
+              + "L'operation controle l'existence du sport cible, l'unicite du nom et la validite de la valeur metabolique avant sauvegarde.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/sports apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/sports")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Sport introuvable ou donnees invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Sport cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour du sport", content = @Content)
   @PostMapping("/sports/{sportId}/update")
   @Transactional
   public String updateSport(
@@ -397,6 +628,25 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Supprime un sport depuis l'administration",
+      description =
+          "Supprime un sport existant, retire ses associations avec les utilisateurs et supprime les activites rattachees a ce sport avant redirection.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/sports apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/sports")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Sport introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Sport cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression du sport", content = @Content)
   @PostMapping("/sports/{sportId}/delete")
   @Transactional
   public String deleteSport(@PathVariable Long sportId, RedirectAttributes redirectAttributes) {
@@ -427,6 +677,25 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  @Operation(
+      summary = "Cree un badge depuis l'administration",
+      description =
+          "Ajoute un badge avec son nom, sa description et son icone. "
+              + "L'operation normalise les valeurs saisies, applique une icone par defaut si necessaire et controle l'unicite du nom.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/badges apres creation",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/badges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Badge deja existant ou donnees invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation du badge", content = @Content)
   @PostMapping("/badges/create")
   @Transactional
   public String createBadge(
@@ -453,6 +722,26 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Met a jour un badge depuis l'administration",
+      description =
+          "Modifie un badge existant en mettant a jour son nom, sa description et son icone. "
+              + "L'operation verifie l'existence du badge et l'unicite de son nom avant sauvegarde.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/badges apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/badges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Badge introuvable ou nom deja utilise",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Badge cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour du badge", content = @Content)
   @PostMapping("/badges/{badgeId}/update")
   @Transactional
   public String updateBadge(
@@ -484,6 +773,25 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Supprime un badge depuis l'administration",
+      description =
+          "Supprime un badge existant et retire ce badge de tous les utilisateurs qui le possedent avant redirection vers la liste des badges.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/badges apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/badges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Badge introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Badge cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression du badge", content = @Content)
   @PostMapping("/badges/{badgeId}/delete")
   @Transactional
   public String deleteBadge(@PathVariable Long badgeId, RedirectAttributes redirectAttributes) {
@@ -506,6 +814,26 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  @Operation(
+      summary = "Cree un objectif depuis l'administration",
+      description =
+          "Ajoute un objectif a un utilisateur. "
+              + "L'operation valide le libelle, le type, les valeurs numeriques, l'unite et l'utilisateur proprietaire, puis synchronise l'appartenance de l'objectif.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/goals apres creation",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/goals")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Utilisateur introuvable ou objectif invalide",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Utilisateur proprietaire introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation de l'objectif", content = @Content)
   @PostMapping("/goals/create")
   @Transactional
   public String createGoal(
@@ -537,6 +865,26 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Met a jour un objectif depuis l'administration",
+      description =
+          "Modifie un objectif existant et resynchronise son rattachement utilisateur. "
+              + "Les valeurs cibles et de progression sont controlees avant la sauvegarde.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/goals apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/goals")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Objectif ou utilisateur introuvable, ou donnees invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Objectif ou utilisateur proprietaire introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour de l'objectif", content = @Content)
   @PostMapping("/goals/{goalId}/update")
   @Transactional
   public String updateGoal(
@@ -569,6 +917,25 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Supprime un objectif depuis l'administration",
+      description =
+          "Supprime un objectif existant apres l'avoir retire des collections utilisateur qui y font reference.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/goals apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/goals")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Objectif introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Objectif cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de l'objectif", content = @Content)
   @PostMapping("/goals/{goalId}/delete")
   @Transactional
   public String deleteGoal(@PathVariable Long goalId, RedirectAttributes redirectAttributes) {
@@ -583,6 +950,26 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  @Operation(
+      summary = "Cree une activite depuis l'administration",
+      description =
+          "Ajoute une activite sportive associee a un utilisateur et a un sport. "
+              + "L'operation enregistre les informations generales du workout, la note eventuelle, la liste des exercices lies et declenche le calcul de calories avant sauvegarde.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/workouts apres creation",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/workouts")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Utilisateur, sport ou donnees d'activite invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Utilisateur proprietaire ou sport introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation de l'activite", content = @Content)
   @PostMapping("/workouts/create")
   @Transactional
   public String createWorkout(
@@ -615,6 +1002,25 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Met a jour une activite depuis l'administration",
+      description =
+          "Modifie une activite existante, remplace ses proprietes principales, met a jour ses exercices associes et recalcule les donnees derivees si necessaire.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/workouts apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/workouts")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Workout, utilisateur ou sport introuvable, ou donnees invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Workout, utilisateur proprietaire ou sport introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour de l'activite", content = @Content)
   @PostMapping("/workouts/{workoutId}/update")
   @Transactional
   public String updateWorkout(
@@ -648,6 +1054,25 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Supprime une activite depuis l'administration",
+      description =
+          "Supprime un workout existant depuis l'espace d'administration puis redirige vers la liste des activites.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/workouts apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/workouts")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Workout introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Workout cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de l'activite", content = @Content)
   @PostMapping("/workouts/{workoutId}/delete")
   @Transactional
   public String deleteWorkout(@PathVariable Long workoutId, RedirectAttributes redirectAttributes) {
@@ -661,6 +1086,26 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  @Operation(
+      summary = "Cree un challenge depuis l'administration",
+      description =
+          "Ajoute un challenge avec titre, type, valeur cible, dates, createur, participants et badges associes. "
+              + "L'operation valide la coherence des dates et les references selectionnees avant enregistrement.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/challenges apres creation",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/challenges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Dates invalides ou references introuvables",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Createur, participant ou badge introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation du challenge", content = @Content)
   @PostMapping("/challenges/create")
   @Transactional
   public String createChallenge(
@@ -696,6 +1141,26 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Met a jour un challenge depuis l'administration",
+      description =
+          "Modifie un challenge existant en mettant a jour ses informations principales, ses participants et ses badges. "
+              + "Les collections associees sont remplacees par les selections transmises.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/challenges apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/challenges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Challenge introuvable, dates invalides ou references invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Challenge, createur, participant ou badge introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour du challenge", content = @Content)
   @PostMapping("/challenges/{challengeId}/update")
   @Transactional
   public String updateChallenge(
@@ -734,6 +1199,25 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Supprime un challenge depuis l'administration",
+      description =
+          "Supprime un challenge existant et redirige vers la page de gestion des challenges avec un message flash de succes ou d'erreur.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/challenges apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/challenges")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Challenge introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Challenge cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression du challenge", content = @Content)
   @PostMapping("/challenges/{challengeId}/delete")
   @Transactional
   public String deleteChallenge(
@@ -748,6 +1232,26 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  @Operation(
+      summary = "Cree une relation d'amitie depuis l'administration",
+      description =
+          "Ajoute ou met a jour une relation d'amitie entre deux utilisateurs a partir du statut fourni. "
+              + "Si une relation existe deja entre les deux utilisateurs, elle est reutilisee puis mise a jour.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/friendships apres creation ou mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/friendships")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Utilisateurs invalides ou relation incoherente",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Demandeur ou destinataire introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la creation de la relation d'amitie", content = @Content)
   @PostMapping("/friendships/create")
   @Transactional
   public String createFriendship(
@@ -776,6 +1280,25 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  @Operation(
+      summary = "Met a jour une relation d'amitie depuis l'administration",
+      description =
+          "Modifie une relation d'amitie existante en redefinissant le demandeur, le destinataire et le statut de la relation.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/friendships apres mise a jour",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/friendships")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Relation introuvable ou utilisateurs invalides",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Relation, demandeur ou destinataire introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la mise a jour de la relation d'amitie", content = @Content)
   @PostMapping("/friendships/{friendshipId}/update")
   @Transactional
   public String updateFriendship(
@@ -799,6 +1322,25 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  @Operation(
+      summary = "Supprime une relation d'amitie depuis l'administration",
+      description =
+          "Supprime une relation d'amitie existante puis redirige vers la page de gestion des relations.")
+  @ApiResponse(
+        responseCode = "302",
+        description = "Redirection vers /admin/friendships apres suppression",
+        content =
+            @Content(
+                mediaType = "text/html",
+                examples = @ExampleObject(value = "redirect:/admin/friendships")))
+  @ApiResponse(
+        responseCode = "400",
+        description = "Relation d'amitie introuvable ou suppression refusee",
+        content = @Content)
+  @ApiResponse(responseCode = "401", description = "Utilisateur non authentifie", content = @Content)
+  @ApiResponse(responseCode = "403", description = "Acces refuse a un utilisateur non administrateur", content = @Content)
+  @ApiResponse(responseCode = "404", description = "Relation d'amitie cible introuvable", content = @Content)
+  @ApiResponse(responseCode = "500", description = "Erreur interne lors de la suppression de la relation d'amitie", content = @Content)
   @PostMapping("/friendships/{friendshipId}/delete")
   @Transactional
   public String deleteFriendship(
