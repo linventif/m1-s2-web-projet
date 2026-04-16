@@ -71,8 +71,8 @@
                       <option value="" disabled selected>Choisir un sport</option>
                       <option
                         th:each="sportName : ${sportNames}"
-                        th:value="${sportName.name()}"
-                        th:text="${sportName.name()}"
+                        th:value="${sportName}"
+                        th:text="${sportName}"
                       ></option>
                     </select>
                     <input
@@ -109,8 +109,8 @@
                         <select name="name" class="select select-bordered" required>
                           <option
                             th:each="sportName : ${sportNames}"
-                            th:value="${sportName.name()}"
-                            th:text="${sportName.name()}"
+                            th:value="${sportName}"
+                            th:text="${sportName}"
                             th:selected="${sport.name == sportName}"
                           ></option>
                         </select>

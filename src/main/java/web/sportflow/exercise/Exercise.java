@@ -42,11 +42,12 @@ public class Exercise {
     this.sports = sports;
   }
 
-  public Exercise(String name, Double caloriesPerSecond, List<Sport> sports) {
+  public Exercise(String name, Double caloriesPerSecond) {
     this.name = name;
     this.caloriesPerSecond = caloriesPerSecond;
     this.workoutExercises = new ArrayList<>();
-    this.sports = sports;
+    this.sports = new ArrayList<>();
+    ;
   }
 
   public Double getCaloriesPerSec() {

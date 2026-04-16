@@ -273,7 +273,7 @@ public class WorkoutController {
     model.addAttribute("sports", sports);
     model.addAttribute("exercises", exercises);
     model.addAttribute("exerciseSportNames", buildExerciseSportNames(exercises));
-    model.addAttribute("sportFieldProfiles", buildSportFieldProfiles(sports));
+    model.addAttribute("sportFieldProfiles", sportService.buildFieldProfiles(sports));
   }
 
   private Map<Long, String> buildExerciseSportNames(List<Exercise> exercises) {
@@ -282,25 +282,12 @@ public class WorkoutController {
       String sportNames =
           exercise.getSports().stream()
               .filter(sport -> sport != null && sport.getName() != null)
-              .map(sport -> sport.getName().name())
+              .map(Sport::getName)
               .distinct()
               .collect(Collectors.joining(","));
       exerciseSportNames.put(exercise.getId(), sportNames);
     }
     return exerciseSportNames;
-  }
-
-  private Map<Long, Map<String, Boolean>> buildSportFieldProfiles(List<Sport> sports) {
-    Map<Long, Map<String, Boolean>> profiles = new HashMap<>();
-    for (Sport sport : sports) {
-      profiles.put(
-          sport.getId(),
-          Map.of(
-              "distance", sport.isDistanceRelevant(),
-              "strength", sport.isStrengthRelevant(),
-              "mobility", sport.isMobilityRelevant()));
-    }
-    return profiles;
   }
 
   private List<Badge> getUnlockedBadgesForWorkout(Workout workout) {

@@ -1,30 +1,27 @@
 package web.sportflow.workout;
 
 import java.util.Locale;
-import web.sportflow.sport.SportName;
 
 public class WorkoutDashboardDisplay {
   private final Workout workout;
-  private final SportName sportName;
+  private final String sportName;
 
   public WorkoutDashboardDisplay(Workout workout) {
     this.workout = workout;
     this.sportName =
-        workout == null || workout.getSport() == null
-            ? SportName.Course
-            : workout.getSport().getName();
+        workout == null || workout.getSport() == null ? "Course" : workout.getSport().getName();
   }
 
   public Workout getWorkout() {
     return workout;
   }
 
-  public SportName getSportName() {
+  public String getSportName() {
     return sportName;
   }
 
   public String getSportNameLabel() {
-    return getSportNameOrDefault().name();
+    return getSportNameOrDefault();
   }
 
   public double getDurationSec() {
@@ -153,14 +150,11 @@ public class WorkoutDashboardDisplay {
   }
 
   public String getPrimaryMetricLabel() {
-    if (isDistanceRelevant() && getDistanceKm() > 0) {
+    if (getDistanceKm() > 0) {
       return "Distance";
     }
-    if (isStrengthRelevant() && getTotalSets() > 0) {
+    if (getTotalSets() > 0) {
       return "Séries";
-    }
-    if (isMobilityRelevant()) {
-      return "Mobilité";
     }
     if (getDurationSec() > 0) {
       return "Durée";
@@ -169,14 +163,11 @@ public class WorkoutDashboardDisplay {
   }
 
   public String getPrimaryMetricValue() {
-    if (isDistanceRelevant() && getDistanceKm() > 0) {
+    if (getDistanceKm() > 0) {
       return format("%.2f km", getDistanceKm());
     }
-    if (isStrengthRelevant() && getTotalSets() > 0) {
+    if (getTotalSets() > 0) {
       return getTotalSets() + " séries";
-    }
-    if (isMobilityRelevant()) {
-      return "Mobilité";
     }
     if (getDurationSec() > 0) {
       return format("%.0f min", getDurationMinutes());
@@ -185,16 +176,13 @@ public class WorkoutDashboardDisplay {
   }
 
   public String getSecondaryMetricLabel() {
-    if (isSpeedRelevant() && getAverageSpeedKmh() > 0) {
+    if (getAverageSpeedKmh() > 0) {
       return "Vitesse moyenne";
     }
-    if (isPaceRelevant() && getAveragePaceMinPerKm() > 0) {
-      return "Allure moyenne";
-    }
-    if (isStrengthRelevant() && getMaxWeightKg() > 0) {
+    if (getMaxWeightKg() > 0) {
       return "Charge max";
     }
-    if (isStrengthRelevant() && getTotalReps() > 0) {
+    if (getTotalReps() > 0) {
       return "Répétitions";
     }
     if (getAverageBpm() > 0) {
@@ -204,16 +192,13 @@ public class WorkoutDashboardDisplay {
   }
 
   public String getSecondaryMetricValue() {
-    if (isSpeedRelevant() && getAverageSpeedKmh() > 0) {
+    if (getAverageSpeedKmh() > 0) {
       return format("%.1f km/h", getAverageSpeedKmh());
     }
-    if (isPaceRelevant() && getAveragePaceMinPerKm() > 0) {
-      return format("%.2f min/km", getAveragePaceMinPerKm());
-    }
-    if (isStrengthRelevant() && getMaxWeightKg() > 0) {
+    if (getMaxWeightKg() > 0) {
       return format("%.0f kg", getMaxWeightKg());
     }
-    if (isStrengthRelevant() && getTotalReps() > 0) {
+    if (getTotalReps() > 0) {
       return getTotalReps() + " répétitions";
     }
     if (getAverageBpm() > 0) {
@@ -226,112 +211,7 @@ public class WorkoutDashboardDisplay {
     return String.format(Locale.ROOT, pattern, value);
   }
 
-  private boolean isDistanceRelevant() {
-    return switch (getSportNameOrDefault()) {
-      case Musculation,
-          Callisthenie,
-          CrossFit,
-          Yoga,
-          Saut_Parachute,
-          Base_Jump,
-          Tir_Sportif,
-          Tir_Arc,
-          Tir_Cible,
-          Formule_1,
-          Motocyclisme ->
-          false;
-      default -> true;
-    };
-  }
-
-  private boolean isPaceRelevant() {
-    return switch (getSportNameOrDefault()) {
-      case Course,
-          Marathon,
-          Marche,
-          Natation,
-          Randonnee,
-          Alpinisme,
-          Plongee,
-          Parkour,
-          Triathlon,
-          Pentathlon,
-          Speleologie ->
-          true;
-      default -> false;
-    };
-  }
-
-  private boolean isSpeedRelevant() {
-    return switch (getSportNameOrDefault()) {
-      case Cyclisme,
-          Football,
-          Basketball,
-          Tennis,
-          Ping_Pong,
-          Squash,
-          Ski,
-          Hockey,
-          Luge,
-          Patinage,
-          Bobsleigh,
-          Skate,
-          Formule_1,
-          Motocyclisme,
-          Aviron,
-          Canoe_Kayak,
-          Surf,
-          Voile ->
-          true;
-      default -> false;
-    };
-  }
-
-  private boolean isStrengthRelevant() {
-    return switch (getSportNameOrDefault()) {
-      case Musculation,
-          Callisthenie,
-          CrossFit,
-          Escalade,
-          Alpinisme,
-          Gymnastique,
-          Judo,
-          Taekwondo,
-          Karate,
-          Boxe,
-          Escrime,
-          Lutte,
-          Aviron,
-          Canoe_Kayak,
-          Equitation,
-          Speleologie ->
-          true;
-      default -> false;
-    };
-  }
-
-  private boolean isMobilityRelevant() {
-    return switch (getSportNameOrDefault()) {
-      case Musculation,
-          Callisthenie,
-          CrossFit,
-          Yoga,
-          Gymnastique,
-          Judo,
-          Taekwondo,
-          Karate,
-          Boxe,
-          Escrime,
-          Lutte,
-          Skate,
-          Surf,
-          Equitation ->
-          true;
-      default -> false;
-    };
-  }
-
-  private SportName getSportNameOrDefault() {
-    return sportName == null ? SportName.Course : sportName;
+  private String getSportNameOrDefault() {
+    return sportName == null ? "Course" : sportName;
   }
 }

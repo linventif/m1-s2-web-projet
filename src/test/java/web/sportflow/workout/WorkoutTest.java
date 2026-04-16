@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -15,7 +14,7 @@ class WorkoutTest {
 
   @Test
   void getCalorieBurn_withoutExerciseShouldReturnZero() {
-    Sport sport = new Sport(SportName.Course, 8.0);
+    Sport sport = new Sport("Course", 8.0);
     User user =
         new User(
             "Alice",

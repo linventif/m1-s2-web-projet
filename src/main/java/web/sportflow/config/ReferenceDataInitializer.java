@@ -31,7 +31,6 @@ import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
 import web.sportflow.goal.GoalType;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
@@ -373,57 +372,57 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     friendshipService.sendRequest(userTaiLung.getId(), userShifu.getId());
 
     // Sports
-    Sport sportEscalade = createSport(SportName.Escalade, 8.0);
-    Sport sportAlpinisme = createSport(SportName.Alpinisme, 7.5);
-    Sport sportRandonnee = createSport(SportName.Randonnee, 6.0);
-    Sport sportCourse = createSport(SportName.Course, 9.8);
-    Sport sportLance = createSport(SportName.Lance, 4.5);
-    Sport sportMarathon = createSport(SportName.Marathon, 10.5);
-    Sport sportMarche = createSport(SportName.Marche, 4.3);
-    Sport sportSaut = createSport(SportName.Saut, 6.5);
-    Sport sportCyclisme = createSport(SportName.Cyclisme, 8.0);
-    Sport sportMusculation = createSport(SportName.Musculation, 6.0);
-    Sport sportCallisthenie = createSport(SportName.Callisthenie, 5.5);
-    Sport sportCrossFit = createSport(SportName.CrossFit, 8.0);
-    Sport sportNatation = createSport(SportName.Natation, 8.3);
-    Sport sportPlongee = createSport(SportName.Plongee, 7.0);
-    Sport sportSautParachute = createSport(SportName.Saut_Parachute, 3.5);
-    Sport sportBaseJump = createSport(SportName.Base_Jump, 4.0);
-    Sport sportTennis = createSport(SportName.Tennis, 7.3);
-    Sport sportPingPong = createSport(SportName.Ping_Pong, 4.0);
-    Sport sportSquash = createSport(SportName.Squash, 7.3);
-    Sport sportFootball = createSport(SportName.Football, 7.0);
-    Sport sportBasketball = createSport(SportName.Basketball, 8.0);
-    Sport sportJudo = createSport(SportName.Judo, 10.3);
-    Sport sportTaekwondo = createSport(SportName.Taekwondo, 10.3);
-    Sport sportKarate = createSport(SportName.Karate, 10.0);
-    Sport sportBoxe = createSport(SportName.Boxe, 12.8);
-    Sport sportEscrime = createSport(SportName.Escrime, 6.0);
-    Sport sportLutte = createSport(SportName.Lutte, 10.3);
-    Sport sportSki = createSport(SportName.Ski, 7.0);
-    Sport sportCurling = createSport(SportName.Curling, 4.0);
-    Sport sportHockey = createSport(SportName.Hockey, 8.0);
-    Sport sportLuge = createSport(SportName.Luge, 4.0);
-    Sport sportPatinage = createSport(SportName.Patinage, 7.0);
-    Sport sportBobsleigh = createSport(SportName.Bobsleigh, 5.0);
-    Sport sportParkour = createSport(SportName.Parkour, 8.5);
-    Sport sportSkate = createSport(SportName.Skate, 5.0);
-    Sport sportTirSportif = createSport(SportName.Tir_Sportif, 2.5);
-    Sport sportTirArc = createSport(SportName.Tir_Arc, 3.5);
-    Sport sportTirCible = createSport(SportName.Tir_Cible, 2.5);
-    Sport sportRepassageExtrem = createSport(SportName.Repassage_Extrem, 4.0);
-    Sport sportGymnastique = createSport(SportName.Gymnastique, 5.5);
-    Sport sportYoga = createSport(SportName.Yoga, 3.3);
-    Sport sportPentathlon = createSport(SportName.Pentathlon, 8.0);
-    Sport sportTriathlon = createSport(SportName.Triathlon, 9.5);
-    Sport sportFormule1 = createSport(SportName.Formule_1, 4.0);
-    Sport sportMotocyclisme = createSport(SportName.Motocyclisme, 4.0);
-    Sport sportAviron = createSport(SportName.Aviron, 7.0);
-    Sport sportCanoeKayak = createSport(SportName.Canoe_Kayak, 6.0);
-    Sport sportSurf = createSport(SportName.Surf, 3.0);
-    Sport sportVoile = createSport(SportName.Voile, 3.0);
-    Sport sportEquitation = createSport(SportName.Equitation, 5.5);
-    Sport sportSpeleologie = createSport(SportName.Speleologie, 6.0);
+    Sport sportEscalade = createSport("Escalade", 8.0);
+    Sport sportAlpinisme = createSport("Alpinisme", 7.5);
+    Sport sportRandonnee = createSport("Randonnee", 6.0);
+    Sport sportCourse = createSport("Course", 9.8);
+    Sport sportLance = createSport("Lance", 4.5);
+    Sport sportMarathon = createSport("Marathon", 10.5);
+    Sport sportMarche = createSport("Marche", 4.3);
+    Sport sportSaut = createSport("Saut", 6.5);
+    Sport sportCyclisme = createSport("Cyclisme", 8.0);
+    Sport sportMusculation = createSport("Musculation", 6.0);
+    Sport sportCallisthenie = createSport("Callisthenie", 5.5);
+    Sport sportCrossFit = createSport("CrossFit", 8.0);
+    Sport sportNatation = createSport("Natation", 8.3);
+    Sport sportPlongee = createSport("Plongee", 7.0);
+    Sport sportSautParachute = createSport("Saut_Parachute", 3.5);
+    Sport sportBaseJump = createSport("Base_Jump", 4.0);
+    Sport sportTennis = createSport("Tennis", 7.3);
+    Sport sportPingPong = createSport("Ping_Pong", 4.0);
+    Sport sportSquash = createSport("Squash", 7.3);
+    Sport sportFootball = createSport("Football", 7.0);
+    Sport sportBasketball = createSport("Basketball", 8.0);
+    Sport sportJudo = createSport("Judo", 10.3);
+    Sport sportTaekwondo = createSport("Taekwondo", 10.3);
+    Sport sportKarate = createSport("Karate", 10.0);
+    Sport sportBoxe = createSport("Boxe", 12.8);
+    Sport sportEscrime = createSport("Escrime", 6.0);
+    Sport sportLutte = createSport("Lutte", 10.3);
+    Sport sportSki = createSport("Ski", 7.0);
+    Sport sportCurling = createSport("Curling", 4.0);
+    Sport sportHockey = createSport("Hockey", 8.0);
+    Sport sportLuge = createSport("Luge", 4.0);
+    Sport sportPatinage = createSport("Patinage", 7.0);
+    Sport sportBobsleigh = createSport("Bobsleigh", 5.0);
+    Sport sportParkour = createSport("Parkour", 8.5);
+    Sport sportSkate = createSport("Skate", 5.0);
+    Sport sportTirSportif = createSport("Tir_Sportif", 2.5);
+    Sport sportTirArc = createSport("Tir_Arc", 3.5);
+    Sport sportTirCible = createSport("Tir_Cible", 2.5);
+    Sport sportRepassageExtrem = createSport("Repassage_Extrem", 4.0);
+    Sport sportGymnastique = createSport("Gymnastique", 5.5);
+    Sport sportYoga = createSport("Yoga", 3.3);
+    Sport sportPentathlon = createSport("Pentathlon", 8.0);
+    Sport sportTriathlon = createSport("Triathlon", 9.5);
+    Sport sportFormule1 = createSport("Formule_1", 4.0);
+    Sport sportMotocyclisme = createSport("Motocyclisme", 4.0);
+    Sport sportAviron = createSport("Aviron", 7.0);
+    Sport sportCanoeKayak = createSport("Canoe_Kayak", 6.0);
+    Sport sportSurf = createSport("Surf", 3.0);
+    Sport sportVoile = createSport("Voile", 3.0);
+    Sport sportEquitation = createSport("Equitation", 5.5);
+    Sport sportSpeleologie = createSport("Speleologie", 6.0);
 
     List<Sport> allSports =
         List.of(
@@ -481,39 +480,37 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     sportRepository.saveAll(allSports);
 
-    Exercise exerciseCourseContinue = createExercice("Course continue", 0.15, new ArrayList<>());
-    Exercise exerciseSprint = createExercice("Sprint", 0.22, new ArrayList<>());
-    Exercise exerciseMonteeCote = createExercice("Montee de cote", 0.18, new ArrayList<>());
-    Exercise exerciseCircuitCardio = createExercice("Circuit cardio", 0.16, new ArrayList<>());
-    Exercise exerciseBurpees = createExercice("Burpees", 0.18, new ArrayList<>());
-    Exercise exercisePompes = createExercice("Pompes", 0.10, new ArrayList<>());
-    Exercise exerciseSquat = createExercice("Squat", 0.11, new ArrayList<>());
-    Exercise exerciseDeveloppeCouche = createExercice("Developpe couche", 0.12, new ArrayList<>());
-    Exercise exerciseDeveloppeMilitaire =
-        createExercice("Developpe militaire", 0.10, new ArrayList<>());
-    Exercise exerciseTractions = createExercice("Tractions", 0.13, new ArrayList<>());
-    Exercise exerciseNageLibre = createExercice("Nage libre", 0.13, new ArrayList<>());
-    Exercise exerciseCrawl = createExercice("Crawl", 0.14, new ArrayList<>());
-    Exercise exerciseEscaladeBloc = createExercice("Escalade bloc", 0.14, new ArrayList<>());
-    Exercise exerciseVoieVitesse = createExercice("Voie de vitesse", 0.16, new ArrayList<>());
-    Exercise exercisePedalage = createExercice("Pedalage endurance", 0.14, new ArrayList<>());
-    Exercise exerciseDribble = createExercice("Dribble et tirs", 0.12, new ArrayList<>());
-    Exercise exerciseYogaFlow = createExercice("Yoga flow", 0.06, new ArrayList<>());
-    Exercise exerciseMarcheSentier = createExercice("Marche sur sentier", 0.09, new ArrayList<>());
-    Exercise exerciseSautTechnique = createExercice("Saut technique", 0.13, new ArrayList<>());
-    Exercise exerciseLancerMedecineBall =
-        createExercice("Lancer medecine ball", 0.09, new ArrayList<>());
-    Exercise exerciseShadowBoxing = createExercice("Shadow boxing", 0.15, new ArrayList<>());
-    Exercise exerciseTravailAppuis = createExercice("Travail des appuis", 0.11, new ArrayList<>());
-    Exercise exerciseKata = createExercice("Kata technique", 0.10, new ArrayList<>());
-    Exercise exerciseRandori = createExercice("Randori", 0.17, new ArrayList<>());
-    Exercise exerciseGlisse = createExercice("Glisse endurance", 0.12, new ArrayList<>());
-    Exercise exerciseTirPrecision = createExercice("Tir de precision", 0.04, new ArrayList<>());
-    Exercise exerciseGainage = createExercice("Gainage", 0.07, new ArrayList<>());
-    Exercise exerciseRame = createExercice("Rame endurance", 0.13, new ArrayList<>());
-    Exercise exercisePagaie = createExercice("Pagaie endurance", 0.11, new ArrayList<>());
-    Exercise exerciseEquilibre = createExercice("Equilibre", 0.05, new ArrayList<>());
-    Exercise exercisePilotage = createExercice("Pilotage technique", 0.07, new ArrayList<>());
+    Exercise exerciseCourseContinue = createExercice("Course continue", 0.15);
+    Exercise exerciseSprint = createExercice("Sprint", 0.22);
+    Exercise exerciseMonteeCote = createExercice("Montee de cote", 0.18);
+    Exercise exerciseCircuitCardio = createExercice("Circuit cardio", 0.16);
+    Exercise exerciseBurpees = createExercice("Burpees", 0.18);
+    Exercise exercisePompes = createExercice("Pompes", 0.10);
+    Exercise exerciseSquat = createExercice("Squat", 0.11);
+    Exercise exerciseDeveloppeCouche = createExercice("Developpe couche", 0.12);
+    Exercise exerciseDeveloppeMilitaire = createExercice("Developpe militaire", 0.10);
+    Exercise exerciseTractions = createExercice("Tractions", 0.13);
+    Exercise exerciseNageLibre = createExercice("Nage libre", 0.13);
+    Exercise exerciseCrawl = createExercice("Crawl", 0.14);
+    Exercise exerciseEscaladeBloc = createExercice("Escalade bloc", 0.14);
+    Exercise exerciseVoieVitesse = createExercice("Voie de vitesse", 0.16);
+    Exercise exercisePedalage = createExercice("Pedalage endurance", 0.14);
+    Exercise exerciseDribble = createExercice("Dribble et tirs", 0.12);
+    Exercise exerciseYogaFlow = createExercice("Yoga flow", 0.06);
+    Exercise exerciseMarcheSentier = createExercice("Marche sur sentier", 0.09);
+    Exercise exerciseSautTechnique = createExercice("Saut technique", 0.13);
+    Exercise exerciseLancerMedecineBall = createExercice("Lancer medecine ball", 0.09);
+    Exercise exerciseShadowBoxing = createExercice("Shadow boxing", 0.15);
+    Exercise exerciseTravailAppuis = createExercice("Travail des appuis", 0.11);
+    Exercise exerciseKata = createExercice("Kata technique", 0.10);
+    Exercise exerciseRandori = createExercice("Randori", 0.17);
+    Exercise exerciseGlisse = createExercice("Glisse endurance", 0.12);
+    Exercise exerciseTirPrecision = createExercice("Tir de precision", 0.04);
+    Exercise exerciseGainage = createExercice("Gainage", 0.07);
+    Exercise exerciseRame = createExercice("Rame endurance", 0.13);
+    Exercise exercisePagaie = createExercice("Pagaie endurance", 0.11);
+    Exercise exerciseEquilibre = createExercice("Equilibre", 0.05);
+    Exercise exercisePilotage = createExercice("Pilotage technique", 0.07);
 
     linkExercises(sportCourse, exerciseCourseContinue, exerciseSprint, exerciseMonteeCote);
     linkExercises(sportCourse, exerciseSprint, exerciseMonteeCote);
@@ -1620,8 +1617,14 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     return workout;
   }
 
-  private Sport createSport(SportName name, Double met) {
+  private Sport createSport(String name, Double met) {
     return new Sport(name, met);
+  }
+
+  private Sport getRequiredSport(String name) {
+    return sportRepository
+        .findByName(name)
+        .orElseThrow(() -> new IllegalStateException("Sport de demo introuvable: " + name));
   }
 
   private List<Workout> createCoverageWorkouts(
@@ -1721,8 +1724,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
         exercise);
   }
 
-  private Exercise createExercice(String name, Double calPerSec, List<Sport> sports) {
-    return new Exercise(name, calPerSec, sports);
+  private Exercise createExercice(String name, Double calPerSec) {
+    return new Exercise(name, calPerSec);
   }
 
   private void linkExercises(Sport sport, Exercise... exercises) {

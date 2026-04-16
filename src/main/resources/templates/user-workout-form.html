@@ -92,9 +92,10 @@
                           <option value="" disabled selected>Choisir un sport...</option>
                           <option
                             th:each="s : ${sports}"
+                            th:with="fieldProfile=${sportFieldProfiles[s.id]}"
                             th:value="${s.id}"
                             th:text="${s.displayName}"
-                            th:attr="data-sport-name=${s.name.name()},data-distance=${s.distanceRelevant},data-strength=${s.strengthRelevant},data-mobility=${s.mobilityRelevant}"
+                            th:attr="data-sport-name=${s.name},data-distance=${fieldProfile != null ? fieldProfile['distance'] : true},data-strength=${fieldProfile != null ? fieldProfile['strength'] : true},data-mobility=${fieldProfile != null ? fieldProfile['mobility'] : true}"
                           ></option>
                         </select>
                       </div>
