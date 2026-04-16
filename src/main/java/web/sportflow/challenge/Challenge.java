@@ -41,10 +41,10 @@ public class Challenge {
   @Column(nullable = false)
   private Double targetValue;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private LocalDate startDate;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private LocalDate endDate;
 
   @ManyToOne(optional = false)
@@ -213,7 +213,9 @@ public class Challenge {
 
   public boolean isActive() {
     LocalDate today = LocalDate.now();
-    return !today.isBefore(startDate) && !today.isAfter(endDate);
+    boolean started = startDate == null || !today.isBefore(startDate);
+    boolean notEnded = endDate == null || !today.isAfter(endDate);
+    return started && notEnded;
   }
 
   public void setId(Long id) {

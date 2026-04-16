@@ -278,8 +278,8 @@ public class ChallengeService {
 
   private List<Workout> loadWorkoutsForChallenge(Challenge challenge, User participant) {
     LocalDate startDate =
-        challenge.getStartDate() == null ? LocalDate.MIN : challenge.getStartDate();
-    LocalDate endDate = challenge.getEndDate() == null ? LocalDate.MAX : challenge.getEndDate();
+        challenge.getStartDate() == null ? LocalDate.of(1970, 1, 1) : challenge.getStartDate();
+    LocalDate endDate = challenge.getEndDate() == null ? LocalDate.now() : challenge.getEndDate();
     if (endDate.isBefore(startDate)) {
       return List.of();
     }
@@ -445,7 +445,7 @@ public class ChallengeService {
   }
 
   private void ensureChallengeIsOpen(Challenge challenge, String message) {
-    if (challenge.getEndDate() == null || LocalDate.now().isAfter(challenge.getEndDate())) {
+    if (challenge.getEndDate() != null && LocalDate.now().isAfter(challenge.getEndDate())) {
       throw new IllegalArgumentException(message);
     }
   }

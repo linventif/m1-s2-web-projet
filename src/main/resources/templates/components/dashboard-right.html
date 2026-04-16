@@ -145,7 +145,7 @@
             >
             <span
               class="badge badge-outline"
-              th:text="${challenge.startDate + ' → ' + challenge.endDate}"
+              th:text="${(challenge.startDate != null ? challenge.startDate : 'Sans debut') + ' → ' + (challenge.endDate != null ? challenge.endDate : 'Sans fin')}"
               >2026-04-01 → 2026-04-30</span
             >
           </div>

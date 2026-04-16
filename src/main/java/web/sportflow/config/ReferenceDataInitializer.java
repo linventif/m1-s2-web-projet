@@ -551,66 +551,90 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Badge badgeYoga = demoBadges.get(6);
 
     LocalDate today = LocalDate.now();
-    // Challenges (axes sur certains sports)
-    Challenge challengeRunning25k =
+    // Challenges officiels: 1 challenge par badge, sans date de debut/fin
+    Challenge challengeBadgeRookie5k =
         createSportChallenge(
             sportCoursePied,
-            "Challenge 25K",
-            "Cumuler 25 km sur la periode.",
+            "Defi Rookie 5K",
+            "Atteindre 5 km cumules.",
             ChallengeType.DISTANCE,
-            25.0,
-            today.minusDays(5),
-            today.plusDays(21),
+            5.0,
+            null,
+            null,
             userAlice);
-    challengeRunning25k.getBadges().addAll(List.of(badgeRookie5k, badgeMarathonHerbe));
+    challengeBadgeRookie5k.getBadges().add(badgeRookie5k);
 
-    Challenge challengeNatationEndurance =
+    Challenge challengeBadgeMarathonHerbe =
+        createSportChallenge(
+            sportCoursePied,
+            "Defi Semi Marathon",
+            "Atteindre 21 km cumules.",
+            ChallengeType.DISTANCE,
+            21.0,
+            null,
+            null,
+            userAlice);
+    challengeBadgeMarathonHerbe.getBadges().add(badgeMarathonHerbe);
+
+    Challenge challengeBadgeMarathonien =
+        createSportChallenge(
+            sportCoursePied,
+            "Defi Marathon 42K",
+            "Atteindre 42 km cumules.",
+            ChallengeType.DISTANCE,
+            42.0,
+            null,
+            null,
+            userAlice);
+    challengeBadgeMarathonien.getBadges().add(badgeMarathonien);
+
+    Challenge challengeBadgeNatation =
         createSportChallenge(
             sportNatation,
-            "Challenge Endurance",
-            "Cumuler 180 minutes sur la periode.",
+            "Defi Natation Endurance",
+            "Cumuler 180 minutes.",
             ChallengeType.DUREE,
             180.0,
-            today.minusDays(3),
-            today.plusDays(18),
+            null,
+            null,
             userNick);
-    challengeNatationEndurance.getBadges().add(badgeNatation);
+    challengeBadgeNatation.getBadges().add(badgeNatation);
 
-    Challenge challengeCyclisme80k =
+    Challenge challengeBadgeCyclisme =
         createSportChallenge(
             sportCyclisme,
-            "Challenge 80K",
-            "Atteindre 80 km sur la periode.",
+            "Defi Cyclisme 80K",
+            "Atteindre 80 km cumules.",
             ChallengeType.DISTANCE,
             80.0,
-            today.minusDays(7),
-            today.plusDays(28),
+            null,
+            null,
             userStoick);
-    challengeCyclisme80k.getBadges().add(badgeCyclisme);
+    challengeBadgeCyclisme.getBadges().add(badgeCyclisme);
 
-    Challenge challengeEscaladeVitesse =
+    Challenge challengeBadgeEscalade =
         createSportChallenge(
             sportEscaladeVitesse,
-            "Challenge Vitesse",
-            "Cumuler 1500 calories sur la periode.",
+            "Defi Escalade Focus",
+            "Cumuler 1500 calories.",
             ChallengeType.CALORIE,
             1500.0,
-            today.minusDays(2),
-            today.plusDays(20),
+            null,
+            null,
             userAstrid);
-    challengeEscaladeVitesse.getBadges().addAll(List.of(badgeEscalade, badgeMarathonien));
+    challengeBadgeEscalade.getBadges().add(badgeEscalade);
 
-    Challenge challengeMusculationRegulier =
+    Challenge challengeBadgeYoga =
         createSportChallenge(
-            sportMusculation,
-            "Challenge Regulier",
-            "Enregistrer 12 seances sur la periode.",
-            ChallengeType.REPETITION,
-            12.0,
-            today.minusDays(1),
-            today.plusDays(30),
+            sportYogaDynamique,
+            "Defi Yoga Flow",
+            "Cumuler 120 minutes.",
+            ChallengeType.DUREE,
+            120.0,
+            null,
+            null,
             userBogo);
-    challengeMusculationRegulier.getBadges().add(badgeYoga);
+    challengeBadgeYoga.getBadges().add(badgeYoga);
 
     // Challenges communautaires (pas de badge, participation manuelle)
     Challenge challengeRunEntreAmis =
@@ -651,11 +675,13 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     challengeRepository.saveAll(
         List.of(
-            challengeRunning25k,
-            challengeNatationEndurance,
-            challengeCyclisme80k,
-            challengeEscaladeVitesse,
-            challengeMusculationRegulier,
+            challengeBadgeRookie5k,
+            challengeBadgeMarathonHerbe,
+            challengeBadgeMarathonien,
+            challengeBadgeNatation,
+            challengeBadgeCyclisme,
+            challengeBadgeEscalade,
+            challengeBadgeYoga,
             challengeRunEntreAmis,
             challengeCardioQuartier,
             challengeMobiliteCrew));

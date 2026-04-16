@@ -115,11 +115,21 @@
                     </div>
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Debut</p>
-                      <p class="font-semibold" th:text="${challenge.startDate}">2026-04-01</p>
+                      <p
+                        class="font-semibold"
+                        th:text="${challenge.startDate != null ? challenge.startDate : 'Sans debut'}"
+                      >
+                        Sans debut
+                      </p>
                     </div>
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Fin</p>
-                      <p class="font-semibold" th:text="${challenge.endDate}">2026-04-30</p>
+                      <p
+                        class="font-semibold"
+                        th:text="${challenge.endDate != null ? challenge.endDate : 'Sans fin'}"
+                      >
+                        Sans fin
+                      </p>
                     </div>
                   </div>
 
@@ -258,11 +268,21 @@
                     </div>
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Debut</p>
-                      <p class="font-semibold" th:text="${challenge.startDate}">2026-04-01</p>
+                      <p
+                        class="font-semibold"
+                        th:text="${challenge.startDate != null ? challenge.startDate : 'Sans debut'}"
+                      >
+                        Sans debut
+                      </p>
                     </div>
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Fin</p>
-                      <p class="font-semibold" th:text="${challenge.endDate}">2026-04-30</p>
+                      <p
+                        class="font-semibold"
+                        th:text="${challenge.endDate != null ? challenge.endDate : 'Sans fin'}"
+                      >
+                        Sans fin
+                      </p>
                     </div>
                   </div>
 
