@@ -552,6 +552,10 @@ public class UserController {
         currentUser != null && currentUser.getId() != null
             ? workoutService.getFriendsWorkout(currentUser.getId())
             : List.of();
+    List<Workout> draftWorkouts =
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getIncompleteForUser(currentUser)
+            : List.of();
 
     model.addAttribute(
         "goals",
@@ -559,6 +563,7 @@ public class UserController {
             ? goalService.getFriendsAndUserGoal(currentUser)
             : List.of());
     model.addAttribute("workouts", visibleWorkouts);
+    model.addAttribute("draftWorkouts", draftWorkouts);
 
     model.addAttribute(
         "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());

@@ -1,6 +1,5 @@
 package web.sportflow.workout;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
@@ -133,7 +133,16 @@ public class WorkoutController {
       @RequestParam(name = "depthM", required = false) List<String> depthM,
       @RequestParam(name = "laps", required = false) List<String> laps,
       @RequestParam(name = "rounds", required = false) List<String> rounds,
-      @AuthenticationPrincipal User currentUser) {
+      @RequestParam(name = "submitAction", defaultValue = "draft") String submitAction,
+      @AuthenticationPrincipal User currentUser,
+      RedirectAttributes redirectAttributes) {
+    if (workoutDto.getDate() == null) {
+      redirectAttributes.addFlashAttribute("errorMessage", "La date de la seance est obligatoire.");
+      return workoutDto.getId() == null
+          ? "redirect:/workouts/new"
+          : "redirect:/workouts/" + workoutDto.getId() + "/edit";
+    }
+
     Workout workout;
     if (workoutDto.getId() != null) {
       Workout existingWorkout = workoutService.findById(workoutDto.getId()).orElseThrow();
@@ -148,18 +157,19 @@ public class WorkoutController {
     workout.setName(resolveWorkoutName(workoutDto));
     workout.setDescription(normalizeNullable(workoutDto.getDescription()));
     workout.setSport(workoutDto.getSport());
-    workout.setDate(workoutDto.getDate() == null ? LocalDateTime.now() : workoutDto.getDate());
+    workout.setDate(workoutDto.getDate());
     workout.setRating(normalizeRating(workoutDto.getRating()));
     workout.setWeather(workoutDto.getWeather());
-    workout.setAddress(workoutDto.getAddress());
-    workout.setRating(workoutDto.getRating());
+    workout.setAddress(normalizeNullable(workoutDto.getAddress()));
     workout.setDurationSec(null);
     if (workoutDto.getDuration() != null) {
       workout.setDurationMin(workoutDto.getDuration());
     }
+    Map<String, Boolean> fieldProfile = sportService.buildFieldProfile(workout.getSport());
     workout.setWorkoutExercises(
         buildWorkoutExercises(
             workout,
+            fieldProfile,
             exerciseIds,
             sets,
             reps,
@@ -177,7 +187,22 @@ public class WorkoutController {
             depthM,
             laps,
             rounds));
-    workoutService.saveWorkout(workout, currentUser);
+    boolean publishRequested = "publish".equals(submitAction);
+    List<String> publishErrors =
+        publishRequested ? validatePublication(workout, fieldProfile) : List.of();
+    workout.setPublished(publishRequested && publishErrors.isEmpty());
+    workout = workoutService.saveWorkout(workout, currentUser);
+    if (!publishErrors.isEmpty()) {
+      redirectAttributes.addFlashAttribute(
+          "errorMessage", "Publication impossible : " + String.join(" ", publishErrors));
+      redirectAttributes.addFlashAttribute(
+          "message", "Les changements ont ete gardes en brouillon.");
+      return "redirect:/workouts/" + workout.getId() + "/edit";
+    }
+    if (!publishRequested) {
+      redirectAttributes.addFlashAttribute("message", "Brouillon enregistre.");
+      return "redirect:/workouts/" + workout.getId() + "/edit";
+    }
     return "redirect:/dashboard";
   }
 
@@ -185,7 +210,7 @@ public class WorkoutController {
     if (workoutDto.getName() != null && !workoutDto.getName().isBlank()) {
       return workoutDto.getName().trim();
     }
-    throw new IllegalArgumentException("Workout name is mandatory");
+    return null;
   }
 
   @PostMapping("/{id}/delete")
@@ -204,6 +229,7 @@ public class WorkoutController {
 
   private List<WorkoutExercise> buildWorkoutExercises(
       Workout workout,
+      Map<String, Boolean> fieldProfile,
       List<String> exerciseIds,
       List<String> sets,
       List<String> reps,
@@ -230,6 +256,7 @@ public class WorkoutController {
             index ->
                 buildWorkoutExercise(
                     workout,
+                    fieldProfile,
                     valueAt(exerciseIds, index),
                     valueAt(sets, index),
                     valueAt(reps, index),
@@ -253,6 +280,7 @@ public class WorkoutController {
 
   private java.util.Optional<WorkoutExercise> buildWorkoutExercise(
       Workout workout,
+      Map<String, Boolean> fieldProfile,
       String exerciseId,
       String sets,
       String reps,
@@ -282,30 +310,144 @@ public class WorkoutController {
               WorkoutExercise workoutExercise = new WorkoutExercise();
               workoutExercise.setWorkout(workout);
               workoutExercise.setExercise(exercise);
-              workoutExercise.setSets(parseInteger(sets));
-              workoutExercise.setReps(parseInteger(reps));
-              Double parsedWeightKg = parseDouble(weightKg);
-              if (parsedWeightKg != null) {
-                workoutExercise.setWeightG(parsedWeightKg);
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_REPETITIONS)) {
+                workoutExercise.setSets(parseInteger(sets));
+                workoutExercise.setReps(parseInteger(reps));
               }
-              Double parsedDurationMin = parseDouble(durationMin);
-              if (parsedDurationMin != null) {
-                workoutExercise.setDurationMin(parsedDurationMin);
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_LOAD)) {
+                Double parsedWeightKg = parseDouble(weightKg);
+                if (parsedWeightKg != null) {
+                  workoutExercise.setWeightG(parsedWeightKg);
+                }
               }
-              workoutExercise.setDistanceM(parseDouble(distanceM));
-              workoutExercise.setAverageBpm(parseDouble(averageBpm));
-              workoutExercise.setElevationGainM(parseDouble(elevationGainM));
-              workoutExercise.setMaxSpeedKmh(parseDouble(maxSpeedKmh));
-              workoutExercise.setScore(parseDouble(score));
-              workoutExercise.setAttempts(parseInteger(attempts));
-              workoutExercise.setSuccessfulAttempts(parseInteger(successfulAttempts));
-              workoutExercise.setAccuracyPercent(parseDouble(accuracyPercent));
-              workoutExercise.setHeightM(parseDouble(heightM));
-              workoutExercise.setDepthM(parseDouble(depthM));
-              workoutExercise.setLaps(parseInteger(laps));
-              workoutExercise.setRounds(parseInteger(rounds));
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DURATION)) {
+                Double parsedDurationMin = parseDouble(durationMin);
+                if (parsedDurationMin != null) {
+                  workoutExercise.setDurationMin(parsedDurationMin);
+                }
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DISTANCE)) {
+                workoutExercise.setDistanceM(parseDouble(distanceM));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_CARDIO)) {
+                workoutExercise.setAverageBpm(parseDouble(averageBpm));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ELEVATION)) {
+                workoutExercise.setElevationGainM(parseDouble(elevationGainM));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_SPEED)) {
+                workoutExercise.setMaxSpeedKmh(parseDouble(maxSpeedKmh));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_SCORE)) {
+                workoutExercise.setScore(parseDouble(score));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ATTEMPTS)) {
+                workoutExercise.setAttempts(parseInteger(attempts));
+                workoutExercise.setSuccessfulAttempts(parseInteger(successfulAttempts));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ACCURACY)) {
+                workoutExercise.setAccuracyPercent(parseDouble(accuracyPercent));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_HEIGHT)) {
+                workoutExercise.setHeightM(parseDouble(heightM));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DEPTH)) {
+                workoutExercise.setDepthM(parseDouble(depthM));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_LAPS)) {
+                workoutExercise.setLaps(parseInteger(laps));
+              }
+              if (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ROUNDS)) {
+                workoutExercise.setRounds(parseInteger(rounds));
+              }
               return workoutExercise;
             });
+  }
+
+  private boolean isExerciseFieldEnabled(Map<String, Boolean> fieldProfile, String fieldName) {
+    return fieldProfile != null && Boolean.TRUE.equals(fieldProfile.get(fieldName));
+  }
+
+  private List<String> validatePublication(Workout workout, Map<String, Boolean> fieldProfile) {
+    java.util.ArrayList<String> errors = new java.util.ArrayList<>();
+
+    if (workout == null) {
+      return List.of("La seance est introuvable.");
+    }
+    if (workout.getDate() == null) {
+      errors.add("La date est obligatoire.");
+    }
+    if (workout.getSport() == null) {
+      errors.add("Le sport est obligatoire.");
+    }
+    if (workout.getDescription() == null || workout.getDescription().isBlank()) {
+      errors.add("La description est obligatoire.");
+    }
+    if (workout.getRating() == null) {
+      errors.add("Le ressenti est obligatoire.");
+    }
+    if (workout.getDurationSec() == null || workout.getDurationSec() <= 0) {
+      errors.add("La duree totale est obligatoire.");
+    }
+    if (workout.getAddress() == null || workout.getAddress().isBlank()) {
+      errors.add("Le lieu est obligatoire.");
+    }
+
+    List<WorkoutExercise> workoutExercises = workout.getWorkoutExercises();
+    if (workoutExercises == null || workoutExercises.isEmpty()) {
+      errors.add("Ajoute au moins un exercice.");
+      return errors;
+    }
+
+    for (int index = 0; index < workoutExercises.size(); index++) {
+      WorkoutExercise workoutExercise = workoutExercises.get(index);
+      int rowNumber = index + 1;
+      if (workoutExercise == null || workoutExercise.getExercise() == null) {
+        errors.add("Selectionne un exercice sur la ligne " + rowNumber + ".");
+        continue;
+      }
+      if (!hasExerciseMetric(workoutExercise, fieldProfile)) {
+        errors.add("Renseigne au moins une valeur pour l'exercice " + rowNumber + ".");
+      }
+    }
+    return errors;
+  }
+
+  private boolean hasExerciseMetric(
+      WorkoutExercise workoutExercise, Map<String, Boolean> fieldProfile) {
+    return (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DURATION)
+            && isPositive(workoutExercise.getDurationSec()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DISTANCE)
+            && isPositive(workoutExercise.getDistanceM()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_REPETITIONS)
+            && (isPositive(workoutExercise.getSets()) || isPositive(workoutExercise.getReps())))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_LOAD)
+            && isPositive(workoutExercise.getWeightKg()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_CARDIO)
+            && isPositive(workoutExercise.getAverageBpm()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ELEVATION)
+            && isPositive(workoutExercise.getElevationGainM()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_SPEED)
+            && isPositive(workoutExercise.getMaxSpeedKmh()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_SCORE)
+            && isPositive(workoutExercise.getScore()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ATTEMPTS)
+            && (isPositive(workoutExercise.getAttempts())
+                || isPositive(workoutExercise.getSuccessfulAttempts())))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ACCURACY)
+            && isPositive(workoutExercise.getAccuracyPercent()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_HEIGHT)
+            && isPositive(workoutExercise.getHeightM()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_DEPTH)
+            && isPositive(workoutExercise.getDepthM()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_LAPS)
+            && isPositive(workoutExercise.getLaps()))
+        || (isExerciseFieldEnabled(fieldProfile, SportService.FIELD_ROUNDS)
+            && isPositive(workoutExercise.getRounds()));
+  }
+
+  private boolean isPositive(Number value) {
+    return value != null && value.doubleValue() > 0;
   }
 
   private String valueAt(List<String> values, int index) {

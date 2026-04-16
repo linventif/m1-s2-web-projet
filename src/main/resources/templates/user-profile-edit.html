@@ -59,6 +59,8 @@
                     class="input input-bordered"
                     type="text"
                     name="firstname"
+                    maxlength="80"
+                    autocomplete="given-name"
                     required
                     th:value="${user.firstname}"
                   />
@@ -70,6 +72,8 @@
                     class="input input-bordered"
                     type="text"
                     name="lastname"
+                    maxlength="80"
+                    autocomplete="family-name"
                     required
                     th:value="${user.lastname}"
                   />
@@ -82,6 +86,8 @@
                   class="input input-bordered"
                   type="email"
                   name="email"
+                  maxlength="254"
+                  autocomplete="email"
                   required
                   th:value="${user.email}"
                 />
@@ -135,6 +141,8 @@
                     class="input input-bordered"
                     type="date"
                     name="birthDate"
+                    min="1900-01-01"
+                    th:max="${T(java.time.LocalDate).now()}"
                     th:value="${user.birthDate}"
                   />
                 </label>

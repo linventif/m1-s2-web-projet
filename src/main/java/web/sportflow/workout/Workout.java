@@ -58,11 +58,15 @@ public class Workout {
   @Column(name = "rating", nullable = true)
   private Double rating; // note de 0.5 a 5.0
 
+  @Column(name = "published", nullable = false)
+  @ColumnDefault("true")
+  private boolean published = true;
+
   @Transient private Double calories;
 
   @Embedded private WeatherStatsDTO weather;
 
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = true)
   @JoinColumn(name = "sport_id")
   private Sport sport;
 
@@ -260,6 +264,14 @@ public class Workout {
 
   public void setRating(Double rating) {
     this.rating = rating;
+  }
+
+  public boolean isPublished() {
+    return published;
+  }
+
+  public void setPublished(boolean published) {
+    this.published = published;
   }
 
   public WeatherStatsDTO getWeather() {

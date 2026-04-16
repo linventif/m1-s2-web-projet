@@ -79,7 +79,8 @@
                       name="caloriesPerMinute"
                       type="number"
                       step="0.1"
-                      min="0.1"
+                      min="1"
+                      max="23"
                       class="input input-bordered"
                       placeholder="Calories / min"
                       required
@@ -118,7 +119,8 @@
                           name="caloriesPerMinute"
                           type="number"
                           step="0.1"
-                          min="0.1"
+                          min="1"
+                          max="23"
                           class="input input-bordered"
                           th:value="${sport.caloryPerMinutes}"
                           required

@@ -46,6 +46,7 @@ public class WorkoutService {
     if (workout.getAddress() != null
         && !workout.getAddress().isEmpty()
         && workout.getDate() != null
+        && workout.getDurationSec() != null
         && workout.getDate().getMonthValue() > java.time.LocalDateTime.now().getMonthValue() - 1) {
       WeatherStatsDTO weatherStatsDTO =
           weatherService.getWeatherStats(
@@ -60,12 +61,7 @@ public class WorkoutService {
   @Transactional(readOnly = true)
   public List<Workout> getAll() {
     List<Workout> workouts = workoutRepository.findAllByOrderByDateDesc();
-    workouts.forEach(
-        workout -> {
-          workout.getWorkoutExercises().size();
-          workout.getUser().getBadges().size();
-        });
-    return workouts;
+    return keepDisplayable(workouts);
   }
 
   @Transactional(readOnly = true)
@@ -73,15 +69,27 @@ public class WorkoutService {
     return getAllForUsers(friendshipService.getCurrentUserAndFriendIds(userId));
   }
 
+  @Transactional(readOnly = true)
   public List<Workout> getAllForUsers(List<Long> userIds) {
     if (userIds == null || userIds.isEmpty()) {
       return List.of();
     }
-    return workoutRepository.findByUserIdInOrderByDateDesc(userIds);
+    return keepDisplayable(workoutRepository.findByUserIdInOrderByDateDesc(userIds));
   }
 
+  @Transactional(readOnly = true)
   public List<Workout> getAllStatutsForUser() {
-    return workoutRepository.findAllByOrderByDateDesc();
+    return keepDisplayable(workoutRepository.findAllByOrderByDateDesc());
+  }
+
+  @Transactional(readOnly = true)
+  public List<Workout> getIncompleteForUser(User user) {
+    if (user == null || user.getId() == null) {
+      return List.of();
+    }
+    return prepareWorkouts(workoutRepository.findByUserOrderByDateDesc(user)).stream()
+        .filter(workout -> !isDisplayable(workout))
+        .toList();
   }
 
   public double getTotalDistanceThisWeek(User user) {
@@ -91,7 +99,7 @@ public class WorkoutService {
     java.time.LocalDateTime start = startOfWeek.atStartOfDay();
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
+    return findDisplayableByUserAndDateBetween(user, start, end).stream()
         .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
@@ -103,7 +111,7 @@ public class WorkoutService {
     java.time.LocalDateTime start = startOfMonth.atStartOfDay();
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
+    return findDisplayableByUserAndDateBetween(user, start, end).stream()
         .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
@@ -115,7 +123,7 @@ public class WorkoutService {
     java.time.LocalDateTime start = startOfYear.atStartOfDay();
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
+    return findDisplayableByUserAndDateBetween(user, start, end).stream()
         .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
   }
@@ -127,7 +135,7 @@ public class WorkoutService {
     java.time.LocalDateTime start = startOfWeek.atStartOfDay();
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
+    return findDisplayableByUserAndDateBetween(user, start, end).stream()
         .filter(workout -> workout.getDurationSec() != null)
         .mapToDouble(Workout::getDurationSec)
         .sum();
@@ -140,7 +148,7 @@ public class WorkoutService {
     java.time.LocalDateTime start = startOfWeek.atStartOfDay();
     java.time.LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-    return workoutRepository.findByUserAndDateBetween(user, start, end).stream()
+    return findDisplayableByUserAndDateBetween(user, start, end).stream()
         .mapToDouble(
             workout -> {
               Double calories = workout.getCalorieBurn();
@@ -160,8 +168,7 @@ public class WorkoutService {
       LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
       double totalDistance =
-          workoutRepository
-              .findByUserAndDateBetween(
+          findDisplayableByUserAndDateBetween(
                   user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
               .stream()
               .mapToDouble(this::getWorkoutDistanceKm)
@@ -218,8 +225,7 @@ public class WorkoutService {
               : startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
       double monthDistance =
-          workoutRepository
-              .findByUserAndDateBetween(
+          findDisplayableByUserAndDateBetween(
                   user, startOfMonth.atStartOfDay(), endOfMonth.plusDays(1).atStartOfDay())
               .stream()
               .mapToDouble(this::getWorkoutDistanceKm)
@@ -323,8 +329,7 @@ public class WorkoutService {
       LocalDate currentDay = startOfWeek.plusDays(i);
 
       double total =
-          workoutRepository
-              .findByUserAndDateBetween(
+          findDisplayableByUserAndDateBetween(
                   user, currentDay.atStartOfDay(), currentDay.plusDays(1).atStartOfDay())
               .stream()
               .mapToDouble(this::getWorkoutDistanceKm)
@@ -359,8 +364,7 @@ public class WorkoutService {
       LocalDate currentDate = startOfMonth.withDayOfMonth(day);
 
       double total =
-          workoutRepository
-              .findByUserAndDateBetween(
+          findDisplayableByUserAndDateBetween(
                   user, currentDate.atStartOfDay(), currentDate.plusDays(1).atStartOfDay())
               .stream()
               .mapToDouble(this::getWorkoutDistanceKm)
@@ -387,12 +391,19 @@ public class WorkoutService {
       return 0.0;
     }
 
-    return workoutRepository
-        .findByUserAndDateBetween(
+    return findDisplayableByUserAndDateBetween(
             user, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay())
         .stream()
         .mapToDouble(this::getWorkoutDistanceKm)
         .sum();
+  }
+
+  private List<Workout> findDisplayableByUserAndDateBetween(
+      User user, java.time.LocalDateTime start, java.time.LocalDateTime end) {
+    if (user == null || user.getId() == null || start == null || end == null) {
+      return List.of();
+    }
+    return keepDisplayable(workoutRepository.findByUserAndDateBetween(user, start, end));
   }
 
   private double getWorkoutDistanceKm(Workout workout) {
@@ -439,10 +450,84 @@ public class WorkoutService {
     workoutRepository.save(workout);
   }
 
-  public void saveWorkout(Workout workout, User currentUser) {
+  public Workout saveWorkout(Workout workout, User currentUser) {
     workout.setUser(currentUser);
     workout.getCalorieBurn();
-    workoutRepository.save(workout);
+    return workoutRepository.save(workout);
+  }
+
+  public boolean isDisplayable(Workout workout) {
+    return workout != null && workout.isPublished() && isPublishable(workout);
+  }
+
+  public boolean isPublishable(Workout workout) {
+    if (workout == null
+        || workout.getDate() == null
+        || workout.getUser() == null
+        || workout.getSport() == null
+        || workout.getDescription() == null
+        || workout.getDescription().isBlank()
+        || workout.getRating() == null
+        || workout.getDurationSec() == null
+        || workout.getDurationSec() <= 0
+        || workout.getAddress() == null
+        || workout.getAddress().isBlank()
+        || workout.getWorkoutExercises() == null
+        || workout.getWorkoutExercises().isEmpty()) {
+      return false;
+    }
+
+    return workout.getWorkoutExercises().stream()
+        .allMatch(
+            workoutExercise ->
+                workoutExercise != null
+                    && workoutExercise.getExercise() != null
+                    && hasExerciseMetric(workoutExercise));
+  }
+
+  private boolean hasExerciseMetric(WorkoutExercise workoutExercise) {
+    return workoutExercise != null
+        && (isPositive(workoutExercise.getDurationSec())
+            || isPositive(workoutExercise.getDistanceM())
+            || isPositive(workoutExercise.getSets())
+            || isPositive(workoutExercise.getReps())
+            || isPositive(workoutExercise.getWeightKg())
+            || isPositive(workoutExercise.getAverageBpm())
+            || isPositive(workoutExercise.getElevationGainM())
+            || isPositive(workoutExercise.getMaxSpeedKmh())
+            || isPositive(workoutExercise.getScore())
+            || isPositive(workoutExercise.getAttempts())
+            || isPositive(workoutExercise.getSuccessfulAttempts())
+            || isPositive(workoutExercise.getAccuracyPercent())
+            || isPositive(workoutExercise.getHeightM())
+            || isPositive(workoutExercise.getDepthM())
+            || isPositive(workoutExercise.getLaps())
+            || isPositive(workoutExercise.getRounds()));
+  }
+
+  private boolean isPositive(Number value) {
+    return value != null && value.doubleValue() > 0;
+  }
+
+  private List<Workout> keepDisplayable(List<Workout> workouts) {
+    return prepareWorkouts(workouts).stream().filter(this::isDisplayable).toList();
+  }
+
+  private List<Workout> prepareWorkouts(List<Workout> workouts) {
+    if (workouts == null) {
+      return List.of();
+    }
+    workouts.forEach(
+        workout -> {
+          if (workout == null) {
+            return;
+          }
+          workout.getWorkoutExercises().size();
+          if (workout.getUser() != null) {
+            workout.getUser().getBadges().size();
+          }
+        });
+    return workouts;
   }
 
   public void deleteWorkout(Workout workout) {
