@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +28,22 @@ public class SportService {
   public static final String FIELD_MOBILITY = "mobility";
 
   private static final List<String> FIELD_KEYS =
-    List.of(
-      FIELD_DURATION,
-      FIELD_DISTANCE,
-      FIELD_REPETITIONS,
-      FIELD_LOAD,
-      FIELD_CARDIO,
-      FIELD_ELEVATION,
-      FIELD_SPEED,
-      FIELD_SCORE,
-      FIELD_ATTEMPTS,
-      FIELD_ACCURACY,
-      FIELD_HEIGHT,
-      FIELD_DEPTH,
-      FIELD_LAPS,
-      FIELD_ROUNDS,
-      FIELD_MOBILITY);
+      List.of(
+          FIELD_DURATION,
+          FIELD_DISTANCE,
+          FIELD_REPETITIONS,
+          FIELD_LOAD,
+          FIELD_CARDIO,
+          FIELD_ELEVATION,
+          FIELD_SPEED,
+          FIELD_SCORE,
+          FIELD_ATTEMPTS,
+          FIELD_ACCURACY,
+          FIELD_HEIGHT,
+          FIELD_DEPTH,
+          FIELD_LAPS,
+          FIELD_ROUNDS,
+          FIELD_MOBILITY);
 
   private final SportRepository sportRepository;
 
@@ -97,79 +96,87 @@ public class SportService {
     }
 
     return switch (normalizeSportName(sport.getName())) {
-      case "course", "marathon" -> fieldProfile(
-        FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
+      case "course", "marathon" ->
+          fieldProfile(
+              FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
       case "marche", "randonnee" ->
-        fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED);
+          fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED);
       case "cyclisme" ->
-        fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS);
+          fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS);
       case "natation" -> fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_SPEED, FIELD_LAPS);
-      case "triathlon" -> fieldProfile(
-        FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
-      case "pentathlon" -> fieldProfile(
-        FIELD_DISTANCE,
-        FIELD_CARDIO,
-        FIELD_SPEED,
-        FIELD_SCORE,
-        FIELD_ATTEMPTS,
-        FIELD_ACCURACY);
+      case "triathlon" ->
+          fieldProfile(
+              FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
+      case "pentathlon" ->
+          fieldProfile(
+              FIELD_DISTANCE,
+              FIELD_CARDIO,
+              FIELD_SPEED,
+              FIELD_SCORE,
+              FIELD_ATTEMPTS,
+              FIELD_ACCURACY);
       case "alpinisme" ->
-        fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_HEIGHT, FIELD_ATTEMPTS);
-      case "escalade" -> fieldProfile(
-        FIELD_REPETITIONS,
-        FIELD_CARDIO,
-        FIELD_SCORE,
-        FIELD_ATTEMPTS,
-        FIELD_HEIGHT,
-        FIELD_MOBILITY);
-      case "parkour" -> fieldProfile(
-        FIELD_DISTANCE,
-        FIELD_REPETITIONS,
-        FIELD_CARDIO,
-        FIELD_SCORE,
-        FIELD_ATTEMPTS,
-        FIELD_HEIGHT,
-        FIELD_MOBILITY);
+          fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_HEIGHT, FIELD_ATTEMPTS);
+      case "escalade" ->
+          fieldProfile(
+              FIELD_REPETITIONS,
+              FIELD_CARDIO,
+              FIELD_SCORE,
+              FIELD_ATTEMPTS,
+              FIELD_HEIGHT,
+              FIELD_MOBILITY);
+      case "parkour" ->
+          fieldProfile(
+              FIELD_DISTANCE,
+              FIELD_REPETITIONS,
+              FIELD_CARDIO,
+              FIELD_SCORE,
+              FIELD_ATTEMPTS,
+              FIELD_HEIGHT,
+              FIELD_MOBILITY);
       case "musculation" ->
-        fieldProfile(FIELD_REPETITIONS, FIELD_LOAD, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS);
+          fieldProfile(FIELD_REPETITIONS, FIELD_LOAD, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS);
       case "callisthenie" ->
-        fieldProfile(FIELD_REPETITIONS, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS, FIELD_MOBILITY);
-      case "crossfit" -> fieldProfile(
-        FIELD_REPETITIONS, FIELD_LOAD, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS, FIELD_LAPS);
+          fieldProfile(FIELD_REPETITIONS, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS, FIELD_MOBILITY);
+      case "crossfit" ->
+          fieldProfile(
+              FIELD_REPETITIONS, FIELD_LOAD, FIELD_CARDIO, FIELD_SCORE, FIELD_ROUNDS, FIELD_LAPS);
       case "yoga" -> fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_MOBILITY);
-      case "gymnastique" -> fieldProfile(
-        FIELD_REPETITIONS,
-        FIELD_CARDIO,
-        FIELD_SCORE,
-        FIELD_ATTEMPTS,
-        FIELD_HEIGHT,
-        FIELD_MOBILITY);
+      case "gymnastique" ->
+          fieldProfile(
+              FIELD_REPETITIONS,
+              FIELD_CARDIO,
+              FIELD_SCORE,
+              FIELD_ATTEMPTS,
+              FIELD_HEIGHT,
+              FIELD_MOBILITY);
       case "plongee" -> fieldProfile(FIELD_CARDIO, FIELD_DEPTH, FIELD_LAPS);
       case "speleologie" -> fieldProfile(FIELD_CARDIO, FIELD_ELEVATION, FIELD_DEPTH, FIELD_HEIGHT);
       case "saut_parachute", "base_jump" ->
-        fieldProfile(FIELD_HEIGHT, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
+          fieldProfile(FIELD_HEIGHT, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
       case "lance" -> fieldProfile(FIELD_DISTANCE, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
       case "saut" -> fieldProfile(FIELD_DISTANCE, FIELD_HEIGHT, FIELD_SCORE, FIELD_ATTEMPTS);
       case "football", "basketball", "hockey" ->
-        fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
+          fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
       case "tennis", "ping_pong", "squash" ->
-        fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_ROUNDS);
+          fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_ROUNDS);
       case "judo", "taekwondo", "karate", "boxe", "escrime", "lutte" ->
-        fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_ROUNDS);
-      case "ski", "patinage", "skate" -> fieldProfile(
-        FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
+          fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_ROUNDS);
+      case "ski", "patinage", "skate" ->
+          fieldProfile(
+              FIELD_DISTANCE, FIELD_CARDIO, FIELD_ELEVATION, FIELD_SPEED, FIELD_LAPS, FIELD_SCORE);
       case "curling", "tir_sportif", "tir_arc", "tir_cible" ->
-        fieldProfile(FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
+          fieldProfile(FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY);
       case "luge", "bobsleigh", "formule_1", "motocyclisme" ->
-        fieldProfile(FIELD_SPEED, FIELD_LAPS, FIELD_SCORE, FIELD_ATTEMPTS);
+          fieldProfile(FIELD_SPEED, FIELD_LAPS, FIELD_SCORE, FIELD_ATTEMPTS);
       case "aviron", "canoe_kayak" ->
-        fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_SPEED, FIELD_LAPS);
+          fieldProfile(FIELD_DISTANCE, FIELD_CARDIO, FIELD_SPEED, FIELD_LAPS);
       case "surf" -> fieldProfile(FIELD_CARDIO, FIELD_SPEED, FIELD_SCORE, FIELD_ATTEMPTS);
       case "voile" -> fieldProfile(FIELD_SPEED, FIELD_SCORE, FIELD_ATTEMPTS);
       case "equitation" ->
-        fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_HEIGHT, FIELD_ACCURACY);
+          fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS, FIELD_HEIGHT, FIELD_ACCURACY);
       case "repassage_extrem" ->
-        fieldProfile(FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_HEIGHT);
+          fieldProfile(FIELD_SCORE, FIELD_ATTEMPTS, FIELD_ACCURACY, FIELD_HEIGHT);
       default -> fieldProfile(FIELD_CARDIO, FIELD_SCORE, FIELD_ATTEMPTS);
     };
   }
@@ -188,10 +195,10 @@ public class SportService {
 
   private String normalizeSportName(String sportName) {
     return Normalizer.normalize(sportName, Normalizer.Form.NFD)
-      .replaceAll("\\p{M}", "")
-      .trim()
-      .toLowerCase(Locale.ROOT)
-      .replace('-', '_')
-      .replace(' ', '_');
+        .replaceAll("\\p{M}", "")
+        .trim()
+        .toLowerCase(Locale.ROOT)
+        .replace('-', '_')
+        .replace(' ', '_');
   }
 }
