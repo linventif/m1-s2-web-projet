@@ -205,7 +205,8 @@ public class UserController {
               model.addAttribute("canEditProfile", false);
               model.addAttribute("showOwnGoals", false);
               return "user-profile";
-                  .orElseGet(
+            })
+        .orElseGet(
             () -> {
               redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
               return "redirect:/user/friends";
