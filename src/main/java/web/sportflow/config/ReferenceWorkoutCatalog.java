@@ -661,12 +661,28 @@ final class ReferenceWorkoutCatalog {
 
     Workout workout =
         new Workout(resolvedName, date, resolvedAddress, resolvedWeather, exercises, sport, user);
+    workout.setDescription("Seance de demonstration " + sport.getName() + " prete a publier.");
+    workout.setRating(4.0);
+    workout.setDurationSec(resolveWorkoutDurationSec(exercises));
+    workout.setPublished(true);
     for (int index = 0; index < exercises.size(); index++) {
       WorkoutExercise exercise = exercises.get(index);
       exercise.setWorkout(workout);
       ReferenceWorkoutExerciseMetrics.enrich(exercise, sport, index);
     }
     return workout;
+  }
+
+  private static double resolveWorkoutDurationSec(List<WorkoutExercise> exercises) {
+    if (exercises == null || exercises.isEmpty()) {
+      return 1800.0;
+    }
+    double totalDurationSec =
+        exercises.stream()
+            .filter(exercise -> exercise != null && exercise.getDurationSec() != null)
+            .mapToDouble(WorkoutExercise::getDurationSec)
+            .sum();
+    return totalDurationSec > 0 ? totalDurationSec : 1800.0;
   }
 
   private static List<Workout> createCoverageWorkouts(

@@ -11,7 +11,6 @@ final class ReferenceFriendshipCatalog {
       List.of(
           accepted("alice", "owen"),
           requested("benoit", "alice"),
-          requested("admin", "judy"),
           accepted("judy", "nick"),
           accepted("hiccup", "astrid"),
           accepted("stoick", "fishlegs"),
