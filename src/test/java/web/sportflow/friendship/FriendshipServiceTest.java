@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import web.sportflow.notification.NotificationService;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -23,6 +24,8 @@ class FriendshipServiceTest {
   @Mock private FriendshipRepository friendshipRepository;
 
   @Mock private UserRepository userRepository;
+
+  @Mock private NotificationService notificationService;
 
   @InjectMocks private FriendshipService friendshipService;
 
@@ -41,6 +44,7 @@ class FriendshipServiceTest {
     assertEquals(FriendshipStatus.PENDING, result.getStatus());
     assertEquals(requester, result.getRequester());
     assertEquals(addressee, result.getAddressee());
+    verify(notificationService).notifyFriendRequestReceived(result);
   }
 
   @Test
@@ -60,6 +64,7 @@ class FriendshipServiceTest {
     assertEquals(FriendshipStatus.ACCEPTED, result.getStatus());
     assertEquals(addressee, result.getRequester());
     assertEquals(requester, result.getAddressee());
+    verify(notificationService).notifyFriendRequestAccepted(result, requester);
   }
 
   @Test
