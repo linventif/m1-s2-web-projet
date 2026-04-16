@@ -79,9 +79,9 @@
                       </p>
                     </div>
                     <div class="flex flex-wrap items-center justify-end gap-2">
-                      <span class="badge badge-primary">Officiel</span>
+                      <span class="badge badge-outline badge-primary">Officiel</span>
                       <span
-                        class="badge"
+                        class="badge badge-outline"
                         th:classappend="${isTemporary} ? ' badge-warning' : ' badge-info'"
                         th:text="${isTemporary} ? 'Temporaire' : 'Statique'"
                         >Statique</span
@@ -189,7 +189,7 @@
                   </div>
 
                   <div class="card-actions justify-end">
-                    <span class="badge badge-primary">Actif pour tous</span>
+                    <span class="badge badge-outline badge-primary">Actif pour tous</span>
                   </div>
                 </div>
               </article>
