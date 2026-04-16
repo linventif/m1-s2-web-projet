@@ -61,13 +61,12 @@ public class WorkoutController {
     this.exerciseService = exerciseService;
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les activites",
       description =
           "Retourne la vue HTML listant les activites sportives visibles, avec les badges debloques par activite et les objets d'affichage utilises par l'interface utilisateur.")
   @HtmlViewApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping({"", "/"})
   public String listWorkouts(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -82,7 +81,7 @@ public class WorkoutController {
     return "user-workout";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Ajoute ou retire un kudo sur une activite",
       description =
@@ -90,7 +89,6 @@ public class WorkoutController {
   @JsonSuccessApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/{id}/kudo")
   @ResponseBody
   public Map<String, Object> toggleKudo(
@@ -104,7 +102,7 @@ public class WorkoutController {
         "isKudoed", isKudoed);
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Ajoute un commentaire a une activite",
       description =
@@ -112,7 +110,6 @@ public class WorkoutController {
   @HtmlFragmentApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/{id}/comments")
   public String postComment(
       @PathVariable("id") Long workoutId,
@@ -124,7 +121,7 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un commentaire d'une activite",
       description =
@@ -133,7 +130,6 @@ public class WorkoutController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/{id}/comments/{commentId}/delete")
   public String deleteComment(
       @PathVariable("id") Long workoutId,
@@ -145,21 +141,20 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de creation d'une activite",
       description =
           "Retourne la vue HTML du formulaire de creation d'activite avec les sports, exercices et profils de champs necessaires au rendu dynamique du formulaire.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/new")
   public String newWorkoutForm(Model model, @AuthenticationPrincipal User currentUser) {
     populateWorkoutForm(model, new Workout());
     return "user-workout-form";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de modification d'une activite",
       description =
@@ -169,7 +164,6 @@ public class WorkoutController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/{id}/edit")
   public String editWorkoutForm(
       @PathVariable("id") Long workoutId, Model model, @AuthenticationPrincipal User currentUser) {
@@ -183,7 +177,7 @@ public class WorkoutController {
     return "user-workout-form";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree ou met a jour une activite",
       description =
@@ -193,7 +187,6 @@ public class WorkoutController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/save")
   public String saveWorkout(
       @ModelAttribute WorkoutDto workoutDto,
@@ -242,7 +235,7 @@ public class WorkoutController {
     throw new IllegalArgumentException("Workout name is mandatory");
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime une activite",
       description =
@@ -256,7 +249,6 @@ public class WorkoutController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/{id}/delete")
   public String deleteWorkout(
       @PathVariable("id") Long workoutId, @AuthenticationPrincipal User currentUser) {

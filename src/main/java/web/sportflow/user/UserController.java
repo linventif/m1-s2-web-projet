@@ -88,37 +88,34 @@ public class UserController {
     this.friendshipService = friendshipService;
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le menu utilisateur",
       description = "Retourne la vue HTML du menu principal utilisateur.")
   @HtmlViewApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping({"", "/"})
   public String showMenu() {
     return "user-menu";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de creation d'utilisateur",
       description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
   @HtmlViewApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/create")
   public String showCreateForm(Model model) {
     populateUserCreationForm(model, new User());
     return "user-create";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un utilisateur",
       description =
           "Traite la creation d'un utilisateur depuis le formulaire dedie. En cas d'erreur fonctionnelle, la meme vue de creation est retournee avec le message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/create")
   public String createUser(
       @ModelAttribute User user,
@@ -148,14 +145,13 @@ public class UserController {
     }
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le profil de l'utilisateur connecte",
       description =
           "Retourne la vue de profil du compte connecte avec ses objectifs, sports, badges et indicateurs personnalises.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     User profileUser =
@@ -169,7 +165,7 @@ public class UserController {
     return "user-profile";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le profil public d'un utilisateur",
       description =
@@ -177,7 +173,6 @@ public class UserController {
   @HtmlViewApiDoc
   @HtmlRedirectApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
   public String showUserProfile(
       @AuthenticationPrincipal User currentUser,
@@ -205,7 +200,7 @@ public class UserController {
             });
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire d'edition du profil",
       description =
@@ -218,7 +213,7 @@ public class UserController {
     return "user-profile-edit";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour le profil de l'utilisateur connecte",
       description =
@@ -227,7 +222,6 @@ public class UserController {
   @HtmlViewApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/profile/edit")
   public String updateProfile(
       @AuthenticationPrincipal User currentUser,
@@ -320,25 +314,23 @@ public class UserController {
     }
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Redirige vers la page des amis",
       description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
   @HtmlRedirectApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/users")
   public String redirectUsersPage() {
     return "redirect:/users/friends";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Enregistre un nouveau compte",
       description =
           "Traite l'inscription publique d'un utilisateur a partir du DTO d'inscription. En cas d'echec, la vue de creation de compte est retournee avec un message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/register")
   public String registerUser(@ModelAttribute RegistrationDTO registrationDTO, Model model) {
     try {
@@ -351,14 +343,13 @@ public class UserController {
     }
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche la gestion des amis",
       description =
           "Retourne la vue HTML de gestion des amis avec pagination des utilisateurs, recherche textuelle, demandes en attente et relations acceptees.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/friends")
   public String manageFriends(
       @AuthenticationPrincipal User currentUser,
@@ -378,14 +369,13 @@ public class UserController {
     return "user-friends";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les challenges disponibles",
       description =
           "Retourne la vue HTML des challenges avec recherche eventuelle, challenges deja rejoints par l'utilisateur et participation de ses amis.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/challenges")
   public String showChallenges(
       @AuthenticationPrincipal User currentUser,
@@ -409,7 +399,7 @@ public class UserController {
     return "user-challenges";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Rejoint un challenge",
       description =
@@ -418,7 +408,6 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/challenges/{challengeId}/join")
   public String joinChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -434,7 +423,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Quitte un challenge",
       description =
@@ -443,7 +432,6 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/challenges/{challengeId}/leave")
   public String leaveChallenge(
       @AuthenticationPrincipal User currentUser,
@@ -502,7 +490,7 @@ public class UserController {
     model.addAttribute("currentUserId", currentUser.getId());
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Envoie une demande d'amitie",
       description =
@@ -511,7 +499,6 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/friends/request")
   public String sendFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -531,7 +518,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Accepte une demande d'amitie",
       description =
@@ -541,7 +528,6 @@ public class UserController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/friends/accept")
   public String acceptFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -557,7 +543,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Refuse une demande d'amitie",
       description =
@@ -567,7 +553,6 @@ public class UserController {
   @UnauthorizedApiDoc
   @ForbiddenApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/friends/refuse")
   public String refuseFriendRequest(
       @AuthenticationPrincipal User currentUser,
@@ -583,7 +568,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Retire un ami",
       description =
@@ -592,7 +577,6 @@ public class UserController {
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
-  // @SuppressWarnings("CPD-END")
   @PostMapping("/friends/unfriend")
   public String unfriend(
       @AuthenticationPrincipal User currentUser,
@@ -671,13 +655,12 @@ public class UserController {
     return null;
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les activites",
       description =
           "Retourne la vue HTML listant les activites avec leurs badges debloques pour l'utilisateur.")
   @HtmlViewApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/workout")
   public String showWorkout(Model model) {
     List<Workout> workouts = workoutService.getAll();
@@ -692,18 +675,17 @@ public class UserController {
     return "user-workout";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Redirige vers les objectifs du profil",
       description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
   @HtmlRedirectApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping({"/goal", "/goals"})
   public String redirectGoalsPage() {
     return "redirect:/users/profile#goals";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le tableau de bord utilisateur",
       description =
@@ -758,14 +740,13 @@ public class UserController {
     return "dashboard";
   }
 
-  // @SuppressWarnings("CPD-START")
+  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les statistiques utilisateur",
       description =
           "Retourne la vue HTML des statistiques avec distances hebdomadaires, mensuelles et annuelles, courbes, indicateurs corporels et recommandations d'entrainement.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
-  // @SuppressWarnings("CPD-END")
   @GetMapping("/statistique")
   public String showStatistiquePage(@AuthenticationPrincipal User currentUser, Model model) {
     double distanceThisWeek = workoutService.getTotalDistanceThisWeek(currentUser);
