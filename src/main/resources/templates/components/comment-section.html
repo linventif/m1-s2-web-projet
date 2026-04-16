@@ -11,7 +11,14 @@
           type="button"
           class="btn btn-ghost btn-sm px-2 gap-1 text-base-content/70"
           th:attr="data-comments-toggle-id=|comments-toggle-${workout.id}|"
-          onclick="event.stopPropagation(); event.preventDefault(); const toggle = document.getElementById(this.dataset.commentsToggleId); if (toggle) { toggle.checked = !toggle.checked; }"
+          onclick="
+            event.stopPropagation();
+            event.preventDefault();
+            const toggle = document.getElementById(this.dataset.commentsToggleId);
+            if (toggle) {
+              toggle.checked = !toggle.checked;
+            }
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
