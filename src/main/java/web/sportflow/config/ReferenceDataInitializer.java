@@ -555,8 +555,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Challenge challengeRunning25k =
         createSportChallenge(
             sportCoursePied,
-            "Challenge Running 25K",
-            "Cumuler 25 km en " + sportCoursePied.getName() + " sur la periode.",
+            "Challenge 25K",
+            "Cumuler 25 km sur la periode.",
             ChallengeType.DISTANCE,
             25.0,
             today.minusDays(5),
@@ -567,8 +567,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Challenge challengeNatationEndurance =
         createSportChallenge(
             sportNatation,
-            "Challenge Natation Endurance",
-            "Cumuler 180 minutes de " + sportNatation.getName() + ".",
+            "Challenge Endurance",
+            "Cumuler 180 minutes sur la periode.",
             ChallengeType.DUREE,
             180.0,
             today.minusDays(3),
@@ -579,8 +579,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Challenge challengeCyclisme80k =
         createSportChallenge(
             sportCyclisme,
-            "Challenge Cyclisme 80K",
-            "Atteindre 80 km en " + sportCyclisme.getName() + ".",
+            "Challenge 80K",
+            "Atteindre 80 km sur la periode.",
             ChallengeType.DISTANCE,
             80.0,
             today.minusDays(7),
@@ -591,8 +591,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Challenge challengeEscaladeVitesse =
         createSportChallenge(
             sportEscaladeVitesse,
-            "Challenge Escalade Vitesse",
-            "Cumuler 1500 calories sur des seances de " + sportEscaladeVitesse.getName() + ".",
+            "Challenge Vitesse",
+            "Cumuler 1500 calories sur la periode.",
             ChallengeType.CALORIE,
             1500.0,
             today.minusDays(2),
@@ -603,8 +603,8 @@ public class ReferenceDataInitializer implements CommandLineRunner {
     Challenge challengeMusculationRegulier =
         createSportChallenge(
             sportMusculation,
-            "Challenge Musculation Regulier",
-            "Enregistrer 12 seances de " + sportMusculation.getName() + ".",
+            "Challenge Regulier",
+            "Enregistrer 12 seances sur la periode.",
             ChallengeType.REPETITION,
             12.0,
             today.minusDays(1),
@@ -1096,15 +1096,7 @@ public class ReferenceDataInitializer implements CommandLineRunner {
       LocalDate endDate,
       User creator) {
     Challenge challenge =
-        new Challenge(
-            title + " (" + sport.getName() + ")",
-            description,
-            type,
-            targetValue,
-            startDate,
-            endDate,
-            creator,
-            true);
+        new Challenge(title, description, type, targetValue, startDate, endDate, creator, true);
     challenge.getSports().add(sport);
     return challenge;
   }
