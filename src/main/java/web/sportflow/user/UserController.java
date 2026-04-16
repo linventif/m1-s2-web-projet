@@ -2,7 +2,6 @@ package web.sportflow.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -19,7 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +62,7 @@ import web.sportflow.workout.WorkoutService;
 public class UserController {
 
   private static final Set<String> ALLOWED_AVATAR_EXTENSIONS =
-    Set.of("png", "jpg", "jpeg", "webp", "gif");
+      Set.of("png", "jpg", "jpeg", "webp", "gif");
 
   @Value("${app.avatar-upload-dir:upload_data/images/avatar}")
   private String avatarUploadDir;
@@ -77,12 +75,12 @@ public class UserController {
   private final FriendshipService friendshipService;
 
   public UserController(
-    UserService userService,
-    WorkoutService workoutService,
-    GoalService goalService,
-    ChallengeService challengeService,
-    BadgeService badgeService,
-    FriendshipService friendshipService) {
+      UserService userService,
+      WorkoutService workoutService,
+      GoalService goalService,
+      ChallengeService challengeService,
+      BadgeService badgeService,
+      FriendshipService friendshipService) {
     this.userService = userService;
     this.workoutService = workoutService;
     this.goalService = goalService;
@@ -92,8 +90,8 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche le menu utilisateur",
-    description = "Retourne la vue HTML du menu principal utilisateur.")
+      summary = "Affiche le menu utilisateur",
+      description = "Retourne la vue HTML du menu principal utilisateur.")
   @HtmlViewApiDoc
   @GetMapping({"", "/"})
   public String showMenu() {
@@ -101,8 +99,8 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche le formulaire de creation d'utilisateur",
-    description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
+      summary = "Affiche le formulaire de creation d'utilisateur",
+      description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
   @HtmlViewApiDoc
   @GetMapping("/create")
   public String showCreateForm(Model model) {
@@ -111,32 +109,32 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Cree un utilisateur",
-    description =
-      "Traite la creation d'un utilisateur depuis le formulaire dedie. En cas d'erreur fonctionnelle, la meme vue de creation est retournee avec le message d'erreur.")
+      summary = "Cree un utilisateur",
+      description =
+          "Traite la creation d'un utilisateur depuis le formulaire dedie. En cas d'erreur fonctionnelle, la meme vue de creation est retournee avec le message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
   @PostMapping("/create")
   public String createUser(
-    @ModelAttribute User user,
-    @RequestParam String password,
-    @RequestParam String codeStatut,
-    @RequestParam(name = "organizedConferenceIds", required = false)
-    List<Long> organizedConferenceIds,
-    @RequestParam(name = "participatingConferenceIds", required = false)
-    List<Long> participatingConferenceIds,
-    Model model) {
+      @ModelAttribute User user,
+      @RequestParam String password,
+      @RequestParam String codeStatut,
+      @RequestParam(name = "organizedConferenceIds", required = false)
+          List<Long> organizedConferenceIds,
+      @RequestParam(name = "participatingConferenceIds", required = false)
+          List<Long> participatingConferenceIds,
+      Model model) {
     try {
       User createdUser =
-        userService.createUser(
-          user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
+          userService.createUser(
+              user, password, codeStatut, organizedConferenceIds, participatingConferenceIds);
       model.addAttribute(
-        "message",
-        "Utilisateur ajoute avec succes : "
-          + createdUser.getFirstname()
-          + " "
-          + createdUser.getLastname()
-          + ".");
+          "message",
+          "Utilisateur ajoute avec succes : "
+              + createdUser.getFirstname()
+              + " "
+              + createdUser.getLastname()
+              + ".");
       return "user-list";
     } catch (IllegalArgumentException exception) {
       populateUserCreationForm(model, user);
@@ -146,17 +144,17 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche le profil de l'utilisateur connecte",
-    description =
-      "Retourne la vue de profil du compte connecte avec ses objectifs, sports, badges et indicateurs personnalises.")
+      summary = "Affiche le profil de l'utilisateur connecte",
+      description =
+          "Retourne la vue de profil du compte connecte avec ses objectifs, sports, badges et indicateurs personnalises.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/profile")
   public String showProfile(@AuthenticationPrincipal User currentUser, Model model) {
     User profileUser =
-      currentUser == null
-        ? null
-        : userService.getUserById(currentUser.getId()).orElse(currentUser);
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
     populateProfileView(model, profileUser);
     populateProfileFriendshipContext(currentUser, profileUser, model);
     model.addAttribute("canEditProfile", true);
@@ -165,43 +163,43 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche le profil public d'un utilisateur",
-    description =
-      "Retourne le profil public d'un utilisateur cible. Si l'identifiant correspond a l'utilisateur connecte, une redirection vers le profil personnel est effectuee.")
+      summary = "Affiche le profil public d'un utilisateur",
+      description =
+          "Retourne le profil public d'un utilisateur cible. Si l'identifiant correspond a l'utilisateur connecte, une redirection vers le profil personnel est effectuee.")
   @HtmlViewApiDoc
   @HtmlRedirectApiDoc
   @NotFoundApiDoc
   @GetMapping({"/profile/{userId:[0-9]+}", "/{userId:[0-9]+}/profile"})
   public String showUserProfile(
-    @AuthenticationPrincipal User currentUser,
-    @PathVariable Long userId,
-    Model model,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long userId,
+      Model model,
+      RedirectAttributes redirectAttributes) {
     if (currentUser != null && currentUser.getId() != null && currentUser.getId().equals(userId)) {
       return "redirect:/user/profile";
     }
 
     return userService
-      .getUserById(userId)
-      .map(
-        user -> {
-          populateProfileView(model, user);
-          populateProfileFriendshipContext(currentUser, user, model);
-          model.addAttribute("canEditProfile", false);
-          model.addAttribute("showOwnGoals", false);
-          return "user-profile";
-        })
-      .orElseGet(
-        () -> {
-          redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
-          return "redirect:/user/friends";
-        });
+        .getUserById(userId)
+        .map(
+            user -> {
+              populateProfileView(model, user);
+              populateProfileFriendshipContext(currentUser, user, model);
+              model.addAttribute("canEditProfile", false);
+              model.addAttribute("showOwnGoals", false);
+              return "user-profile";
+            })
+        .orElseGet(
+            () -> {
+              redirectAttributes.addFlashAttribute("errorMessage", "Utilisateur introuvable.");
+              return "redirect:/user/friends";
+            });
   }
 
   @Operation(
-    summary = "Affiche le formulaire d'edition du profil",
-    description =
-      "Retourne la vue HTML du formulaire d'edition du profil de l'utilisateur connecte.")
+      summary = "Affiche le formulaire d'edition du profil",
+      description =
+          "Retourne la vue HTML du formulaire d'edition du profil de l'utilisateur connecte.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/profile/edit")
@@ -211,32 +209,32 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Met a jour le profil de l'utilisateur connecte",
-    description =
-      "Traite la mise a jour du profil personnel, y compris l'upload d'avatar si un fichier image valide est fourni. En cas d'erreur, le formulaire d'edition est retourne avec le message associe.")
+      summary = "Met a jour le profil de l'utilisateur connecte",
+      description =
+          "Traite la mise a jour du profil personnel, y compris l'upload d'avatar si un fichier image valide est fourni. En cas d'erreur, le formulaire d'edition est retourne avec le message associe.")
   @HtmlRedirectApiDoc
   @HtmlViewApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @PostMapping("/profile/edit")
   public String updateProfile(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam String firstname,
-    @RequestParam String lastname,
-    @RequestParam String email,
-    @RequestParam Double weight,
-    @RequestParam Double height,
-    @RequestParam Sex sex,
-    @RequestParam PracticeLevel level,
-    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate birthDate,
-    @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
-    Model model,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam String firstname,
+      @RequestParam String lastname,
+      @RequestParam String email,
+      @RequestParam Double weight,
+      @RequestParam Double height,
+      @RequestParam Sex sex,
+      @RequestParam PracticeLevel level,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate birthDate,
+      @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
+      Model model,
+      RedirectAttributes redirectAttributes) {
     try {
       User updatedUser =
-        userService.updateCurrentUserProfile(
-          currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
+          userService.updateCurrentUserProfile(
+              currentUser, firstname, lastname, email, weight, height, sex, birthDate, level);
       if (avatarFile != null && !avatarFile.isEmpty()) {
         String avatarPath = storeAvatarForUser(updatedUser.getId(), avatarFile);
         String avatarPathWithVersion = avatarPath + "?v=" + System.currentTimeMillis();
@@ -311,8 +309,8 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Redirige vers la page des amis",
-    description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
+      summary = "Redirige vers la page des amis",
+      description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
   @HtmlRedirectApiDoc
   @GetMapping("/users")
   public String redirectUsersPage() {
@@ -320,9 +318,9 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Enregistre un nouveau compte",
-    description =
-      "Traite l'inscription publique d'un utilisateur a partir du DTO d'inscription. En cas d'echec, la vue de creation de compte est retournee avec un message d'erreur.")
+      summary = "Enregistre un nouveau compte",
+      description =
+          "Traite l'inscription publique d'un utilisateur a partir du DTO d'inscription. En cas d'echec, la vue de creation de compte est retournee avec un message d'erreur.")
   @HtmlViewApiDoc
   @BadRequestApiDoc
   @PostMapping("/register")
@@ -338,17 +336,17 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche la gestion des amis",
-    description =
-      "Retourne la vue HTML de gestion des amis avec pagination des utilisateurs, recherche textuelle, demandes en attente et relations acceptees.")
+      summary = "Affiche la gestion des amis",
+      description =
+          "Retourne la vue HTML de gestion des amis avec pagination des utilisateurs, recherche textuelle, demandes en attente et relations acceptees.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/friends")
   public String manageFriends(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam(value = "q", required = false) String query,
-    @PageableDefault(size = 10, sort = "lastname") Pageable pageable,
-    Model model) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam(value = "q", required = false) String query,
+      @PageableDefault(size = 10, sort = "lastname") Pageable pageable,
+      Model model) {
     populateFriendshipContext(currentUser, model);
 
     Page<User> userPage;
@@ -363,25 +361,25 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche les challenges disponibles",
-    description =
-      "Retourne la vue HTML des challenges avec recherche eventuelle, challenges deja rejoints par l'utilisateur et participation de ses amis.")
+      summary = "Affiche les challenges disponibles",
+      description =
+          "Retourne la vue HTML des challenges avec recherche eventuelle, challenges deja rejoints par l'utilisateur et participation de ses amis.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/challenges")
   public String showChallenges(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam(value = "q", required = false) String query,
-    Model model) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam(value = "q", required = false) String query,
+      Model model) {
     User refreshedCurrentUser =
-      currentUser == null
-        ? null
-        : userService.getUserById(currentUser.getId()).orElse(currentUser);
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
     List<Challenge> challenges = challengeService.searchChallenges(query);
     challengeService.syncChallengeBadgesForUser(challenges, refreshedCurrentUser);
     if (refreshedCurrentUser != null && refreshedCurrentUser.getId() != null) {
       refreshedCurrentUser =
-        userService.getUserById(refreshedCurrentUser.getId()).orElse(refreshedCurrentUser);
+          userService.getUserById(refreshedCurrentUser.getId()).orElse(refreshedCurrentUser);
     }
     User activeUser = refreshedCurrentUser;
 
@@ -389,31 +387,31 @@ public class UserController {
     List<Challenge> communityChallenges = challengeService.getCommunityChallenges(challenges);
 
     Set<Long> joinedChallengeIds =
-      challenges.stream()
-        .filter(challenge -> hasParticipant(challenge, activeUser))
-        .map(Challenge::getId)
-        .filter(id -> id != null)
-        .collect(Collectors.toSet());
-    Map<Long, ChallengeDto> ChallengeDtoById =
-      challengeService.buildProgressByChallenge(challenges, activeUser);
+        challenges.stream()
+            .filter(challenge -> hasParticipant(challenge, activeUser))
+            .map(Challenge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
+    Map<Long, ChallengeDto> challengeDtoById =
+        challengeService.buildProgressByChallenge(challenges, activeUser);
     Set<Long> completedChallengeIds =
-      ChallengeDtoById.entrySet().stream()
-        .filter(entry -> entry.getValue() != null && entry.getValue().completed())
-        .map(Map.Entry::getKey)
-        .collect(Collectors.toSet());
+        challengeDtoById.entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue().completed())
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     Map<Long, List<User>> friendParticipantsByChallengeId =
-      buildFriendParticipantsByChallengeId(communityChallenges, activeUser);
+        buildFriendParticipantsByChallengeId(communityChallenges, activeUser);
     Map<Long, Set<Long>> unlockedChallengeBadgeIdsByChallengeId =
-      buildUnlockedChallengeBadgeIdsByChallengeId(challenges, activeUser);
+        buildUnlockedChallengeBadgeIdsByChallengeId(challenges, activeUser);
 
     model.addAttribute("challenges", challenges);
     model.addAttribute("officialChallenges", officialChallenges);
     model.addAttribute("communityChallenges", communityChallenges);
     model.addAttribute("joinedChallengeIds", joinedChallengeIds);
-    model.addAttribute("ChallengeDtoById", ChallengeDtoById);
+    model.addAttribute("challengeDtoById", challengeDtoById);
     model.addAttribute("completedChallengeIds", completedChallengeIds);
     model.addAttribute(
-      "unlockedChallengeBadgeIdsByChallengeId", unlockedChallengeBadgeIdsByChallengeId);
+        "unlockedChallengeBadgeIdsByChallengeId", unlockedChallengeBadgeIdsByChallengeId);
     model.addAttribute("friendParticipantsByChallengeId", friendParticipantsByChallengeId);
     model.addAttribute("query", query);
     model.addAttribute("today", LocalDate.now());
@@ -421,19 +419,19 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Rejoint un challenge",
-    description =
-      "Inscrit l'utilisateur connecte au challenge cible puis redirige vers l'URL de retour autorisee, avec message flash de succes ou d'erreur.")
+      summary = "Rejoint un challenge",
+      description =
+          "Inscrit l'utilisateur connecte au challenge cible puis redirige vers l'URL de retour autorisee, avec message flash de succes ou d'erreur.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/join")
   public String joinChallenge(
-    @AuthenticationPrincipal User currentUser,
-    @PathVariable Long challengeId,
-    @RequestParam(defaultValue = "/users/challenges") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long challengeId,
+      @RequestParam(defaultValue = "/users/challenges") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       challengeService.joinChallenge(challengeId, currentUser);
       redirectAttributes.addFlashAttribute("message", "Inscription au challenge confirmee.");
@@ -444,19 +442,19 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Quitte un challenge",
-    description =
-      "Retire l'utilisateur connecte des participants du challenge cible puis redirige vers l'URL de retour autorisee.")
+      summary = "Quitte un challenge",
+      description =
+          "Retire l'utilisateur connecte des participants du challenge cible puis redirige vers l'URL de retour autorisee.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
   @PostMapping("/challenges/{challengeId}/leave")
   public String leaveChallenge(
-    @AuthenticationPrincipal User currentUser,
-    @PathVariable Long challengeId,
-    @RequestParam(defaultValue = "/users/challenges") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long challengeId,
+      @RequestParam(defaultValue = "/users/challenges") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       challengeService.leaveChallenge(challengeId, currentUser);
       redirectAttributes.addFlashAttribute("message", "Participation annulee.");
@@ -468,36 +466,36 @@ public class UserController {
 
   private void populateFriendshipContext(User currentUser, Model model) {
     List<Friendship> incomingRequests =
-      friendshipService.getIncomingPendingRequests(currentUser.getId());
+        friendshipService.getIncomingPendingRequests(currentUser.getId());
     List<Friendship> outgoingRequests =
-      friendshipService.getOutgoingPendingRequests(currentUser.getId());
+        friendshipService.getOutgoingPendingRequests(currentUser.getId());
     List<Friendship> acceptedFriendships =
-      friendshipService.getAcceptedFriendships(currentUser.getId());
+        friendshipService.getAcceptedFriendships(currentUser.getId());
 
     Map<Long, Long> incomingRequestIdByUserId =
-      incomingRequests.stream()
-        .collect(
-          Collectors.toMap(
-            friendship -> friendship.getRequester().getId(),
-            Friendship::getId,
-            (first, ignored) -> first));
+        incomingRequests.stream()
+            .collect(
+                Collectors.toMap(
+                    friendship -> friendship.getRequester().getId(),
+                    Friendship::getId,
+                    (first, ignored) -> first));
 
     Set<Long> incomingRequestSenderIds =
-      incomingRequests.stream()
-        .map(friendship -> friendship.getRequester().getId())
-        .collect(Collectors.toSet());
+        incomingRequests.stream()
+            .map(friendship -> friendship.getRequester().getId())
+            .collect(Collectors.toSet());
     Set<Long> outgoingRequestTargetIds =
-      outgoingRequests.stream()
-        .map(friendship -> friendship.getAddressee().getId())
-        .collect(Collectors.toSet());
+        outgoingRequests.stream()
+            .map(friendship -> friendship.getAddressee().getId())
+            .collect(Collectors.toSet());
     Set<Long> friendIds =
-      acceptedFriendships.stream()
-        .map(
-          friendship ->
-            friendship.getRequester().getId().equals(currentUser.getId())
-              ? friendship.getAddressee().getId()
-              : friendship.getRequester().getId())
-        .collect(Collectors.toSet());
+        acceptedFriendships.stream()
+            .map(
+                friendship ->
+                    friendship.getRequester().getId().equals(currentUser.getId())
+                        ? friendship.getAddressee().getId()
+                        : friendship.getRequester().getId())
+            .collect(Collectors.toSet());
 
     model.addAttribute("incomingRequests", incomingRequests);
     model.addAttribute("outgoingRequests", outgoingRequests);
@@ -510,19 +508,19 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Envoie une demande d'amitie",
-    description =
-      "Cree une demande d'amitie vers un utilisateur cible, ou accepte automatiquement la relation si les conditions metier le permettent.")
+      summary = "Envoie une demande d'amitie",
+      description =
+          "Cree une demande d'amitie vers un utilisateur cible, ou accepte automatiquement la relation si les conditions metier le permettent.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
   @PostMapping("/friends/request")
   public String sendFriendRequest(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam Long targetUserId,
-    @RequestParam(defaultValue = "/users/friends") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long targetUserId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       Friendship friendship = friendshipService.sendRequest(currentUser.getId(), targetUserId);
       if (friendship.getStatus() == FriendshipStatus.ACCEPTED) {
@@ -537,9 +535,9 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Accepte une demande d'amitie",
-    description =
-      "Accepte une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
+      summary = "Accepte une demande d'amitie",
+      description =
+          "Accepte une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
@@ -547,10 +545,10 @@ public class UserController {
   @NotFoundApiDoc
   @PostMapping("/friends/accept")
   public String acceptFriendRequest(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam Long friendshipId,
-    @RequestParam(defaultValue = "/users/friends") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendshipId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       friendshipService.acceptRequest(currentUser.getId(), friendshipId);
       redirectAttributes.addFlashAttribute("message", "Demande d'ami acceptée.");
@@ -561,9 +559,9 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Refuse une demande d'amitie",
-    description =
-      "Refuse une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
+      summary = "Refuse une demande d'amitie",
+      description =
+          "Refuse une demande d'amitie recue par l'utilisateur connecte puis redirige vers l'URL de retour autorisee.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
@@ -571,10 +569,10 @@ public class UserController {
   @NotFoundApiDoc
   @PostMapping("/friends/refuse")
   public String refuseFriendRequest(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam Long friendshipId,
-    @RequestParam(defaultValue = "/users/friends") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendshipId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       friendshipService.refuseRequest(currentUser.getId(), friendshipId);
       redirectAttributes.addFlashAttribute("message", "Demande d'ami refusée.");
@@ -585,19 +583,19 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Retire un ami",
-    description =
-      "Supprime la relation d'amitie entre l'utilisateur connecte et l'ami cible puis redirige vers l'URL de retour autorisee.")
+      summary = "Retire un ami",
+      description =
+          "Supprime la relation d'amitie entre l'utilisateur connecte et l'ami cible puis redirige vers l'URL de retour autorisee.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @UnauthorizedApiDoc
   @NotFoundApiDoc
   @PostMapping("/friends/unfriend")
   public String unfriend(
-    @AuthenticationPrincipal User currentUser,
-    @RequestParam Long friendId,
-    @RequestParam(defaultValue = "/users/friends") String returnTo,
-    RedirectAttributes redirectAttributes) {
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam Long friendId,
+      @RequestParam(defaultValue = "/users/friends") String returnTo,
+      RedirectAttributes redirectAttributes) {
     try {
       friendshipService.unfriend(currentUser.getId(), friendId);
       redirectAttributes.addFlashAttribute("message", "Ami retiré.");
@@ -622,20 +620,20 @@ public class UserController {
       return true;
     }
     return challenge.getParticipants().stream()
-      .anyMatch(user -> user != null && currentUser.getId().equals(user.getId()));
+        .anyMatch(user -> user != null && currentUser.getId().equals(user.getId()));
   }
 
   private Map<Long, List<User>> buildFriendParticipantsByChallengeId(
-    List<Challenge> challenges, User currentUser) {
+      List<Challenge> challenges, User currentUser) {
     if (currentUser == null || currentUser.getId() == null) {
       return Map.of();
     }
 
     Set<Long> friendIds =
-      friendshipService.getAcceptedFriendships(currentUser.getId()).stream()
-        .map(friendship -> getFriendId(friendship, currentUser.getId()))
-        .filter(id -> id != null)
-        .collect(Collectors.toSet());
+        friendshipService.getAcceptedFriendships(currentUser.getId()).stream()
+            .map(friendship -> getFriendId(friendship, currentUser.getId()))
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
     if (friendIds.isEmpty()) {
       return Map.of();
     }
@@ -646,28 +644,28 @@ public class UserController {
         continue;
       }
       List<User> friendParticipants =
-        challenge.getParticipants().stream()
-          .filter(user -> user != null && friendIds.contains(user.getId()))
-          .toList();
+          challenge.getParticipants().stream()
+              .filter(user -> user != null && friendIds.contains(user.getId()))
+              .toList();
       friendParticipantsByChallengeId.put(challenge.getId(), friendParticipants);
     }
     return friendParticipantsByChallengeId;
   }
 
   private Map<Long, Set<Long>> buildUnlockedChallengeBadgeIdsByChallengeId(
-    List<Challenge> challenges, User currentUser) {
+      List<Challenge> challenges, User currentUser) {
     if (currentUser == null
-      || currentUser.getBadges() == null
-      || challenges == null
-      || challenges.isEmpty()) {
+        || currentUser.getBadges() == null
+        || challenges == null
+        || challenges.isEmpty()) {
       return Map.of();
     }
 
     Set<Long> unlockedBadgeIds =
-      currentUser.getBadges().stream()
-        .map(Badge::getId)
-        .filter(id -> id != null)
-        .collect(Collectors.toSet());
+        currentUser.getBadges().stream()
+            .map(Badge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
     if (unlockedBadgeIds.isEmpty()) {
       return Map.of();
     }
@@ -678,10 +676,10 @@ public class UserController {
         continue;
       }
       Set<Long> unlockedChallengeBadgeIds =
-        challenge.getBadges().stream()
-          .map(Badge::getId)
-          .filter(id -> id != null && unlockedBadgeIds.contains(id))
-          .collect(Collectors.toSet());
+          challenge.getBadges().stream()
+              .map(Badge::getId)
+              .filter(id -> id != null && unlockedBadgeIds.contains(id))
+              .collect(Collectors.toSet());
       unlockedByChallengeId.put(challenge.getId(), unlockedChallengeBadgeIds);
     }
     return unlockedByChallengeId;
@@ -692,24 +690,24 @@ public class UserController {
       return null;
     }
     if (friendship.getRequester() != null
-      && currentUserId.equals(friendship.getRequester().getId())) {
+        && currentUserId.equals(friendship.getRequester().getId())) {
       if (friendship.getAddressee() == null) {
         return null;
       }
       return friendship.getAddressee().getId();
     }
     if (friendship.getAddressee() != null
-      && currentUserId.equals(friendship.getAddressee().getId())
-      && friendship.getRequester() != null) {
+        && currentUserId.equals(friendship.getAddressee().getId())
+        && friendship.getRequester() != null) {
       return friendship.getRequester().getId();
     }
     return null;
   }
 
   @Operation(
-    summary = "Affiche les activites",
-    description =
-      "Retourne la vue HTML listant les activites avec leurs badges debloques pour l'utilisateur.")
+      summary = "Affiche les activites",
+      description =
+          "Retourne la vue HTML listant les activites avec leurs badges debloques pour l'utilisateur.")
   @HtmlViewApiDoc
   @GetMapping("/workout")
   public String showWorkout(Model model) {
@@ -720,14 +718,14 @@ public class UserController {
     }
     model.addAttribute("workouts", workouts);
     model.addAttribute(
-      "workoutDisplays", workouts.stream().map(WorkoutDashboardDisplay::new).toList());
+        "workoutDisplays", workouts.stream().map(WorkoutDashboardDisplay::new).toList());
     model.addAttribute("unlockedBadgesByWorkoutId", unlockedBadgesByWorkoutId);
     return "user-workout";
   }
 
   @Operation(
-    summary = "Redirige vers les objectifs du profil",
-    description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
+      summary = "Redirige vers les objectifs du profil",
+      description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
   @HtmlRedirectApiDoc
   @GetMapping({"/goal", "/goals"})
   public String redirectGoalsPage() {
@@ -735,9 +733,9 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche le tableau de bord utilisateur",
-    description =
-      "Retourne la vue HTML du tableau de bord personnel avec objectifs visibles, activites d'amis, challenges actifs et statistiques hebdomadaires.")
+      summary = "Affiche le tableau de bord utilisateur",
+      description =
+          "Retourne la vue HTML du tableau de bord personnel avec objectifs visibles, activites d'amis, challenges actifs et statistiques hebdomadaires.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/dashboard")
@@ -752,33 +750,33 @@ public class UserController {
     int minutesPart = (totalSeconds % 3600) / 60;
 
     List<Friendship> acceptedFriendships =
-      currentUser != null && currentUser.getId() != null
-        ? friendshipService.getAcceptedFriendships(currentUser.getId())
-        : List.of();
+        currentUser != null && currentUser.getId() != null
+            ? friendshipService.getAcceptedFriendships(currentUser.getId())
+            : List.of();
     List<Workout> visibleWorkouts =
-      currentUser != null && currentUser.getId() != null
-        ? workoutService.getFriendsWorkout(currentUser.getId())
-        : List.of();
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getFriendsWorkout(currentUser.getId())
+            : List.of();
     List<Workout> draftWorkouts =
-      currentUser != null && currentUser.getId() != null
-        ? workoutService.getIncompleteForUser(currentUser)
-        : List.of();
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getIncompleteForUser(currentUser)
+            : List.of();
 
     model.addAttribute(
-      "goals",
-      currentUser != null && currentUser.getId() != null
-        ? goalService.getFriendsAndUserGoal(currentUser)
-        : List.of());
+        "goals",
+        currentUser != null && currentUser.getId() != null
+            ? goalService.getFriendsAndUserGoal(currentUser)
+            : List.of());
     model.addAttribute("workouts", visibleWorkouts);
     model.addAttribute("draftWorkouts", draftWorkouts);
 
     model.addAttribute(
-      "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());
+        "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());
     model.addAttribute(
-      "activeChallenges",
-      currentUser != null && currentUser.getId() != null
-        ? challengeService.getFriendsAndUserChallenge(currentUser)
-        : List.of());
+        "activeChallenges",
+        currentUser != null && currentUser.getId() != null
+            ? challengeService.getFriendsAndUserChallenge(currentUser)
+            : List.of());
     model.addAttribute("friends", acceptedFriendships);
 
     model.addAttribute("currentMonthLabel", "Avril 2026");
@@ -794,9 +792,9 @@ public class UserController {
   }
 
   @Operation(
-    summary = "Affiche les statistiques utilisateur",
-    description =
-      "Retourne la vue HTML des statistiques avec distances hebdomadaires, mensuelles et annuelles, courbes, indicateurs corporels et recommandations d'entrainement.")
+      summary = "Affiche les statistiques utilisateur",
+      description =
+          "Retourne la vue HTML des statistiques avec distances hebdomadaires, mensuelles et annuelles, courbes, indicateurs corporels et recommandations d'entrainement.")
   @HtmlViewApiDoc
   @UnauthorizedApiDoc
   @GetMapping("/statistique")
@@ -813,7 +811,7 @@ public class UserController {
     int minutesPart = (totalSeconds % 3600) / 60;
 
     double averageMonthlyDistanceThisYear =
-      workoutService.getAverageMonthlyDistanceThisYear(currentUser);
+        workoutService.getAverageMonthlyDistanceThisYear(currentUser);
 
     double distanceGapVsAverage = workoutService.getDistanceGapVsAverageMonthly(currentUser);
 
@@ -835,7 +833,7 @@ public class UserController {
     model.addAttribute("monthlyBars", workoutService.getMonthlyBarViewsCurrentYear(currentUser));
 
     model.addAttribute(
-      "averageMonthlyDistanceThisYear", Math.round(averageMonthlyDistanceThisYear * 10.0) / 10.0);
+        "averageMonthlyDistanceThisYear", Math.round(averageMonthlyDistanceThisYear * 10.0) / 10.0);
 
     model.addAttribute("distanceGapVsAverage", Math.round(distanceGapVsAverage * 10.0) / 10.0);
 
@@ -847,7 +845,7 @@ public class UserController {
 
     model.addAttribute("monthChartLabels", workoutService.getMonthLabelsForChart());
     model.addAttribute(
-      "monthChartDistances", workoutService.getMonthDistancesForChart(currentUser));
+        "monthChartDistances", workoutService.getMonthDistancesForChart(currentUser));
 
     model.addAttribute("yearChartLabels", workoutService.getYearLabelsForChart());
     model.addAttribute("yearChartDistances", workoutService.getYearDistancesForChart(currentUser));
@@ -866,10 +864,10 @@ public class UserController {
   private void populateProfileView(Model model, User user) {
     model.addAttribute("user", user);
     Set<Long> unlockedBadgeIds =
-      user.getBadges().stream()
-        .map(Badge::getId)
-        .filter(id -> id != null)
-        .collect(Collectors.toSet());
+        user.getBadges().stream()
+            .map(Badge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
     model.addAttribute("user", user);
     model.addAttribute("profileGoals", user.getGoals());
     model.addAttribute("profileSports", resolveProfileSports(user));
@@ -908,7 +906,7 @@ public class UserController {
     }
 
     Friendship relationship =
-      friendshipService.findRelationshipBetween(currentUserId, profileUserId).orElse(null);
+        friendshipService.findRelationshipBetween(currentUserId, profileUserId).orElse(null);
 
     if (relationship == null) {
       model.addAttribute("canSendFriendRequest", true);
@@ -923,8 +921,8 @@ public class UserController {
       }
       case PENDING -> {
         boolean requestSentByCurrentUser =
-          relationship.getRequester() != null
-            && currentUserId.equals(relationship.getRequester().getId());
+            relationship.getRequester() != null
+                && currentUserId.equals(relationship.getRequester().getId());
 
         if (requestSentByCurrentUser) {
           model.addAttribute("friendshipStatusLabel", "Demande envoyee");
@@ -953,9 +951,9 @@ public class UserController {
     Map<Long, Sport> sportsById = new LinkedHashMap<>();
     for (Workout workout : workoutService.getAll()) {
       if (workout.getUser() == null
-        || workout.getUser().getId() == null
-        || !user.getId().equals(workout.getUser().getId())
-        || workout.getSport() == null) {
+          || workout.getUser().getId() == null
+          || !user.getId().equals(workout.getUser().getId())
+          || workout.getSport() == null) {
         continue;
       }
       Sport sport = workout.getSport();
@@ -969,17 +967,17 @@ public class UserController {
 
   private List<Badge> getUnlockedBadgesForWorkout(Workout workout) {
     if (workout == null
-      || workout.getUser() == null
-      || workout.getUser().getBadges() == null
-      || workout.getSport() == null
-      || workout.getSport().getName() == null) {
+        || workout.getUser() == null
+        || workout.getUser().getBadges() == null
+        || workout.getSport() == null
+        || workout.getSport().getName() == null) {
       return Collections.emptyList();
     }
 
     String sportPrefix = workout.getSport().getName() + " - ";
     return workout.getUser().getBadges().stream()
-      .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
-      .toList();
+        .filter(badge -> badge.getName() != null && badge.getName().startsWith(sportPrefix))
+        .toList();
   }
 
   private void populateProfileEditForm(Model model, User user) {
