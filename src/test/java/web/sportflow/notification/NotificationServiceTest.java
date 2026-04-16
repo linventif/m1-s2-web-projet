@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -127,7 +126,7 @@ class NotificationServiceTest {
   void notifyCommentOnWorkout_usesSportDisplayNameFallback() {
     User recipient = user(1L, "Judy", "Hopps");
     User actor = user(3L, "", "");
-    Sport sport = new Sport(SportName.Course, 9.0);
+    Sport sport = new Sport("Course", 9.0);
 
     Workout workout = new Workout();
     workout.setUser(recipient);

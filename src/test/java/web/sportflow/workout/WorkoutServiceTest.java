@@ -18,10 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import web.sportflow.exercise.Exercise;
 import web.sportflow.friendship.FriendshipService;
 import web.sportflow.notification.NotificationService;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -48,7 +48,7 @@ class WorkoutServiceTest {
     user.setId(1L);
     user.setRole(Role.USER);
 
-    running = new Sport(SportName.Course, 10.0);
+    running = new Sport("Course", 10.0);
     running.setId(11L);
   }
 
@@ -115,9 +115,9 @@ class WorkoutServiceTest {
     when(workoutRepository.findByUserAndDateBetween(any(), any(), any()))
         .thenReturn(List.of(withDistance, withoutDuration));
 
-    assertEquals(1.5, workoutService.getTotalDistanceThisWeek(user), 0.0001);
-    assertEquals(1.5, workoutService.getTotalDistanceThisMonth(user), 0.0001);
-    assertEquals(1.5, workoutService.getTotalDistanceThisYear(user), 0.0001);
+    assertEquals(1.0, workoutService.getTotalDistanceThisWeek(user), 0.0001);
+    assertEquals(1.0, workoutService.getTotalDistanceThisMonth(user), 0.0001);
+    assertEquals(1.0, workoutService.getTotalDistanceThisYear(user), 0.0001);
     assertEquals(600.0, workoutService.getTotalDurationThisWeek(user), 0.0001);
     assertTrue(workoutService.getTotalCaloriesThisWeek(user) > 0.0);
 
@@ -174,11 +174,17 @@ class WorkoutServiceTest {
   private Workout workoutWithDistance(Double distanceMeters, Double durationSec) {
     Workout workout = new Workout();
     workout.setName("Workout");
+    workout.setDescription("Description");
+    workout.setAddress("Toulouse");
+    workout.setDate(LocalDateTime.now());
+    workout.setRating(4.0);
+    workout.setPublished(true);
     workout.setSport(running);
     workout.setUser(user);
     workout.setDurationSec(durationSec);
 
     WorkoutExercise exercise = new WorkoutExercise();
+    exercise.setExercise(new Exercise("Course continue", 0.15));
     exercise.setDistanceM(distanceMeters);
     exercise.setDurationSec(durationSec == null ? 300.0 : durationSec);
     workout.setWorkoutExercises(List.of(exercise));

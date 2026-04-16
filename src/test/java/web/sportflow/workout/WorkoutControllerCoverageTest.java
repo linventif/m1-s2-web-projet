@@ -18,11 +18,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import web.sportflow.badge.Badge;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseService;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportService;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -43,7 +43,7 @@ class WorkoutControllerCoverageTest {
   @Test
   void listWorkouts_includesDisplaysAndUnlockedBadges() {
     User owner = user(1L, Role.USER);
-    Sport running = sport(10L, SportName.Course);
+    Sport running = sport(10L, "Course");
     Badge unlocked = new Badge("Course - Rookie", "desc");
     owner.getBadges().add(unlocked);
 
@@ -94,7 +94,7 @@ class WorkoutControllerCoverageTest {
     User owner = user(1L, Role.USER);
     User other = user(2L, Role.USER);
 
-    Sport running = sport(10L, SportName.Course);
+    Sport running = sport(10L, "Course");
     Exercise exercise = new Exercise();
     exercise.setId(99L);
     exercise.setSports(List.of(running));
@@ -124,11 +124,20 @@ class WorkoutControllerCoverageTest {
   void saveWorkout_coversCreateEditValidationAndExerciseParsing() {
     User owner = user(1L, Role.USER);
     User other = user(2L, Role.USER);
-    Sport running = sport(10L, SportName.Course);
+    Sport running = sport(10L, "Course");
 
     Exercise exercise = new Exercise();
     exercise.setId(100L);
     when(exerciseService.findById(100L)).thenReturn(Optional.of(exercise));
+    when(sportService.buildFieldProfile(any(Sport.class)))
+        .thenReturn(
+            Map.of(
+                SportService.FIELD_DURATION,
+                true,
+                SportService.FIELD_DISTANCE,
+                true,
+                SportService.FIELD_CARDIO,
+                true));
 
     WorkoutDto createDto =
         new WorkoutDto(
@@ -153,7 +162,19 @@ class WorkoutControllerCoverageTest {
             List.of("30"),
             List.of("1500"),
             List.of("145"),
-            owner);
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "publish",
+            owner,
+            new RedirectAttributesModelMap());
     assertEquals("redirect:/dashboard", createView);
 
     Workout existing = new Workout();
@@ -185,7 +206,19 @@ class WorkoutControllerCoverageTest {
             List.of("15"),
             List.of("500"),
             List.of("135"),
-            owner);
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "publish",
+            owner,
+            new RedirectAttributesModelMap());
     assertEquals("redirect:/dashboard", editView);
 
     String deniedView =
@@ -198,7 +231,19 @@ class WorkoutControllerCoverageTest {
             List.of("15"),
             List.of("500"),
             List.of("135"),
-            other);
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "publish",
+            other,
+            new RedirectAttributesModelMap());
     assertEquals("redirect:/dashboard", deniedView);
 
     verify(workoutService, org.mockito.Mockito.atLeastOnce())
@@ -214,7 +259,7 @@ class WorkoutControllerCoverageTest {
     Workout workout = new Workout();
     workout.setId(44L);
     workout.setUser(owner);
-    workout.setSport(sport(10L, SportName.Cyclisme));
+    workout.setSport(sport(10L, "Cyclisme"));
     when(workoutService.findById(44L)).thenReturn(Optional.of(workout));
 
     assertEquals("Séance Cyclisme", controller.deleteWorkout(44L, owner));
@@ -235,7 +280,7 @@ class WorkoutControllerCoverageTest {
     return user;
   }
 
-  private Sport sport(Long id, SportName name) {
+  private Sport sport(Long id, String name) {
     Sport sport = new Sport(name, 8.0);
     sport.setId(id);
     return sport;

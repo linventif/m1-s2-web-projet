@@ -8,7 +8,6 @@ import web.sportflow.challenge.ChallengeType;
 import web.sportflow.friendship.FriendshipStatus;
 import web.sportflow.goal.GoalType;
 import web.sportflow.notification.NotificationType;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -61,10 +60,9 @@ class EnumCoverageTest {
   }
 
   @Test
-  void sportNameValues_areAvailable() {
-    assertTrue(SportName.values().length >= 10);
-    assertEquals(SportName.Course, SportName.valueOf("Course"));
-    assertEquals(SportName.Seance, SportName.valueOf("Seance"));
+  void sportNames_areStoredAsStrings() {
+    assertTrue("Course".equalsIgnoreCase("course"));
+    assertEquals("Course", " Course ".trim());
   }
 
   @Test

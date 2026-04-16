@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import web.sportflow.badge.Badge;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -81,7 +80,7 @@ class ChallengeAdditionalBranchesTest {
             LocalDate.now().plusDays(1),
             creator);
 
-    Sport sport = new Sport(SportName.Course, 9.0);
+    Sport sport = new Sport("Course", 9.0);
     sport.setId(2L);
     Badge badge = new Badge("BadgeX", "desc");
     badge.setId(3L);

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.weather.WeatherStatsDTO;
 import web.sportflow.workout.statistique.MonthlyBarView;
 
@@ -21,7 +20,7 @@ class WorkoutDtoCoverageTest {
 
   @Test
   void fullConstructor_gettersAndSetters_work() {
-    Sport sport = new Sport(SportName.Course, 8.0);
+    Sport sport = new Sport("Course", 8.0);
     WeatherStatsDTO weather = new WeatherStatsDTO("20", "25", "15", "21", "0.2", "10", "sunny");
     LocalDateTime date = LocalDateTime.of(2026, 4, 16, 10, 0);
 
