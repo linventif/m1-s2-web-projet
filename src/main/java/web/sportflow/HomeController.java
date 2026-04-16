@@ -12,7 +12,6 @@ import web.sportflow.openapi.InternalServerErrorApiDoc;
 @InternalServerErrorApiDoc
 public class HomeController {
 
-  // NOSONAR
   @Operation(
       summary = "Redirige la racine de l'application vers le dashboard",
       description =
@@ -23,7 +22,6 @@ public class HomeController {
     return "redirect:/dashboard";
   }
 
-  // NOSONAR
   @Operation(
       summary = "Redirige vers le tableau de bord utilisateur",
       description =
@@ -34,7 +32,6 @@ public class HomeController {
     return "redirect:/user/dashboard";
   }
 
-  // NOSONAR
   @Operation(
       summary = "Corrige la faute de frappe sur l'URL du dashboard",
       description =

@@ -99,13 +99,14 @@ public class AdminController {
     this.passwordEncoder = passwordEncoder;
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Accès au panel d'administration",
       description =
           "Retourne la vue Thymeleaf du tableau de bord administrateur. "
               + "La page centralise les compteurs globaux sur les utilisateurs, sports, activites, badges, objectifs, challenges et relations d'amitie.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping({"", "/", "/panel"})
   public String showPanel(Model model) {
     List<User> users = loadUsers();
@@ -129,13 +130,14 @@ public class AdminController {
     return "admin-index";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les utilisateurs dans l'espace admin",
       description =
           "Retourne la vue de gestion des utilisateurs avec les collections necessaires a l'administration : "
               + "liste des utilisateurs, sports, badges, roles, sexes et niveaux de pratique.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/users")
   public String showUsersPage(Model model) {
     model.addAttribute("users", loadUsers());
@@ -148,12 +150,13 @@ public class AdminController {
     return "admin-users";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les sports dans l'espace admin",
       description =
           "Retourne la vue d'administration des sports avec les sports en base et les valeurs possibles de l'enumeration des noms de sport.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/sports")
   public String showSportsPage(Model model) {
     model.addAttribute("sports", loadSports());
@@ -162,12 +165,13 @@ public class AdminController {
     return "admin-sports";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les activites dans l'espace admin",
       description =
           "Retourne la vue d'administration des activites avec les workouts, les utilisateurs, les sports et la date courante pre-remplie pour les formulaires.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/workouts")
   public String showWorkoutsPage(Model model) {
     model.addAttribute("workouts", loadWorkouts());
@@ -178,12 +182,13 @@ public class AdminController {
     return "admin-workouts";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les badges dans l'espace admin",
       description =
           "Retourne la vue d'administration des badges avec la liste complete des badges disponibles.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/badges")
   public String showBadgesPage(Model model) {
     model.addAttribute("badges", loadBadges());
@@ -191,12 +196,13 @@ public class AdminController {
     return "admin-badges";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les objectifs dans l'espace admin",
       description =
           "Retourne la vue de gestion des objectifs avec les objectifs existants, les utilisateurs selectionnables et les types d'objectif autorises.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/goals")
   public String showGoalsPage(Model model) {
     model.addAttribute("goals", loadGoals());
@@ -206,12 +212,13 @@ public class AdminController {
     return "admin-goals";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les challenges dans l'espace admin",
       description =
           "Retourne la vue de gestion des challenges avec les challenges existants, les utilisateurs, les badges, les types de challenge et la date du jour.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/challenges")
   public String showChallengesPage(Model model) {
     model.addAttribute("challenges", loadChallenges());
@@ -223,12 +230,13 @@ public class AdminController {
     return "admin-challenges";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Liste les relations d'amitie dans l'espace admin",
       description =
           "Retourne la vue de gestion des relations d'amitie avec les relations existantes, les utilisateurs disponibles et les statuts applicables.")
   @HtmlViewApiDoc
+  // CPD-ON
   @GetMapping("/friendships")
   public String showFriendshipsPage(Model model) {
     model.addAttribute("friendships", loadFriendships());
@@ -238,7 +246,7 @@ public class AdminController {
     return "admin-friendships";
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un utilisateur depuis l'administration",
       description =
@@ -246,6 +254,7 @@ public class AdminController {
               + "L'operation valide les informations principales, verifie l'unicite de l'email, associe les sports et badges selectionnes, puis redirige vers la section utilisateurs avec message de succes ou d'erreur.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
+  // CPD-ON
   @PostMapping("/users/create")
   @Transactional
   public String createUser(
@@ -298,7 +307,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour un utilisateur depuis l'administration",
       description =
@@ -307,6 +316,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/users/{userId}/update")
   @Transactional
   public String updateUser(
@@ -367,7 +377,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime un utilisateur depuis l'administration",
       description =
@@ -377,6 +387,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/users/{userId}/delete")
   @Transactional
   public String deleteUser(
@@ -434,7 +445,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un sport depuis l'administration",
       description =
@@ -442,6 +453,7 @@ public class AdminController {
               + "L'operation verifie qu'aucun sport du meme type n'existe deja avant la creation.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
+  // CPD-ON
   @PostMapping("/sports/create")
   @Transactional
   public String createSport(
@@ -467,7 +479,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour un sport depuis l'administration",
       description =
@@ -476,6 +488,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/sports/{sportId}/update")
   @Transactional
   public String updateSport(
@@ -504,7 +517,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime un sport depuis l'administration",
       description =
@@ -512,6 +525,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/sports/{sportId}/delete")
   @Transactional
   public String deleteSport(@PathVariable Long sportId, RedirectAttributes redirectAttributes) {
@@ -542,7 +556,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un badge depuis l'administration",
       description =
@@ -550,6 +564,7 @@ public class AdminController {
               + "L'operation normalise les valeurs saisies, applique une icone par defaut si necessaire et controle l'unicite du nom.")
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
+  // CPD-ON
   @PostMapping("/badges/create")
   @Transactional
   public String createBadge(
@@ -576,7 +591,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour un badge depuis l'administration",
       description =
@@ -585,6 +600,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/badges/{badgeId}/update")
   @Transactional
   public String updateBadge(
@@ -616,7 +632,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime un badge depuis l'administration",
       description =
@@ -624,6 +640,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/badges/{badgeId}/delete")
   @Transactional
   public String deleteBadge(@PathVariable Long badgeId, RedirectAttributes redirectAttributes) {
@@ -646,7 +663,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un objectif depuis l'administration",
       description =
@@ -655,6 +672,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/goals/create")
   @Transactional
   public String createGoal(
@@ -686,7 +704,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour un objectif depuis l'administration",
       description =
@@ -695,6 +713,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/goals/{goalId}/update")
   @Transactional
   public String updateGoal(
@@ -727,7 +746,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime un objectif depuis l'administration",
       description =
@@ -735,6 +754,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/goals/{goalId}/delete")
   @Transactional
   public String deleteGoal(@PathVariable Long goalId, RedirectAttributes redirectAttributes) {
@@ -749,7 +769,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree une activite depuis l'administration",
       description =
@@ -758,6 +778,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/workouts/create")
   @Transactional
   public String createWorkout(
@@ -790,7 +811,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour une activite depuis l'administration",
       description =
@@ -798,6 +819,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/workouts/{workoutId}/update")
   @Transactional
   public String updateWorkout(
@@ -831,7 +853,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime une activite depuis l'administration",
       description =
@@ -839,6 +861,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/workouts/{workoutId}/delete")
   @Transactional
   public String deleteWorkout(@PathVariable Long workoutId, RedirectAttributes redirectAttributes) {
@@ -852,7 +875,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree un challenge depuis l'administration",
       description =
@@ -861,6 +884,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/challenges/create")
   @Transactional
   public String createChallenge(
@@ -896,7 +920,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour un challenge depuis l'administration",
       description =
@@ -905,6 +929,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/challenges/{challengeId}/update")
   @Transactional
   public String updateChallenge(
@@ -943,7 +968,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime un challenge depuis l'administration",
       description =
@@ -951,6 +976,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/challenges/{challengeId}/delete")
   @Transactional
   public String deleteChallenge(
@@ -965,7 +991,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Cree une relation d'amitie depuis l'administration",
       description =
@@ -974,6 +1000,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friendships/create")
   @Transactional
   public String createFriendship(
@@ -1002,7 +1029,7 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Met a jour une relation d'amitie depuis l'administration",
       description =
@@ -1010,6 +1037,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friendships/{friendshipId}/update")
   @Transactional
   public String updateFriendship(
@@ -1033,7 +1061,7 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
-  // NOSONAR
+  // CPD-OFF
   @Operation(
       summary = "Supprime une relation d'amitie depuis l'administration",
       description =
@@ -1041,6 +1069,7 @@ public class AdminController {
   @HtmlRedirectApiDoc
   @BadRequestApiDoc
   @NotFoundApiDoc
+  // CPD-ON
   @PostMapping("/friendships/{friendshipId}/delete")
   @Transactional
   public String deleteFriendship(

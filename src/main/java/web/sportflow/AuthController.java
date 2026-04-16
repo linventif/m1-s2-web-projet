@@ -26,7 +26,6 @@ public class AuthController {
     this.userService = userService;
   }
 
-  // NOSONAR
   @Operation(
       summary = "Affiche le formulaire d'inscription",
       description =
@@ -39,7 +38,6 @@ public class AuthController {
     return "register"; // Points to templates/register.html
   }
 
-  // NOSONAR
   @Operation(
       summary = "Traite l'inscription d'un nouvel utilisateur",
       description =
@@ -53,7 +51,6 @@ public class AuthController {
     return "redirect:/login?success"; // Send them to login after signing up
   }
 
-  // NOSONAR
   @Operation(
       summary = "Affiche la page de connexion",
       description = "Retourne la vue HTML de connexion personnalisee de l'application.")
