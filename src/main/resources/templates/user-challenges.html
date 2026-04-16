@@ -231,7 +231,7 @@
             >
               <article
                 th:each="challenge : ${communityChallenges}"
-                th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}, challengeDto=${challengeDtoById[challenge.id]}, isTimed=${challenge.startDate != null or challenge.endDate != null}"
+                th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}, challengeDto=${challengeDtoById[challenge.id]}, isTimed=${challenge.startDate != null or challenge.endDate != null}, isEnded=${challenge.endDate != null and today.isAfter(challenge.endDate)}, isUpcoming=${challenge.startDate != null and today.isBefore(challenge.startDate)}"
                 class="card border border-base-300 bg-base-100 shadow-sm"
               >
                 <div class="card-body gap-4">
@@ -248,8 +248,8 @@
                     </div>
                     <span
                       class="badge shrink-0"
-                      th:classappend="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? ' badge-ghost' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? ' badge-info' : ' badge-success')"
-                      th:text="${challenge.endDate != null and today.isAfter(challenge.endDate)} ? 'Termine' : (${challenge.startDate != null and today.isBefore(challenge.startDate)} ? 'A venir' : 'En cours')"
+                      th:classappend="${isEnded} ? ' badge-ghost' : (${isUpcoming} ? ' badge-info' : ' badge-success')"
+                      th:text="${isEnded} ? 'Termine' : (${isUpcoming} ? 'A venir' : 'En cours')"
                       >En cours</span
                     >
                   </div>
