@@ -144,6 +144,14 @@
               >Objectif : 100</span
             >
             <span
+              th:if="${challenge.official}"
+              class="badge"
+              th:classappend="${challenge.startDate != null or challenge.endDate != null} ? ' badge-warning' : ' badge-info'"
+              th:text="${challenge.startDate != null or challenge.endDate != null ? 'Officiel temporaire' : 'Officiel statique'}"
+              >Officiel statique</span
+            >
+            <span
+              th:if="${!challenge.official or challenge.startDate != null or challenge.endDate != null}"
               class="badge badge-outline"
               th:text="${(challenge.startDate != null ? challenge.startDate : 'Sans debut') + ' → ' + (challenge.endDate != null ? challenge.endDate : 'Sans fin')}"
               >2026-04-01 → 2026-04-30</span

@@ -636,6 +636,40 @@ public class ReferenceDataInitializer implements CommandLineRunner {
             userBogo);
     challengeBadgeYoga.getBadges().add(badgeYoga);
 
+    // Challenges officiels temporaires (visibles en tete de liste)
+    Challenge challengeTempRunFlash =
+        createSportChallenge(
+            sportCoursePied,
+            "Run Flash 7 jours",
+            "Atteindre 15 km avant la fin de la semaine.",
+            ChallengeType.DISTANCE,
+            15.0,
+            today.minusDays(1),
+            today.plusDays(6),
+            userAlice);
+
+    Challenge challengeTempCardioWeek =
+        createSportChallenge(
+            sportCircuitCardio,
+            "Cardio Week",
+            "Cumuler 500 kcal pendant cette semaine.",
+            ChallengeType.CALORIE,
+            500.0,
+            today,
+            today.plusDays(7),
+            userBogo);
+
+    Challenge challengeTempNatationExpress =
+        createSportChallenge(
+            sportNatation,
+            "Natation Express",
+            "Cumuler 60 minutes avant la date de fin.",
+            ChallengeType.DUREE,
+            60.0,
+            today.minusDays(2),
+            today.plusDays(5),
+            userNick);
+
     // Challenges communautaires (pas de badge, participation manuelle)
     Challenge challengeRunEntreAmis =
         createCommunityChallenge(
@@ -675,6 +709,9 @@ public class ReferenceDataInitializer implements CommandLineRunner {
 
     challengeRepository.saveAll(
         List.of(
+            challengeTempRunFlash,
+            challengeTempCardioWeek,
+            challengeTempNatationExpress,
             challengeBadgeRookie5k,
             challengeBadgeMarathonHerbe,
             challengeBadgeMarathonien,

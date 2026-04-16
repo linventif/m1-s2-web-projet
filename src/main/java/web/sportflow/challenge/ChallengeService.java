@@ -230,7 +230,18 @@ public class ChallengeService {
     if (challenges == null || challenges.isEmpty()) {
       return List.of();
     }
-    return challenges.stream().filter(Challenge::isOfficial).toList();
+    return challenges.stream()
+        .filter(Challenge::isOfficial)
+        .sorted(
+            Comparator.<Challenge, Boolean>comparing(this::isTimedOfficial)
+                .reversed()
+                .thenComparing(
+                    Challenge::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(
+                    Challenge::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(
+                    Challenge::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+        .toList();
   }
 
   @Transactional(readOnly = true)
@@ -427,6 +438,13 @@ public class ChallengeService {
     }
     return user.getBadges().stream()
         .anyMatch(currentBadge -> currentBadge != null && badgeId.equals(currentBadge.getId()));
+  }
+
+  private boolean isTimedOfficial(Challenge challenge) {
+    if (challenge == null) {
+      return false;
+    }
+    return challenge.getStartDate() != null || challenge.getEndDate() != null;
   }
 
   private Challenge requireChallenge(Long challengeId) {
