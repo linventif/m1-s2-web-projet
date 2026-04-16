@@ -52,58 +52,63 @@ public class Sport implements Serializable {
 
   public boolean isDistanceRelevant() {
     return switch (getNameOrDefault()) {
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Plongee,
-          Parkour,
-          Seance ->
-          true;
-      case Musculation, Yoga, Parachute, Cardio, Mobilite -> false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Yoga,
+          Saut_Parachute,
+          Base_Jump,
+          Tir_Sportif,
+          Tir_Arc,
+          Tir_Cible,
+          Formule_1,
+          Motocyclisme ->
+          false;
+      default -> true;
     };
   }
 
   public boolean isStrengthRelevant() {
     return switch (getNameOrDefault()) {
-      case Musculation, Escalade, Cardio -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Yoga,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Mobilite,
-          Seance ->
-          false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Escalade,
+          Alpinisme,
+          Gymnastique,
+          Judo,
+          Taekwondo,
+          Karate,
+          Boxe,
+          Escrime,
+          Lutte,
+          Aviron,
+          Canoe_Kayak,
+          Equitation,
+          Speleologie ->
+          true;
+      default -> false;
     };
   }
 
   public boolean isMobilityRelevant() {
     return switch (getNameOrDefault()) {
-      case Musculation, Yoga, Cardio, Mobilite -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Seance ->
-          false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Yoga,
+          Gymnastique,
+          Judo,
+          Taekwondo,
+          Karate,
+          Boxe,
+          Escrime,
+          Lutte,
+          Skate,
+          Surf,
+          Equitation ->
+          true;
+      default -> false;
     };
   }
 
@@ -141,6 +146,6 @@ public class Sport implements Serializable {
   }
 
   private SportName getNameOrDefault() {
-    return name == null ? SportName.Seance : name;
+    return name == null ? SportName.Course : name;
   }
 }

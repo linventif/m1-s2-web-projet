@@ -11,7 +11,7 @@ public class WorkoutDashboardDisplay {
     this.workout = workout;
     this.sportName =
         workout == null || workout.getSport() == null
-            ? SportName.Seance
+            ? SportName.Course
             : workout.getSport().getName();
   }
 
@@ -228,98 +228,110 @@ public class WorkoutDashboardDisplay {
 
   private boolean isDistanceRelevant() {
     return switch (getSportNameOrDefault()) {
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Plongee,
-          Parkour,
-          Seance ->
-          true;
-      case Musculation, Yoga, Parachute, Cardio, Mobilite -> false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Yoga,
+          Saut_Parachute,
+          Base_Jump,
+          Tir_Sportif,
+          Tir_Arc,
+          Tir_Cible,
+          Formule_1,
+          Motocyclisme ->
+          false;
+      default -> true;
     };
   }
 
   private boolean isPaceRelevant() {
     return switch (getSportNameOrDefault()) {
-      case Course, Natation, Randonnee, Plongee, Parkour, Seance -> true;
-      case Cyclisme,
-          Football,
-          Basketball,
-          Tennis,
-          Musculation,
-          Escalade,
-          Yoga,
-          Parachute,
-          Cardio,
-          Mobilite ->
-          false;
+      case Course,
+          Marathon,
+          Marche,
+          Natation,
+          Randonnee,
+          Alpinisme,
+          Plongee,
+          Parkour,
+          Triathlon,
+          Pentathlon,
+          Speleologie ->
+          true;
+      default -> false;
     };
   }
 
   private boolean isSpeedRelevant() {
     return switch (getSportNameOrDefault()) {
-      case Cyclisme, Football, Basketball, Tennis -> true;
-      case Course,
-          Natation,
-          Musculation,
-          Escalade,
-          Yoga,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Cardio,
-          Mobilite,
-          Seance ->
-          false;
+      case Cyclisme,
+          Football,
+          Basketball,
+          Tennis,
+          Ping_Pong,
+          Squash,
+          Ski,
+          Hockey,
+          Luge,
+          Patinage,
+          Bobsleigh,
+          Skate,
+          Formule_1,
+          Motocyclisme,
+          Aviron,
+          Canoe_Kayak,
+          Surf,
+          Voile ->
+          true;
+      default -> false;
     };
   }
 
   private boolean isStrengthRelevant() {
     return switch (getSportNameOrDefault()) {
-      case Musculation, Escalade, Cardio -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Yoga,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Mobilite,
-          Seance ->
-          false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Escalade,
+          Alpinisme,
+          Gymnastique,
+          Judo,
+          Taekwondo,
+          Karate,
+          Boxe,
+          Escrime,
+          Lutte,
+          Aviron,
+          Canoe_Kayak,
+          Equitation,
+          Speleologie ->
+          true;
+      default -> false;
     };
   }
 
   private boolean isMobilityRelevant() {
     return switch (getSportNameOrDefault()) {
-      case Musculation, Yoga, Cardio, Mobilite -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Seance ->
-          false;
+      case Musculation,
+          Callisthenie,
+          CrossFit,
+          Yoga,
+          Gymnastique,
+          Judo,
+          Taekwondo,
+          Karate,
+          Boxe,
+          Escrime,
+          Lutte,
+          Skate,
+          Surf,
+          Equitation ->
+          true;
+      default -> false;
     };
   }
 
   private SportName getSportNameOrDefault() {
-    return sportName == null ? SportName.Seance : sportName;
+    return sportName == null ? SportName.Course : sportName;
   }
 }
