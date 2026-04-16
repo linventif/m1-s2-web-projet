@@ -27,7 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.Challenge;
-import web.sportflow.challenge.ChallengeProgress;
+import web.sportflow.challenge.ChallengeDto;
 import web.sportflow.challenge.ChallengeService;
 import web.sportflow.challenge.ChallengeType;
 import web.sportflow.friendship.Friendship;
@@ -37,7 +37,6 @@ import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalService;
 import web.sportflow.goal.GoalType;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.workout.Workout;
 import web.sportflow.workout.WorkoutService;
 import web.sportflow.workout.statistique.MonthlyBarView;
@@ -80,7 +79,7 @@ class UserControllerCoverageTest {
     badge.setId(10L);
     goal = new Goal("Run", GoalType.DISTANCE, 50.0, 10.0, "km", currentUser);
     goal.setId(20L);
-    sport = new Sport(SportName.Course, 9.5);
+    sport = new Sport("Course", 9.5);
     sport.setId(30L);
 
     currentUser.getBadges().add(badge);
@@ -147,7 +146,7 @@ class UserControllerCoverageTest {
     when(challengeService.getOfficialChallenges(any())).thenReturn(List.of());
     when(challengeService.getCommunityChallenges(any())).thenReturn(List.of(challenge));
     when(challengeService.buildProgressByChallenge(any(), any()))
-        .thenReturn(Map.of(40L, new ChallengeProgress(5.0, 5.0, 100, true, "km")));
+        .thenReturn(Map.of(40L, new ChallengeDto(5.0, 5.0, 100, true, "km")));
     when(challengeService.getFriendsAndUserChallenge(any())).thenReturn(List.of(challenge));
     when(challengeService.syncChallengeBadgesForUser(any(), any())).thenReturn(Set.of(10L));
 

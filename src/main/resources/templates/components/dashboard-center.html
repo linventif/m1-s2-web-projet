@@ -239,7 +239,10 @@
                 <span>prioritaire pour cette séance.</span>
               </p>
             </div>
-            <div class="rounded-2xl bg-white/15 px-4 py-3 text-sm backdrop-blur">
+            <div
+              th:if="${display.secondaryMetric}"
+              class="rounded-2xl bg-white/15 px-4 py-3 text-sm backdrop-blur"
+            >
               <p class="font-semibold" th:text="${display.secondaryMetricLabel}">Allure moyenne</p>
               <p class="text-xl font-black" th:text="${display.secondaryMetricValue}">
                 5.20 min/km
@@ -273,7 +276,7 @@
                     <span th:text="${display.primaryMetricLabel}">Distance</span> :
                     <strong th:text="${display.primaryMetricValue}">12.50 km</strong>
                   </p>
-                  <p class="text-sm text-base-content/65">
+                  <p class="text-sm text-base-content/65" th:if="${display.secondaryMetric}">
                     <span th:text="${display.secondaryMetricLabel}">Allure moyenne</span>
                     :
                     <strong th:text="${display.secondaryMetricValue}">5.20 min/km</strong>
@@ -318,34 +321,88 @@
                   </h4>
                   <div class="mt-3 flex flex-wrap gap-2">
                     <span
-                      th:if="${exercise.distanceM != null}"
+                      th:if="${exercise.distanceM != null and exercise.distanceM > 0}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.distanceM / 1000, 1, 2)} + ' km'"
                       >1.20 km</span
                     >
                     <span
-                      th:if="${exercise.durationSec != null}"
+                      th:if="${exercise.durationSec != null and exercise.durationSec > 0}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.durationSec / 60, 1, 0)} + ' min'"
                       >7 min</span
                     >
                     <span
-                      th:if="${exercise.sets != null and exercise.reps != null}"
+                      th:if="${exercise.sets != null and exercise.sets > 0 and exercise.reps != null and exercise.reps > 0}"
                       class="badge badge-outline rounded-full"
                       th:text="${exercise.sets + 'x' + exercise.reps}"
                       >4x12</span
                     >
                     <span
-                      th:if="${exercise.weightKg != null}"
+                      th:if="${exercise.weightKg != null and exercise.weightKg > 0}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.weightKg, 1, 0)} + ' kg'"
                       >80 kg</span
                     >
                     <span
-                      th:if="${exercise.averageBpm != null}"
+                      th:if="${exercise.averageBpm != null and exercise.averageBpm > 0}"
                       class="badge badge-outline rounded-full"
                       th:text="${#numbers.formatDecimal(exercise.averageBpm, 1, 0)} + ' bpm'"
                       >145 bpm</span
+                    >
+                    <span
+                      th:if="${exercise.elevationGainM != null and exercise.elevationGainM > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.elevationGainM, 1, 0)} + ' m D+'"
+                      >320 m D+</span
+                    >
+                    <span
+                      th:if="${exercise.maxSpeedKmh != null and exercise.maxSpeedKmh > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.maxSpeedKmh, 1, 1)} + ' km/h max'"
+                      >42.0 km/h max</span
+                    >
+                    <span
+                      th:if="${exercise.score != null and exercise.score > 0 and exercise.attempts == null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.score, 1, 0)} + ' pts'"
+                      >180 pts</span
+                    >
+                    <span
+                      th:if="${exercise.attempts != null and exercise.attempts > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${exercise.successfulAttempts != null ? exercise.successfulAttempts + '/' + exercise.attempts + ' réussites' : exercise.attempts + ' tentatives'}"
+                      >8/10 réussites</span
+                    >
+                    <span
+                      th:if="${exercise.accuracyPercent != null and exercise.accuracyPercent > 0 and exercise.attempts == null}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.accuracyPercent, 1, 1)} + ' % précision'"
+                      >82.0 % précision</span
+                    >
+                    <span
+                      th:if="${exercise.heightM != null and exercise.heightM > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.heightM, 1, 1)} + ' m haut.'"
+                      >1.8 m haut.</span
+                    >
+                    <span
+                      th:if="${exercise.depthM != null and exercise.depthM > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${#numbers.formatDecimal(exercise.depthM, 1, 1)} + ' m prof.'"
+                      >18.0 m prof.</span
+                    >
+                    <span
+                      th:if="${exercise.laps != null and exercise.laps > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${exercise.laps + ' tours'}"
+                      >6 tours</span
+                    >
+                    <span
+                      th:if="${exercise.rounds != null and exercise.rounds > 0}"
+                      class="badge badge-outline rounded-full"
+                      th:text="${exercise.rounds + ' rounds'}"
+                      >3 rounds</span
                     >
                   </div>
                 </div>

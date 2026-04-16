@@ -21,7 +21,6 @@ import web.sportflow.goal.GoalType;
 import web.sportflow.notification.Notification;
 import web.sportflow.notification.NotificationType;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -85,15 +84,13 @@ class DomainModelCoverageTest {
 
   @Test
   void sportUserWorkoutAndDashboard_coverMetricBranches() {
-    Sport running = new Sport(SportName.Course, 10.0);
-    Sport strength = new Sport(SportName.Musculation, 6.0);
-    Sport mobility = new Sport(SportName.Mobilite, 3.5);
+    Sport running = new Sport("Course", 10.0);
+    Sport strength = new Sport("Musculation", 6.0);
+    Sport mobility = new Sport("Yoga", 3.5);
 
-    assertTrue(running.isDistanceRelevant());
-    assertFalse(running.isStrengthRelevant());
-    assertFalse(running.isMobilityRelevant());
-    assertTrue(strength.isStrengthRelevant());
-    assertTrue(mobility.isMobilityRelevant());
+    assertEquals("Course", running.getDisplayName());
+    assertEquals("Musculation", strength.getDisplayName());
+    assertEquals("Yoga", mobility.getDisplayName());
     assertThrows(IllegalArgumentException.class, () -> running.setMET(30.0));
 
     User athlete = user(3L, Role.USER);
@@ -153,7 +150,7 @@ class DomainModelCoverageTest {
     mobilityWorkout.setDurationSec(0.0);
     mobilityWorkout.setWorkoutExercises(new ArrayList<>());
     WorkoutDashboardDisplay mobilityDisplay = new WorkoutDashboardDisplay(mobilityWorkout);
-    assertEquals("Mobilité", mobilityDisplay.getPrimaryMetricValue());
+    assertEquals("Aucune donnée", mobilityDisplay.getPrimaryMetricValue());
 
     Workout withComment = new Workout();
     Comment comment = new Comment("Nice", withComment, athlete);
@@ -174,7 +171,7 @@ class DomainModelCoverageTest {
   @Test
   void workoutCaloriesAndChallengeTimeWindows_coverRemainingBranches() {
     User athlete = user(4L, Role.USER);
-    Sport running = new Sport(SportName.Course, 10.0);
+    Sport running = new Sport("Course", 10.0);
     running.setId(44L);
 
     Workout workout = new Workout();

@@ -1,6 +1,16 @@
 package web.sportflow.sport;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +25,7 @@ public class Sport implements Serializable {
   private Long id;
 
   @Column(nullable = false, unique = true)
-  @Enumerated(EnumType.STRING)
-  private SportName name;
+  private String name;
 
   @Column(name = "met", nullable = false)
   private Double met;
@@ -33,7 +42,7 @@ public class Sport implements Serializable {
 
   public Sport() {}
 
-  public Sport(SportName name, Double met) {
+  public Sport(String name, Double met) {
     this.name = name;
     this.met = met;
   }
@@ -42,69 +51,12 @@ public class Sport implements Serializable {
     return id;
   }
 
-  public SportName getName() {
+  public String getName() {
     return name;
   }
 
   public String getDisplayName() {
-    return getNameOrDefault().name();
-  }
-
-  public boolean isDistanceRelevant() {
-    return switch (getNameOrDefault()) {
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Plongee,
-          Parkour,
-          Seance ->
-          true;
-      case Musculation, Yoga, Parachute, Cardio, Mobilite -> false;
-    };
-  }
-
-  public boolean isStrengthRelevant() {
-    return switch (getNameOrDefault()) {
-      case Musculation, Escalade, Cardio -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Yoga,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Mobilite,
-          Seance ->
-          false;
-    };
-  }
-
-  public boolean isMobilityRelevant() {
-    return switch (getNameOrDefault()) {
-      case Musculation, Yoga, Cardio, Mobilite -> true;
-      case Course,
-          Cyclisme,
-          Natation,
-          Football,
-          Basketball,
-          Tennis,
-          Escalade,
-          Randonnee,
-          Parachute,
-          Plongee,
-          Parkour,
-          Seance ->
-          false;
-    };
+    return getNameOrDefault();
   }
 
   public Double getMET() {
@@ -115,7 +67,7 @@ public class Sport implements Serializable {
     this.id = id;
   }
 
-  public void setName(SportName name) {
+  public void setName(String name) {
     this.name = name;
   }
 
@@ -140,7 +92,7 @@ public class Sport implements Serializable {
     this.exercises = exercises;
   }
 
-  private SportName getNameOrDefault() {
-    return name == null ? SportName.Seance : name;
+  private String getNameOrDefault() {
+    return name == null ? "Course" : name;
   }
 }

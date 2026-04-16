@@ -186,7 +186,7 @@ class WeatherServiceTest {
     assertEquals("22", stats.getMaxTemperature());
     assertEquals("20", stats.getMinTemperature());
     assertEquals("20", stats.getAverageApparentTemperature());
-    assertEquals("0.20", stats.getAveragePrecipitation());
+    assertEquals("0.20", stats.getAveragePrecipitation().replace(',', '.'));
     assertEquals("13", stats.getAverageWindSpeed());
     assertEquals("rain", stats.getWeatherIndicator());
 

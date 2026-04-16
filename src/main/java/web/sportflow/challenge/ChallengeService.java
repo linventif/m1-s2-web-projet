@@ -160,7 +160,7 @@ public class ChallengeService {
   }
 
   @Transactional(readOnly = true)
-  public Map<Long, ChallengeProgress> buildProgressByChallenge(
+  public Map<Long, ChallengeDto> buildProgressByChallenge(
       List<Challenge> challenges, User currentUser) {
     if (currentUser == null
         || currentUser.getId() == null
@@ -170,7 +170,7 @@ public class ChallengeService {
     }
 
     User participant = requireUser(currentUser);
-    Map<Long, ChallengeProgress> progressByChallengeId = new LinkedHashMap<>();
+    Map<Long, ChallengeDto> progressByChallengeId = new LinkedHashMap<>();
     for (Challenge challenge : challenges) {
       if (challenge == null || challenge.getId() == null) {
         continue;
@@ -203,7 +203,7 @@ public class ChallengeService {
         continue;
       }
 
-      ChallengeProgress progress = computeProgress(challenge, participant);
+      ChallengeDto progress = computeProgress(challenge, participant);
       if (!progress.completed()) {
         continue;
       }
@@ -253,11 +253,11 @@ public class ChallengeService {
     return challenges.stream().filter(challenge -> !challenge.isOfficial()).toList();
   }
 
-  private ChallengeProgress computeProgress(Challenge challenge, User participant) {
+  private ChallengeDto computeProgress(Challenge challenge, User participant) {
     if (challenge == null
         || challenge.getType() == null
         || !isEligibleForChallenge(challenge, participant)) {
-      return new ChallengeProgress(0.0, 0.0, 0, false, "");
+      return new ChallengeDto(0.0, 0.0, 0, false, "");
     }
 
     double targetValue = challenge.getTargetValue() == null ? 0.0 : challenge.getTargetValue();
@@ -266,7 +266,7 @@ public class ChallengeService {
     int percentage = computePercentage(currentValue, targetValue);
     boolean completed = targetValue <= 0 || currentValue >= targetValue;
 
-    return new ChallengeProgress(
+    return new ChallengeDto(
         roundOneDecimal(currentValue),
         roundOneDecimal(targetValue),
         percentage,

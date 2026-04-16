@@ -22,6 +22,8 @@
                 class="input input-bordered w-full"
                 type="text"
                 th:field="*{firstname}"
+                maxlength="80"
+                autocomplete="given-name"
                 required
               />
             </label>
@@ -34,6 +36,8 @@
                 class="input input-bordered w-full"
                 type="text"
                 th:field="*{lastname}"
+                maxlength="80"
+                autocomplete="family-name"
                 required
               />
             </label>
@@ -47,6 +51,8 @@
                 class="input input-bordered w-full"
                 type="email"
                 th:field="*{email}"
+                maxlength="254"
+                autocomplete="email"
                 required
               />
             </label>
@@ -61,6 +67,8 @@
                 name="password"
                 type="password"
                 minlength="6"
+                maxlength="72"
+                autocomplete="new-password"
                 required
               />
             </label>

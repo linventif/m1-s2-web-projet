@@ -10,17 +10,6 @@
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
-    <style>
-      .time-progress::-webkit-progress-bar {
-        background-image: repeating-linear-gradient(
-          135deg,
-          hsl(var(--b3)) 0px,
-          hsl(var(--b3)) 8px,
-          hsl(var(--b2)) 8px,
-          hsl(var(--b2)) 16px
-        );
-      }
-    </style>
     <div th:insert="~{components/layout::header}"></div>
 
     <main class="mx-auto w-full max-w-7xl px-4 pb-8 pt-24 sm:px-6 lg:px-8">
@@ -50,6 +39,7 @@
               th:value="${query}"
               placeholder="Rechercher par titre, sport, type ou description"
               class="input input-bordered w-full lg:w-96"
+              maxlength="100"
             />
             <button type="submit" class="btn btn-primary">Chercher</button>
           </form>
@@ -78,7 +68,7 @@
             >
               <article
                 th:each="challenge : ${officialChallenges}"
-                th:with="progress=${challengeProgressById[challenge.id]}, unlockedBadgeIds=${unlockedChallengeBadgeIdsByChallengeId[challenge.id]}, isTemporary=${challenge.startDate != null or challenge.endDate != null}"
+                th:with="challengeDto=${challengeDtoById[challenge.id]}, unlockedBadgeIds=${unlockedChallengeBadgeIdsByChallengeId[challenge.id]}, isTemporary=${challenge.startDate != null or challenge.endDate != null}"
                 class="card border bg-base-100 shadow-sm"
                 th:classappend="${isTemporary} ? ' border-warning/40' : ' border-primary/25'"
               >
@@ -104,7 +94,7 @@
 
                   <p
                     class="text-sm text-base-content/75"
-                    th:text="${challenge.description != null and !challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
+                    th:text="${challenge.description != null and not challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
                   >
                     Description
                   </p>
@@ -121,7 +111,7 @@
                     >
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTemporary}">
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${not isTemporary}">
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Type</p>
                       <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
@@ -131,7 +121,7 @@
                       <p class="font-semibold">
                         <span th:text="${challenge.targetValue}">10</span>
                         <span
-                          th:text="${progress != null and progress.unitLabel != null ? progress.unitLabel : ''}"
+                          th:text="${challengeDto != null and challengeDto.unitLabel != null ? challengeDto.unitLabel : ''}"
                         ></span>
                       </p>
                     </div>
@@ -163,14 +153,14 @@
                     <div class="flex items-center justify-between text-sm">
                       <span>Ta progression</span>
                       <span
-                        th:text="${progress != null ? progress.currentValue + ' / ' + progress.targetValue + ' ' + progress.unitLabel : '0 / 0'}"
+                        th:text="${challengeDto != null ? challengeDto.currentValue + ' / ' + challengeDto.targetValue + ' ' + challengeDto.unitLabel : '0 / 0'}"
                         >0 / 0</span
                       >
                     </div>
                     <progress
                       class="progress progress-primary w-full"
                       max="100"
-                      th:value="${progress != null ? progress.percentage : 0}"
+                      th:value="${challengeDto != null ? challengeDto.percentage : 0}"
                     ></progress>
                     <span
                       th:if="${#sets.contains(completedChallengeIds, challenge.id)}"
@@ -241,7 +231,7 @@
             >
               <article
                 th:each="challenge : ${communityChallenges}"
-                th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}, progress=${challengeProgressById[challenge.id]}, isTimed=${challenge.startDate != null or challenge.endDate != null}"
+                th:with="friendParticipants=${friendParticipantsByChallengeId[challenge.id]}, challengeDto=${challengeDtoById[challenge.id]}, isTimed=${challenge.startDate != null or challenge.endDate != null}"
                 class="card border border-base-300 bg-base-100 shadow-sm"
               >
                 <div class="card-body gap-4">
@@ -266,7 +256,7 @@
 
                   <p
                     class="text-sm text-base-content/75"
-                    th:text="${challenge.description != null and !challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
+                    th:text="${challenge.description != null and not challenge.description.isBlank() ? challenge.description : 'Pas de description.'}"
                   >
                     Description
                   </p>
@@ -283,7 +273,7 @@
                     >
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${!isTimed}">
+                  <div class="grid grid-cols-2 gap-3 text-sm" th:if="${not isTimed}">
                     <div class="rounded-lg bg-base-200 p-3">
                       <p class="text-xs uppercase text-base-content/50">Type</p>
                       <p class="font-semibold" th:text="${challenge.type.labelFr}">Distance</p>
@@ -293,7 +283,7 @@
                       <p class="font-semibold">
                         <span th:text="${challenge.targetValue}">10</span>
                         <span
-                          th:text="${progress != null and progress.unitLabel != null ? progress.unitLabel : ''}"
+                          th:text="${challengeDto != null and challengeDto.unitLabel != null ? challengeDto.unitLabel : ''}"
                         ></span>
                       </p>
                     </div>
@@ -336,7 +326,7 @@
                   <div class="space-y-2">
                     <p class="text-sm font-semibold">Amis participants</p>
                     <div
-                      th:if="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
+                      th:if="${friendParticipants != null and not #lists.isEmpty(friendParticipants)}"
                       class="flex flex-wrap gap-2"
                     >
                       <a
@@ -357,7 +347,7 @@
                       </a>
                     </div>
                     <p
-                      th:unless="${friendParticipants != null and !#lists.isEmpty(friendParticipants)}"
+                      th:unless="${friendParticipants != null and not #lists.isEmpty(friendParticipants)}"
                       class="text-sm text-base-content/60"
                     >
                       Aucun ami inscrit pour le moment.
@@ -368,7 +358,7 @@
                     <form
                       method="post"
                       th:action="@{/users/challenges/{id}/leave(id=${challenge.id})}"
-                      th:if="${#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
+                      th:if="${#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or not today.isAfter(challenge.endDate))}"
                     >
                       <input type="hidden" name="returnTo" value="/users/challenges" />
                       <input
@@ -384,7 +374,7 @@
                     <form
                       method="post"
                       th:action="@{/users/challenges/{id}/join(id=${challenge.id})}"
-                      th:if="${!#sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or !today.isAfter(challenge.endDate))}"
+                      th:if="${not #sets.contains(joinedChallengeIds, challenge.id) and (challenge.endDate == null or not today.isAfter(challenge.endDate))}"
                     >
                       <input type="hidden" name="returnTo" value="/users/challenges" />
                       <input

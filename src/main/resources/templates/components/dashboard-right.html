@@ -95,7 +95,7 @@
           <div class="flex items-start justify-between gap-3">
             <div class="flex min-w-0 items-start gap-3">
               <a
-                th:if="${challenge.creator != null and !challenge.official}"
+                th:if="${challenge.creator != null}"
                 th:href="@{/users/profile/{id}(id=${challenge.creator.id})}"
                 class="avatar shrink-0"
               >

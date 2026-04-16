@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -19,9 +19,21 @@ class WorkoutDashboardDisplayCoverageTest {
     user.setId(1L);
     user.setRole(Role.USER);
 
-    for (SportName sportName : SportName.values()) {
-      Sport sport = new Sport(sportName, 8.0);
-      sport.setId((long) sportName.ordinal() + 1);
+    List<String> sportNames =
+        List.of(
+            "Course",
+            "Cyclisme",
+            "Natation",
+            "Musculation",
+            "Yoga",
+            "Escalade",
+            "Football",
+            "Tennis",
+            "Plongee",
+            "Surf");
+    for (int index = 0; index < sportNames.size(); index++) {
+      Sport sport = new Sport(sportNames.get(index), 8.0);
+      sport.setId((long) index + 1);
 
       Workout workout = new Workout();
       workout.setSport(sport);

@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import web.sportflow.badge.Badge;
 import web.sportflow.friendship.FriendshipService;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
@@ -187,7 +186,7 @@ class ChallengeServiceAdditionalTest {
   void progressAndBadgeSync_coverComputationBranches() {
     User current = user(10L);
     User creator = user(1L);
-    Sport running = new Sport(SportName.Course, 10.0);
+    Sport running = new Sport("Course", 10.0);
     running.setId(100L);
 
     Badge badge = badge(501L);
@@ -217,11 +216,11 @@ class ChallengeServiceAdditionalTest {
         .thenReturn(List.of(workout));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    Map<Long, ChallengeProgress> progressByChallenge =
+    Map<Long, ChallengeDto> progressByChallenge =
         challengeService.buildProgressByChallenge(List.of(challenge), current);
 
     assertTrue(progressByChallenge.containsKey(70L));
-    ChallengeProgress progress = progressByChallenge.get(70L);
+    ChallengeDto progress = progressByChallenge.get(70L);
     assertTrue(progress.currentValue() >= 5.0);
     assertTrue(progress.percentage() > 0);
     assertEquals("km", progress.unitLabel());

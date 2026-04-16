@@ -13,6 +13,13 @@
       <form th:action="@{/workouts/save}" th:object="${workout}" method="post" class="space-y-6">
         <input type="hidden" th:field="*{id}" />
 
+        <div th:if="${message}" class="alert alert-success shadow-sm">
+          <span th:text="${message}">Brouillon enregistré.</span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error shadow-sm">
+          <span th:text="${errorMessage}">La date est obligatoire.</span>
+        </div>
+
         <section class="card border border-base-300 bg-base-100 shadow-xl">
           <div class="card-body gap-6 p-6 sm:p-8">
             <div
@@ -35,7 +42,22 @@
               </div>
               <div class="flex flex-wrap gap-2">
                 <a th:href="@{/workouts}" class="btn btn-outline rounded-full">Annuler</a>
-                <button type="submit" class="btn btn-primary rounded-full px-6">Enregistrer</button>
+                <button
+                  type="submit"
+                  name="submitAction"
+                  value="draft"
+                  class="btn btn-outline rounded-full px-6"
+                >
+                  Enregistrer le brouillon
+                </button>
+                <button
+                  type="submit"
+                  name="submitAction"
+                  value="publish"
+                  class="btn btn-primary rounded-full px-6"
+                >
+                  Publier
+                </button>
               </div>
             </div>
 
@@ -64,6 +86,7 @@
                         th:field="*{name}"
                         class="input input-bordered w-full rounded-lg bg-base-100"
                         placeholder="Fractionné du soir, Push day, sortie longue..."
+                        maxlength="120"
                       />
                     </div>
 
@@ -75,6 +98,7 @@
                         th:field="*{description}"
                         class="textarea textarea-bordered min-h-24 w-full rounded-lg bg-base-100"
                         placeholder="Sensations, objectif de la séance, contexte..."
+                        maxlength="1000"
                       ></textarea>
                     </div>
 
@@ -87,14 +111,14 @@
                           id="sport-select"
                           class="select select-bordered w-full rounded-lg bg-base-100"
                           th:field="*{sport}"
-                          required
                         >
                           <option value="" disabled selected>Choisir un sport...</option>
                           <option
                             th:each="s : ${sports}"
+                            th:with="fieldProfile=${sportFieldProfiles[s.id]}"
                             th:value="${s.id}"
                             th:text="${s.displayName}"
-                            th:attr="data-sport-name=${s.name.name()},data-distance=${s.distanceRelevant},data-strength=${s.strengthRelevant},data-mobility=${s.mobilityRelevant}"
+                            th:attr="data-sport-name=${s.name},data-distance=${fieldProfile != null ? fieldProfile['distance'] : false},data-repetitions=${fieldProfile != null ? fieldProfile['repetitions'] : false},data-load=${fieldProfile != null ? fieldProfile['load'] : false},data-cardio=${fieldProfile != null ? fieldProfile['cardio'] : false},data-elevation=${fieldProfile != null ? fieldProfile['elevation'] : false},data-speed=${fieldProfile != null ? fieldProfile['speed'] : false},data-score=${fieldProfile != null ? fieldProfile['score'] : false},data-attempts=${fieldProfile != null ? fieldProfile['attempts'] : false},data-accuracy=${fieldProfile != null ? fieldProfile['accuracy'] : false},data-height=${fieldProfile != null ? fieldProfile['height'] : false},data-depth=${fieldProfile != null ? fieldProfile['depth'] : false},data-laps=${fieldProfile != null ? fieldProfile['laps'] : false},data-rounds=${fieldProfile != null ? fieldProfile['rounds'] : false},data-mobility=${fieldProfile != null ? fieldProfile['mobility'] : false}"
                           ></option>
                         </select>
                       </div>
@@ -108,7 +132,10 @@
                           id="date"
                           th:field="*{date}"
                           th:value="${workout.date != null ? #temporals.format(workout.date, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                          min="2000-01-01T00:00"
+                          max="2100-12-31T23:59"
                           class="input input-bordered w-full rounded-lg bg-base-100"
+                          required
                         />
                       </div>
                     </div>
@@ -226,6 +253,7 @@
                             name="duration"
                             th:value="${workout.durationSec != null ? workout.durationSec / 60 : ''}"
                             min="0"
+                            max="10080"
                             step="1"
                             class="input input-bordered w-full rounded-lg bg-base-100 pr-14"
                             placeholder="45"
@@ -246,6 +274,7 @@
                           th:field="*{address}"
                           class="input input-bordered w-full rounded-lg bg-base-100"
                           placeholder="Parc des sports, Toulouse"
+                          maxlength="255"
                         />
                       </div>
                     </div>
@@ -351,7 +380,7 @@
                     <div>
                       <h2 class="text-xl font-black">Exercices</h2>
                       <p class="mt-1 text-sm text-base-content/60">
-                        Ajoute uniquement les mesures utiles au mouvement.
+                        Ajoute un exercice a ta scéance
                       </p>
                     </div>
                     <button
@@ -361,13 +390,6 @@
                     >
                       Ajouter
                     </button>
-                  </div>
-
-                  <div
-                    class="mb-4 rounded-2xl border border-dashed border-base-300 bg-base-100 p-4 text-sm text-base-content/65"
-                  >
-                    Commence par choisir un sport, puis recherche un exercice. La liste et les
-                    champs de saisie se limitent aux mesures utiles pour ce type de sport.
                   </div>
 
                   <div id="exercise-rows" class="space-y-4">
@@ -411,6 +433,7 @@
                               class="input input-bordered w-full rounded-lg exercise-search"
                               th:value="${workoutExercise.exercise != null ? workoutExercise.exercise.name : ''}"
                               placeholder="Rechercher un exercice..."
+                              maxlength="120"
                               autocomplete="off"
                             />
                             <div
@@ -446,6 +469,7 @@
                               name="durationMin"
                               th:value="${workoutExercise.durationMin}"
                               min="0"
+                              max="10080"
                               step="1"
                               class="input input-bordered rounded-lg"
                               placeholder="min"
@@ -463,13 +487,14 @@
                               name="distanceM"
                               th:value="${workoutExercise.distanceM}"
                               min="0"
+                              max="1000000"
                               step="1"
                               class="input input-bordered rounded-lg"
                               placeholder="m"
                             />
                           </div>
 
-                          <div class="form-control exercise-field" data-field-group="strength">
+                          <div class="form-control exercise-field" data-field-group="repetitions">
                             <label
                               class="label py-1 text-xs font-semibold uppercase text-base-content/55"
                             >
@@ -480,11 +505,12 @@
                               name="sets"
                               th:value="${workoutExercise.sets}"
                               min="0"
+                              max="100"
                               class="input input-bordered rounded-lg"
                             />
                           </div>
 
-                          <div class="form-control exercise-field" data-field-group="strength">
+                          <div class="form-control exercise-field" data-field-group="repetitions">
                             <label
                               class="label py-1 text-xs font-semibold uppercase text-base-content/55"
                             >
@@ -495,11 +521,12 @@
                               name="reps"
                               th:value="${workoutExercise.reps}"
                               min="0"
+                              max="1000"
                               class="input input-bordered rounded-lg"
                             />
                           </div>
 
-                          <div class="form-control exercise-field" data-field-group="strength">
+                          <div class="form-control exercise-field" data-field-group="load">
                             <label
                               class="label py-1 text-xs font-semibold uppercase text-base-content/55"
                             >
@@ -510,13 +537,14 @@
                               name="weightKg"
                               th:value="${workoutExercise.weightKg}"
                               min="0"
+                              max="1000"
                               step="0.5"
                               class="input input-bordered rounded-lg"
                               placeholder="kg"
                             />
                           </div>
 
-                          <div class="form-control exercise-field" data-field-group="advanced">
+                          <div class="form-control exercise-field" data-field-group="cardio">
                             <label
                               class="label py-1 text-xs font-semibold uppercase text-base-content/55"
                             >
@@ -526,10 +554,186 @@
                               type="number"
                               name="averageBpm"
                               th:value="${workoutExercise.averageBpm}"
-                              min="0"
+                              min="30"
+                              max="240"
                               step="1"
                               class="input input-bordered rounded-lg"
                               placeholder="bpm"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="elevation">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Dénivelé
+                            </label>
+                            <input
+                              type="number"
+                              name="elevationGainM"
+                              th:value="${workoutExercise.elevationGainM}"
+                              min="0"
+                              max="10000"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="speed">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Vitesse max
+                            </label>
+                            <input
+                              type="number"
+                              name="maxSpeedKmh"
+                              th:value="${workoutExercise.maxSpeedKmh}"
+                              min="0"
+                              max="500"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="km/h"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="score">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Score
+                            </label>
+                            <input
+                              type="number"
+                              name="score"
+                              th:value="${workoutExercise.score}"
+                              min="0"
+                              max="100000"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="attempts">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Tentatives
+                            </label>
+                            <input
+                              type="number"
+                              name="attempts"
+                              th:value="${workoutExercise.attempts}"
+                              min="0"
+                              max="10000"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="attempts">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Réussites
+                            </label>
+                            <input
+                              type="number"
+                              name="successfulAttempts"
+                              th:value="${workoutExercise.successfulAttempts}"
+                              min="0"
+                              max="10000"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="accuracy">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Précision
+                            </label>
+                            <input
+                              type="number"
+                              name="accuracyPercent"
+                              th:value="${workoutExercise.accuracyPercent}"
+                              min="0"
+                              max="100"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="%"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="height">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Hauteur
+                            </label>
+                            <input
+                              type="number"
+                              name="heightM"
+                              th:value="${workoutExercise.heightM}"
+                              min="0"
+                              max="10000"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="depth">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Profondeur
+                            </label>
+                            <input
+                              type="number"
+                              name="depthM"
+                              th:value="${workoutExercise.depthM}"
+                              min="0"
+                              max="500"
+                              step="0.1"
+                              class="input input-bordered rounded-lg"
+                              placeholder="m"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="laps">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Tours
+                            </label>
+                            <input
+                              type="number"
+                              name="laps"
+                              th:value="${workoutExercise.laps}"
+                              min="0"
+                              max="1000"
+                              step="1"
+                              class="input input-bordered rounded-lg"
+                            />
+                          </div>
+
+                          <div class="form-control exercise-field" data-field-group="rounds">
+                            <label
+                              class="label py-1 text-xs font-semibold uppercase text-base-content/55"
+                            >
+                              Rounds
+                            </label>
+                            <input
+                              type="number"
+                              name="rounds"
+                              th:value="${workoutExercise.rounds}"
+                              min="0"
+                              max="1000"
+                              step="1"
+                              class="input input-bordered rounded-lg"
                             />
                           </div>
                         </div>
@@ -567,6 +771,7 @@
                     type="search"
                     class="input input-bordered w-full rounded-lg exercise-search"
                     placeholder="Rechercher un exercice..."
+                    maxlength="120"
                     autocomplete="off"
                   />
                   <div
@@ -597,6 +802,7 @@
                     type="number"
                     name="durationMin"
                     min="0"
+                    max="10080"
                     step="1"
                     class="input input-bordered rounded-lg"
                     placeholder="min"
@@ -611,13 +817,14 @@
                     type="number"
                     name="distanceM"
                     min="0"
+                    max="1000000"
                     step="1"
                     class="input input-bordered rounded-lg"
                     placeholder="m"
                   />
                 </div>
 
-                <div class="form-control exercise-field" data-field-group="strength">
+                <div class="form-control exercise-field" data-field-group="repetitions">
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Séries
                   </label>
@@ -625,11 +832,12 @@
                     type="number"
                     name="sets"
                     min="0"
+                    max="100"
                     class="input input-bordered rounded-lg"
                   />
                 </div>
 
-                <div class="form-control exercise-field" data-field-group="strength">
+                <div class="form-control exercise-field" data-field-group="repetitions">
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Répétitions
                   </label>
@@ -637,11 +845,12 @@
                     type="number"
                     name="reps"
                     min="0"
+                    max="1000"
                     class="input input-bordered rounded-lg"
                   />
                 </div>
 
-                <div class="form-control exercise-field" data-field-group="strength">
+                <div class="form-control exercise-field" data-field-group="load">
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Charge
                   </label>
@@ -649,23 +858,170 @@
                     type="number"
                     name="weightKg"
                     min="0"
+                    max="1000"
                     step="0.5"
                     class="input input-bordered rounded-lg"
                     placeholder="kg"
                   />
                 </div>
 
-                <div class="form-control exercise-field" data-field-group="advanced">
+                <div class="form-control exercise-field" data-field-group="cardio">
                   <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
                     Cardio
                   </label>
                   <input
                     type="number"
                     name="averageBpm"
-                    min="0"
+                    min="30"
+                    max="240"
                     step="1"
                     class="input input-bordered rounded-lg"
                     placeholder="bpm"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="elevation">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Dénivelé
+                  </label>
+                  <input
+                    type="number"
+                    name="elevationGainM"
+                    min="0"
+                    max="10000"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="speed">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Vitesse max
+                  </label>
+                  <input
+                    type="number"
+                    name="maxSpeedKmh"
+                    min="0"
+                    max="500"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="km/h"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="score">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Score
+                  </label>
+                  <input
+                    type="number"
+                    name="score"
+                    min="0"
+                    max="100000"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="attempts">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Tentatives
+                  </label>
+                  <input
+                    type="number"
+                    name="attempts"
+                    min="0"
+                    max="10000"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="attempts">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Réussites
+                  </label>
+                  <input
+                    type="number"
+                    name="successfulAttempts"
+                    min="0"
+                    max="10000"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="accuracy">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Précision
+                  </label>
+                  <input
+                    type="number"
+                    name="accuracyPercent"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="%"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="height">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Hauteur
+                  </label>
+                  <input
+                    type="number"
+                    name="heightM"
+                    min="0"
+                    max="10000"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="depth">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Profondeur
+                  </label>
+                  <input
+                    type="number"
+                    name="depthM"
+                    min="0"
+                    max="500"
+                    step="0.1"
+                    class="input input-bordered rounded-lg"
+                    placeholder="m"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="laps">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Tours
+                  </label>
+                  <input
+                    type="number"
+                    name="laps"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    class="input input-bordered rounded-lg"
+                  />
+                </div>
+
+                <div class="form-control exercise-field" data-field-group="rounds">
+                  <label class="label py-1 text-xs font-semibold uppercase text-base-content/55">
+                    Rounds
+                  </label>
+                  <input
+                    type="number"
+                    name="rounds"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    class="input input-bordered rounded-lg"
                   />
                 </div>
               </div>
@@ -683,23 +1039,45 @@
         const template = document.getElementById("exercise-row-template");
         const addButton = document.getElementById("add-exercise-row");
         const sportSelect = document.getElementById("sport-select");
+        const profileKeys = [
+          "distance",
+          "repetitions",
+          "load",
+          "cardio",
+          "elevation",
+          "speed",
+          "score",
+          "attempts",
+          "accuracy",
+          "height",
+          "depth",
+          "laps",
+          "rounds",
+          "mobility",
+        ];
 
         const currentProfile = () => {
           const option = sportSelect?.selectedOptions?.[0];
-          return {
+          const profile = {
             sportName: option?.dataset.sportName || "",
-            distance: option?.dataset.distance === "true",
-            strength: option?.dataset.strength === "true",
-            mobility: option?.dataset.mobility === "true",
           };
+          profileKeys.forEach((key) => {
+            profile[key] = option?.dataset[key] === "true";
+          });
+          return profile;
         };
 
         const shouldShowField = (field, profile) => {
           const group = field.dataset.fieldGroup;
           if (group === "duration") return true;
-          if (group === "distance") return profile.distance;
-          if (group === "strength") return profile.strength;
-          return profile.distance || profile.strength;
+          return profile[group] === true;
+        };
+
+        const updateFieldState = (field, visible) => {
+          field.classList.toggle("hidden", !visible);
+          field.querySelectorAll("input, select, textarea").forEach((control) => {
+            control.disabled = !visible;
+          });
         };
 
         const choiceMatchesSport = (choice, profile) => {
@@ -735,7 +1113,7 @@
         const updateRowFields = (row) => {
           const profile = currentProfile();
           row.querySelectorAll(".exercise-field").forEach((field) => {
-            field.classList.toggle("hidden", !shouldShowField(field, profile));
+            updateFieldState(field, shouldShowField(field, profile));
           });
 
           const choice = selectedChoice(row);

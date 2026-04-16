@@ -43,8 +43,8 @@ import web.sportflow.openapi.InternalServerErrorApiDoc;
 import web.sportflow.openapi.NotFoundApiDoc;
 import web.sportflow.openapi.UnauthorizedApiDoc;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
+import web.sportflow.sport.SportService;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -70,6 +70,7 @@ public class AdminController {
   private final WorkoutRepository workoutRepository;
   private final WorkoutExerciseRepository workoutExerciseRepository;
   private final ExerciseRepository exerciseRepository;
+  private final SportService sportService;
   private final BadgeRepository badgeRepository;
   private final GoalRepository goalRepository;
   private final ChallengeRepository challengeRepository;
@@ -82,6 +83,7 @@ public class AdminController {
       WorkoutRepository workoutRepository,
       WorkoutExerciseRepository workoutExerciseRepository,
       ExerciseRepository exerciseRepository,
+      SportService sportService,
       BadgeRepository badgeRepository,
       GoalRepository goalRepository,
       ChallengeRepository challengeRepository,
@@ -92,6 +94,7 @@ public class AdminController {
     this.workoutRepository = workoutRepository;
     this.workoutExerciseRepository = workoutExerciseRepository;
     this.exerciseRepository = exerciseRepository;
+    this.sportService = sportService;
     this.badgeRepository = badgeRepository;
     this.goalRepository = goalRepository;
     this.challengeRepository = challengeRepository;
@@ -154,7 +157,7 @@ public class AdminController {
   @GetMapping("/sports")
   public String showSportsPage(Model model) {
     model.addAttribute("sports", loadSports());
-    model.addAttribute("sportNames", SportName.values());
+    model.addAttribute("sportNames", sportService.findAllNames());
     model.addAttribute("activeAdminPage", "sports");
     return "admin-sports";
   }
@@ -434,18 +437,20 @@ public class AdminController {
   @PostMapping("/sports/create")
   @Transactional
   public String createSport(
-      @RequestParam SportName name,
+      @RequestParam String name,
       @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
       RedirectAttributes redirectAttributes) {
     try {
+      String normalizedName = requireText(name, "Le nom du sport est obligatoire.");
       boolean alreadyExists =
-          sportRepository.findAll().stream().anyMatch(sport -> sport.getName() == name);
+          sportRepository.findAll().stream()
+              .anyMatch(sport -> normalizedName.equalsIgnoreCase(sport.getName()));
       if (alreadyExists) {
         throw new IllegalArgumentException("Un sport avec ce nom existe deja.");
       }
 
       Sport sport = new Sport();
-      sport.setName(name);
+      sport.setName(normalizedName);
       sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
 
       sportRepository.save(sport);
@@ -468,21 +473,23 @@ public class AdminController {
   @Transactional
   public String updateSport(
       @PathVariable Long sportId,
-      @RequestParam SportName name,
+      @RequestParam String name,
       @RequestParam(name = "caloriesPerMinute") Double caloriesPerMinute,
       RedirectAttributes redirectAttributes) {
     try {
       Sport sport = requireSport(sportId);
+      String normalizedName = requireText(name, "Le nom du sport est obligatoire.");
       boolean alreadyExists =
           sportRepository.findAll().stream()
               .anyMatch(
                   currentSport ->
-                      !currentSport.getId().equals(sportId) && currentSport.getName() == name);
+                      !currentSport.getId().equals(sportId)
+                          && normalizedName.equalsIgnoreCase(currentSport.getName()));
       if (alreadyExists) {
         throw new IllegalArgumentException("Un sport avec ce nom existe deja.");
       }
 
-      sport.setName(name);
+      sport.setName(normalizedName);
       sport.setMET(requirePositive(caloriesPerMinute, "La valeur doit etre > 0."));
       sportRepository.save(sport);
       redirectAttributes.addFlashAttribute("message", "Sport mis a jour.");

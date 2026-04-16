@@ -70,7 +70,8 @@
                     <select name="requesterId" class="select select-bordered" required>
                       <option value="" disabled selected>Demandeur</option>
                       <option
-                        th:each="user : ${users.?[#this != null]}"
+                        th:each="user : ${users}"
+                        th:if="${user != null}"
                         th:value="${user.id}"
                         th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                       ></option>
@@ -78,7 +79,8 @@
                     <select name="addresseeId" class="select select-bordered" required>
                       <option value="" disabled selected>Destinataire</option>
                       <option
-                        th:each="user : ${users.?[#this != null]}"
+                        th:each="user : ${users}"
+                        th:if="${user != null}"
                         th:value="${user.id}"
                         th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                       ></option>
@@ -99,7 +101,8 @@
                 </div>
                 <div class="space-y-3" th:unless="${#lists.isEmpty(friendships)}">
                   <details
-                    th:each="friendship : ${friendships.?[#this != null]}"
+                    th:each="friendship : ${friendships}"
+                    th:if="${friendship != null}"
                     class="collapse collapse-arrow border border-base-300 bg-base-100"
                   >
                     <summary class="collapse-title font-semibold">
@@ -136,7 +139,8 @@
                       >
                         <select name="requesterId" class="select select-bordered" required>
                           <option
-                            th:each="user : ${users.?[#this != null]}"
+                            th:each="user : ${users}"
+                            th:if="${user != null}"
                             th:value="${user.id}"
                             th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                             th:selected="${friendship.requester != null and user != null and user.id != null and friendship.requester.id == user.id}"
@@ -144,7 +148,8 @@
                         </select>
                         <select name="addresseeId" class="select select-bordered" required>
                           <option
-                            th:each="user : ${users.?[#this != null]}"
+                            th:each="user : ${users}"
+                            th:if="${user != null}"
                             th:value="${user.id}"
                             th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                             th:selected="${friendship.addressee != null and user != null and user.id != null and friendship.addressee.id == user.id}"

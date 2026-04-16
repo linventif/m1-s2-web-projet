@@ -46,6 +46,37 @@
       </div>
     </div>
 
+    <div
+      th:if="${draftWorkouts != null and !#lists.isEmpty(draftWorkouts)}"
+      class="card rounded-[2rem] border border-dashed border-orange-300 bg-orange-50 shadow-sm"
+    >
+      <div class="card-body">
+        <div class="flex items-center justify-between">
+          <h2 class="card-title text-lg">À compléter</h2>
+          <span class="badge badge-warning rounded-full" th:text="${#lists.size(draftWorkouts)}"
+            >0</span
+          >
+        </div>
+        <p class="text-sm text-base-content/70">
+          Ces séances restent privées tant que le sport et les exercices ne sont pas renseignés.
+        </p>
+        <div class="mt-3 space-y-2">
+          <a
+            th:each="draftWorkout : ${draftWorkouts}"
+            th:href="@{/workouts/{id}/edit(id=${draftWorkout.id})}"
+            class="block rounded-2xl border border-orange-200 bg-base-100 p-3 text-sm hover:border-orange-400"
+          >
+            <span class="font-semibold" th:text="${draftWorkout.name}">Brouillon</span>
+            <span
+              class="mt-1 block text-xs text-base-content/60"
+              th:text="${draftWorkout.date != null ? #temporals.format(draftWorkout.date, 'dd/MM/yyyy HH:mm') : 'Date à choisir'}"
+              >01/04/2026 10:00</span
+            >
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- Cette semaine -->
     <div class="card rounded-[2rem] border border-base-300 bg-base-100 shadow-sm">
       <div class="card-body">

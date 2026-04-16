@@ -36,8 +36,8 @@ import web.sportflow.goal.Goal;
 import web.sportflow.goal.GoalRepository;
 import web.sportflow.goal.GoalType;
 import web.sportflow.sport.Sport;
-import web.sportflow.sport.SportName;
 import web.sportflow.sport.SportRepository;
+import web.sportflow.sport.SportService;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Role;
 import web.sportflow.user.Sex;
@@ -57,6 +57,7 @@ class AdminControllerCoverageTest {
   @Mock private WorkoutRepository workoutRepository;
   @Mock private WorkoutExerciseRepository workoutExerciseRepository;
   @Mock private ExerciseRepository exerciseRepository;
+  @Mock private SportService sportService;
   @Mock private BadgeRepository badgeRepository;
   @Mock private GoalRepository goalRepository;
   @Mock private ChallengeRepository challengeRepository;
@@ -82,6 +83,7 @@ class AdminControllerCoverageTest {
             workoutRepository,
             workoutExerciseRepository,
             exerciseRepository,
+            sportService,
             badgeRepository,
             goalRepository,
             challengeRepository,
@@ -92,7 +94,7 @@ class AdminControllerCoverageTest {
     user.setId(1L);
     user.setRole(Role.USER);
 
-    sport = new Sport(SportName.Course, 9.5);
+    sport = new Sport("Course", 9.5);
     sport.setId(10L);
 
     badge = new Badge("Course - Starter", "desc", "/images/badge/running_5km.png");
@@ -264,10 +266,10 @@ class AdminControllerCoverageTest {
 
     assertEquals(
         "redirect:/admin/sports",
-        controller.createSport(SportName.Musculation, 6.0, new RedirectAttributesModelMap()));
+        controller.createSport("Musculation", 6.0, new RedirectAttributesModelMap()));
     assertEquals(
         "redirect:/admin/sports",
-        controller.updateSport(10L, SportName.Cyclisme, 7.0, new RedirectAttributesModelMap()));
+        controller.updateSport(10L, "Cyclisme", 7.0, new RedirectAttributesModelMap()));
     assertEquals(
         "redirect:/admin/sports", controller.deleteSport(10L, new RedirectAttributesModelMap()));
   }

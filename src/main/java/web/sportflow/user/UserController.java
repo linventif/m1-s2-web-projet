@@ -37,7 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.Challenge;
-import web.sportflow.challenge.ChallengeProgress;
+import web.sportflow.challenge.ChallengeDto;
 import web.sportflow.challenge.ChallengeService;
 import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipService;
@@ -392,10 +392,10 @@ public class UserController {
             .map(Challenge::getId)
             .filter(id -> id != null)
             .collect(Collectors.toSet());
-    Map<Long, ChallengeProgress> challengeProgressById =
+    Map<Long, ChallengeDto> ChallengeDtoById =
         challengeService.buildProgressByChallenge(challenges, activeUser);
     Set<Long> completedChallengeIds =
-        challengeProgressById.entrySet().stream()
+        ChallengeDtoById.entrySet().stream()
             .filter(entry -> entry.getValue() != null && entry.getValue().completed())
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
@@ -408,7 +408,7 @@ public class UserController {
     model.addAttribute("officialChallenges", officialChallenges);
     model.addAttribute("communityChallenges", communityChallenges);
     model.addAttribute("joinedChallengeIds", joinedChallengeIds);
-    model.addAttribute("challengeProgressById", challengeProgressById);
+    model.addAttribute("ChallengeDtoById", ChallengeDtoById);
     model.addAttribute("completedChallengeIds", completedChallengeIds);
     model.addAttribute(
         "unlockedChallengeBadgeIdsByChallengeId", unlockedChallengeBadgeIdsByChallengeId);
@@ -757,6 +757,10 @@ public class UserController {
         currentUser != null && currentUser.getId() != null
             ? workoutService.getFriendsWorkout(currentUser.getId())
             : List.of();
+    List<Workout> draftWorkouts =
+        currentUser != null && currentUser.getId() != null
+            ? workoutService.getIncompleteForUser(currentUser)
+            : List.of();
 
     model.addAttribute(
         "goals",
@@ -764,6 +768,7 @@ public class UserController {
             ? goalService.getFriendsAndUserGoal(currentUser)
             : List.of());
     model.addAttribute("workouts", visibleWorkouts);
+    model.addAttribute("draftWorkouts", draftWorkouts);
 
     model.addAttribute(
         "workoutDisplays", visibleWorkouts.stream().map(WorkoutDashboardDisplay::new).toList());

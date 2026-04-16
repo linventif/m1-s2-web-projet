@@ -44,7 +44,7 @@ class FriendshipServiceTest {
     assertEquals(FriendshipStatus.PENDING, result.getStatus());
     assertEquals(requester, result.getRequester());
     assertEquals(addressee, result.getAddressee());
-    verify(notificationService).notifyFriendRequestReceived(any(Friendship.class));
+    verify(notificationService).notifyFriendRequestReceived(result);
   }
 
   @Test
@@ -64,7 +64,7 @@ class FriendshipServiceTest {
     assertEquals(FriendshipStatus.ACCEPTED, result.getStatus());
     assertEquals(addressee, result.getRequester());
     assertEquals(requester, result.getAddressee());
-    verify(notificationService).notifyFriendRequestAccepted(any(Friendship.class), any(User.class));
+    verify(notificationService).notifyFriendRequestAccepted(result, requester);
   }
 
   @Test

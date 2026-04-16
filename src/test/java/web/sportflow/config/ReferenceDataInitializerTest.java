@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,21 +52,21 @@ class ReferenceDataInitializerTest {
 
     when(passwordEncoder.encode("demo123")).thenReturn("encoded-demo123");
 
-    when(userRepository.saveAll(anyList()))
+    when(userRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    when(sportRepository.saveAll(anyList()))
+    when(sportRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
-    when(badgeRepository.saveAll(anyList()))
+    when(badgeRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
-    when(challengeRepository.saveAll(anyList()))
+    when(challengeRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
-    when(goalRepository.saveAll(anyList()))
+    when(goalRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
-    when(exerciseRepository.saveAll(anyList()))
+    when(exerciseRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
-    when(workoutRepository.saveAll(anyList()))
+    when(workoutRepository.saveAll(any()))
         .thenAnswer(invocation -> assignIds(invocation.getArgument(0)));
 
     ReferenceDataInitializer initializer =
@@ -89,32 +88,37 @@ class ReferenceDataInitializerTest {
 
     initializer.run();
 
-    verify(userRepository, atLeastOnce()).saveAll(anyList());
-    verify(sportRepository, atLeastOnce()).saveAll(anyList());
-    verify(badgeRepository, atLeastOnce()).saveAll(anyList());
-    verify(challengeRepository, atLeastOnce()).saveAll(anyList());
-    verify(goalRepository, atLeastOnce()).saveAll(anyList());
-    verify(exerciseRepository, atLeastOnce()).saveAll(anyList());
-    verify(workoutRepository, atLeastOnce()).saveAll(anyList());
+    verify(userRepository, atLeastOnce()).saveAll(any());
+    verify(sportRepository, atLeastOnce()).saveAll(any());
+    verify(badgeRepository, atLeastOnce()).saveAll(any());
+    verify(challengeRepository, atLeastOnce()).saveAll(any());
+    verify(goalRepository, atLeastOnce()).saveAll(any());
+    verify(exerciseRepository, atLeastOnce()).saveAll(any());
+    verify(workoutRepository, atLeastOnce()).saveAll(any());
   }
 
   @Test
   void fileHelpers_extractAndCleanupPaths(@TempDir Path tmp) throws IOException {
-    ReferenceDataInitializer initializer = minimalInitializer();
-
-    String normal = ReflectionTestUtils.invokeMethod(initializer, "extractFileName", "/a/b/c.png");
+    String normal =
+        ReflectionTestUtils.invokeMethod(
+            ReferenceDemoAssets.class, "extractFileName", "/a/b/c.png");
     String withQuery =
-        ReflectionTestUtils.invokeMethod(initializer, "extractFileName", "/a/b/c.png?x=1#f");
+        ReflectionTestUtils.invokeMethod(
+            ReferenceDemoAssets.class, "extractFileName", "/a/b/c.png?x=1#f");
     String traversal =
-        ReflectionTestUtils.invokeMethod(initializer, "extractFileName", "../secret");
+        ReflectionTestUtils.invokeMethod(ReferenceDemoAssets.class, "extractFileName", "../secret");
 
     assertEquals("c.png", normal);
     assertEquals("c.png", withQuery);
     assertEquals("secret", traversal);
 
-    assertEquals("png", ReflectionTestUtils.invokeMethod(initializer, "extractExtension", "a.png"));
-    assertEquals("", ReflectionTestUtils.invokeMethod(initializer, "extractExtension", "a"));
-    assertEquals("", ReflectionTestUtils.invokeMethod(initializer, "extractExtension", "a."));
+    assertEquals(
+        "png",
+        ReflectionTestUtils.invokeMethod(ReferenceDemoAssets.class, "extractExtension", "a.png"));
+    assertEquals(
+        "", ReflectionTestUtils.invokeMethod(ReferenceDemoAssets.class, "extractExtension", "a"));
+    assertEquals(
+        "", ReflectionTestUtils.invokeMethod(ReferenceDemoAssets.class, "extractExtension", "a."));
 
     Path uploadDir = tmp.resolve("avatars");
     Files.createDirectories(uploadDir);
@@ -123,35 +127,34 @@ class ReferenceDataInitializerTest {
     Path other = uploadDir.resolve("other.png");
     Files.writeString(other, "y");
 
-    ReflectionTestUtils.invokeMethod(initializer, "cleanupExistingUserAvatars", uploadDir, 42L);
+    ReflectionTestUtils.invokeMethod(
+        ReferenceDemoAssets.class, "cleanupExistingUserAvatars", uploadDir, 42L);
 
     assertFalse(Files.exists(avatar));
     assertTrue(Files.exists(other));
   }
 
   @Test
-  void assignDemoBadgeIcons_handlesNullAndEmptyEntries() {
+  void assignBadgeIcons_handlesNullAndEmptyEntries() {
     BadgeRepository badgeRepository = Mockito.mock(BadgeRepository.class);
-    when(badgeRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
-
-    ReferenceDataInitializer initializer = minimalInitializerWithBadgeRepo(badgeRepository);
-    ReflectionTestUtils.setField(
-        initializer, "badgeUploadDir", tempDir.resolve("badge-assets").toString());
+    when(badgeRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     List<Badge> badges = new ArrayList<>();
     badges.add(null);
     badges.add(new Badge("B1", "D1", ""));
     badges.add(new Badge("B2", "D2", "/images/badge/not-existing.png"));
 
-    ReflectionTestUtils.invokeMethod(initializer, "assignDemoBadgeIcons", badges);
+    ReferenceDemoAssets.assignBadgeIcons(
+        badges, tempDir.resolve("badge-assets").toString(), badgeRepository);
 
     verify(badgeRepository).saveAll(badges);
   }
 
-  @SuppressWarnings("unchecked")
-  private <T> List<T> assignIds(List<T> entities) {
+  private <T> List<T> assignIds(Iterable<T> entities) {
+    List<T> assignedEntities = new ArrayList<>();
     long id = 1L;
     for (T entity : entities) {
+      assignedEntities.add(entity);
       if (entity instanceof User user && user.getId() == null) {
         user.setId(id++);
       } else if (entity instanceof Sport sport && sport.getId() == null) {
@@ -168,7 +171,7 @@ class ReferenceDataInitializerTest {
         workout.setId(id++);
       }
     }
-    return entities;
+    return assignedEntities;
   }
 
   private ReferenceDataInitializer minimalInitializer() {
@@ -187,13 +190,12 @@ class ReferenceDataInitializerTest {
     ExerciseRepository exerciseRepository = Mockito.mock(ExerciseRepository.class);
 
     when(passwordEncoder.encode(any())).thenReturn("encoded");
-    when(userRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(sportRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(challengeRepository.saveAll(anyList()))
-        .thenAnswer(invocation -> invocation.getArgument(0));
-    when(goalRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(exerciseRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(workoutRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(sportRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(challengeRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(goalRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(exerciseRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(workoutRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     return new ReferenceDataInitializer(
