@@ -115,7 +115,11 @@
                         th:text="${user.firstname + ' ' + user.lastname + ' (#' + user.id + ')'}"
                       ></option>
                     </select>
-                    <select name="sportIds" multiple class="select select-bordered h-32 md:col-span-2">
+                    <select
+                      name="sportIds"
+                      multiple
+                      class="select select-bordered h-32 md:col-span-2"
+                    >
                       <option
                         th:each="sport : ${sports}"
                         th:value="${sport.id}"
@@ -193,7 +197,9 @@
                       </p>
                       <p class="text-sm text-base-content/60">
                         Participants :
-                        <span th:if="${#lists.isEmpty(challenge.participants)}" class="italic"
+                        <span
+                          th:if="${#lists.isEmpty(challenge.participants)}"
+                          class="italic"
                           th:text="${challenge.official} ? 'Global (tous les utilisateurs)' : 'Aucun'"
                           >Aucun</span
                         >
@@ -339,7 +345,7 @@
       </div>
     </div>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener("DOMContentLoaded", () => {
         const challengeForms = document.querySelectorAll('form[action*="/admin/challenges/"]');
         for (const form of challengeForms) {
           const officialInput = form.querySelector('input[name="official"]');
@@ -370,7 +376,7 @@
           };
 
           refreshFormState();
-          officialInput.addEventListener('change', refreshFormState);
+          officialInput.addEventListener("change", refreshFormState);
         }
       });
     </script>
