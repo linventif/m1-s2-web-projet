@@ -63,6 +63,7 @@
             >Admin</a
           >
           <a th:href="@{/users/workout}" class="btn btn-ghost rounded-full px-4">Activités</a>
+          <a th:href="@{/users/challenges}" class="btn btn-ghost rounded-full px-4">Challenges</a>
           <a th:href="@{/users/friends}" class="btn btn-ghost rounded-full px-4">Communauté</a>
           <a th:href="@{/users/profile}" class="btn btn-ghost rounded-full px-4">Profil</a>
         </nav>
@@ -138,6 +139,7 @@
             <li><a th:href="@{/users/profile}">Mon profil</a></li>
             <li><a th:href="@{/users/friends}">Mes amis</a></li>
             <li><a th:href="@{/users/workout}">Mes activités</a></li>
+            <li><a th:href="@{/users/challenges}">Mes challenges</a></li>
             <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">Panneau admin</a></li>
             <li>
               <form th:action="@{/logout}" method="post">
@@ -200,6 +202,9 @@
             >Admin</a
           >
           <a th:href="@{/users/workout}" class="btn btn-ghost btn-sm rounded-full">Activités</a>
+          <a th:href="@{/users/challenges}" class="btn btn-ghost btn-sm rounded-full"
+            >Challenges</a
+          >
           <a th:href="@{/users/friends}" class="btn btn-ghost btn-sm rounded-full">Amis</a>
           <a th:href="@{/users/profile}" class="btn btn-ghost btn-sm rounded-full">Profil</a>
         </nav>

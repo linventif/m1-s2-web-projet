@@ -2,6 +2,7 @@ package web.sportflow.challenge;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,19 +10,24 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import web.sportflow.friendship.FriendshipService;
 import web.sportflow.user.PracticeLevel;
 import web.sportflow.user.Sex;
 import web.sportflow.user.User;
+import web.sportflow.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ChallengeServiceTest {
 
   @Mock private ChallengeRepository challengeRepository;
+  @Mock private FriendshipService friendshipService;
+  @Mock private UserRepository userRepository;
 
   @InjectMocks private ChallengeService challengeService;
 
@@ -89,5 +95,71 @@ class ChallengeServiceTest {
 
     assertEquals(expected, result);
     verify(challengeRepository).findAll();
+  }
+
+  @Test
+  void joinChallenge_addsCurrentUserAsParticipantWhenChallengeIsOpen() {
+    user.setId(10L);
+    Challenge challenge =
+        new Challenge(
+            "Avril actif",
+            "Bouger tous les jours",
+            ChallengeType.DUREE,
+            30.0,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1),
+            user);
+    challenge.setId(1L);
+    when(challengeRepository.findById(1L)).thenReturn(Optional.of(challenge));
+    when(userRepository.findById(10L)).thenReturn(Optional.of(user));
+
+    challengeService.joinChallenge(1L, user);
+
+    assertEquals(1, challenge.getParticipants().size());
+    assertEquals(user, challenge.getParticipants().getFirst());
+    verify(challengeRepository).save(challenge);
+  }
+
+  @Test
+  void leaveChallenge_removesCurrentUserBeforeEndDate() {
+    user.setId(10L);
+    Challenge challenge =
+        new Challenge(
+            "Avril actif",
+            "Bouger tous les jours",
+            ChallengeType.DUREE,
+            30.0,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1),
+            user);
+    challenge.setId(1L);
+    challenge.getParticipants().add(user);
+    when(challengeRepository.findById(1L)).thenReturn(Optional.of(challenge));
+    when(userRepository.findById(10L)).thenReturn(Optional.of(user));
+
+    challengeService.leaveChallenge(1L, user);
+
+    assertEquals(0, challenge.getParticipants().size());
+    verify(challengeRepository).save(challenge);
+  }
+
+  @Test
+  void leaveChallenge_rejectsCancellationAfterEndDate() {
+    user.setId(10L);
+    Challenge challenge =
+        new Challenge(
+            "Challenge termine",
+            "Trop tard",
+            ChallengeType.DISTANCE,
+            5.0,
+            LocalDate.now().minusDays(10),
+            LocalDate.now().minusDays(1),
+            user);
+    challenge.setId(1L);
+    challenge.getParticipants().add(user);
+    when(challengeRepository.findById(1L)).thenReturn(Optional.of(challenge));
+    when(userRepository.findById(10L)).thenReturn(Optional.of(user));
+
+    assertThrows(IllegalArgumentException.class, () -> challengeService.leaveChallenge(1L, user));
   }
 }

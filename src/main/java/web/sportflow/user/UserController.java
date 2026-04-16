@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
+import web.sportflow.challenge.Challenge;
 import web.sportflow.challenge.ChallengeService;
 import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipService;
@@ -290,6 +291,59 @@ public class UserController {
     return "user-friends";
   }
 
+  @GetMapping("/challenges")
+  public String showChallenges(
+      @AuthenticationPrincipal User currentUser,
+      @RequestParam(value = "q", required = false) String query,
+      Model model) {
+    List<Challenge> challenges = challengeService.searchChallenges(query);
+    Set<Long> joinedChallengeIds =
+        challenges.stream()
+            .filter(challenge -> hasParticipant(challenge, currentUser))
+            .map(Challenge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
+    Map<Long, List<User>> friendParticipantsByChallengeId =
+        buildFriendParticipantsByChallengeId(challenges, currentUser);
+
+    model.addAttribute("challenges", challenges);
+    model.addAttribute("joinedChallengeIds", joinedChallengeIds);
+    model.addAttribute("friendParticipantsByChallengeId", friendParticipantsByChallengeId);
+    model.addAttribute("query", query);
+    model.addAttribute("today", LocalDate.now());
+    return "user-challenges";
+  }
+
+  @PostMapping("/challenges/{challengeId}/join")
+  public String joinChallenge(
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long challengeId,
+      @RequestParam(defaultValue = "/users/challenges") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      challengeService.joinChallenge(challengeId, currentUser);
+      redirectAttributes.addFlashAttribute("message", "Inscription au challenge confirmee.");
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
+  @PostMapping("/challenges/{challengeId}/leave")
+  public String leaveChallenge(
+      @AuthenticationPrincipal User currentUser,
+      @PathVariable Long challengeId,
+      @RequestParam(defaultValue = "/users/challenges") String returnTo,
+      RedirectAttributes redirectAttributes) {
+    try {
+      challengeService.leaveChallenge(challengeId, currentUser);
+      redirectAttributes.addFlashAttribute("message", "Participation annulee.");
+    } catch (IllegalArgumentException exception) {
+      redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+    }
+    return "redirect:" + resolveReturnTo(returnTo);
+  }
+
   private void populateFriendshipContext(User currentUser, Model model) {
     List<Friendship> incomingRequests =
         friendshipService.getIncomingPendingRequests(currentUser.getId());
@@ -402,6 +456,62 @@ public class UserController {
       return returnTo;
     }
     return "/users/friends";
+  }
+
+  private boolean hasParticipant(Challenge challenge, User currentUser) {
+    if (challenge == null || currentUser == null || currentUser.getId() == null) {
+      return false;
+    }
+    return challenge.getParticipants().stream()
+        .anyMatch(user -> user != null && currentUser.getId().equals(user.getId()));
+  }
+
+  private Map<Long, List<User>> buildFriendParticipantsByChallengeId(
+      List<Challenge> challenges, User currentUser) {
+    if (currentUser == null || currentUser.getId() == null) {
+      return Map.of();
+    }
+
+    Set<Long> friendIds =
+        friendshipService.getAcceptedFriendships(currentUser.getId()).stream()
+            .map(friendship -> getFriendId(friendship, currentUser.getId()))
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
+    if (friendIds.isEmpty()) {
+      return Map.of();
+    }
+
+    Map<Long, List<User>> friendParticipantsByChallengeId = new LinkedHashMap<>();
+    for (Challenge challenge : challenges) {
+      if (challenge.getId() == null) {
+        continue;
+      }
+      List<User> friendParticipants =
+          challenge.getParticipants().stream()
+              .filter(user -> user != null && friendIds.contains(user.getId()))
+              .toList();
+      friendParticipantsByChallengeId.put(challenge.getId(), friendParticipants);
+    }
+    return friendParticipantsByChallengeId;
+  }
+
+  private Long getFriendId(Friendship friendship, Long currentUserId) {
+    if (friendship == null || currentUserId == null) {
+      return null;
+    }
+    if (friendship.getRequester() != null
+        && currentUserId.equals(friendship.getRequester().getId())) {
+      if (friendship.getAddressee() == null) {
+        return null;
+      }
+      return friendship.getAddressee().getId();
+    }
+    if (friendship.getAddressee() != null
+        && currentUserId.equals(friendship.getAddressee().getId())
+        && friendship.getRequester() != null) {
+      return friendship.getRequester().getId();
+    }
+    return null;
   }
 
   @GetMapping("/workout")
