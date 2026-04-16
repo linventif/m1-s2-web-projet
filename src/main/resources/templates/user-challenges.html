@@ -10,6 +10,17 @@
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
+    <style>
+      .time-progress::-webkit-progress-bar {
+        background-image: repeating-linear-gradient(
+          135deg,
+          hsl(var(--b3)) 0px,
+          hsl(var(--b3)) 8px,
+          hsl(var(--b2)) 8px,
+          hsl(var(--b2)) 16px
+        );
+      }
+    </style>
     <div th:insert="~{components/layout::header}"></div>
 
     <main class="mx-auto w-full max-w-7xl px-4 pb-8 pt-24 sm:px-6 lg:px-8">
@@ -131,7 +142,7 @@
                       <span class="font-semibold" th:text="${challenge.endDateShortUs}">04/26</span>
                     </div>
                     <progress
-                      class="progress progress-warning w-full"
+                      class="progress progress-warning time-progress w-full"
                       max="100"
                       th:value="${challenge.remainingTimePercent}"
                     ></progress>
@@ -286,7 +297,7 @@
                       <span class="font-semibold" th:text="${challenge.endDateShortUs}">04/26</span>
                     </div>
                     <progress
-                      class="progress progress-info w-full"
+                      class="progress progress-info time-progress w-full"
                       max="100"
                       th:value="${challenge.remainingTimePercent}"
                     ></progress>

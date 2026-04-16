@@ -234,22 +234,26 @@ public class Challenge {
       return 0;
     }
 
-    long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-    if (totalDays <= 0) {
+    LocalDate today = LocalDate.now();
+
+    if (startDate.equals(endDate)) {
+      return today.isBefore(startDate) ? 0 : 100;
+    }
+
+    long totalSpanDays = ChronoUnit.DAYS.between(startDate, endDate);
+    if (totalSpanDays <= 0) {
       return 0;
     }
 
-    LocalDate today = LocalDate.now();
-    long remainingDays;
     if (today.isBefore(startDate)) {
-      remainingDays = totalDays;
-    } else if (today.isAfter(endDate)) {
-      remainingDays = 0;
-    } else {
-      remainingDays = ChronoUnit.DAYS.between(today, endDate) + 1;
+      return 0;
+    }
+    if (!today.isBefore(endDate)) {
+      return 100;
     }
 
-    double percent = (remainingDays * 100.0) / totalDays;
+    long elapsedDays = ChronoUnit.DAYS.between(startDate, today);
+    double percent = (elapsedDays * 100.0) / totalSpanDays;
     return (int) Math.max(0, Math.min(100, Math.round(percent)));
   }
 
