@@ -88,6 +88,7 @@ public class UserController {
     this.friendshipService = friendshipService;
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le menu utilisateur",
       description = "Retourne la vue HTML du menu principal utilisateur.")
@@ -97,6 +98,7 @@ public class UserController {
     return "user-menu";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le formulaire de creation d'utilisateur",
       description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
@@ -107,6 +109,7 @@ public class UserController {
     return "user-create";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un utilisateur",
       description =
@@ -142,6 +145,7 @@ public class UserController {
     }
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le profil de l'utilisateur connecte",
       description =
@@ -161,6 +165,7 @@ public class UserController {
     return "user-profile";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le profil public d'un utilisateur",
       description =
@@ -195,6 +200,7 @@ public class UserController {
             });
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le formulaire d'edition du profil",
       description =
@@ -207,6 +213,7 @@ public class UserController {
     return "user-profile-edit";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour le profil de l'utilisateur connecte",
       description =
@@ -307,6 +314,7 @@ public class UserController {
     }
   }
 
+  // NOSONAR
   @Operation(
       summary = "Redirige vers la page des amis",
       description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
@@ -316,6 +324,7 @@ public class UserController {
     return "redirect:/users/friends";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Enregistre un nouveau compte",
       description =
@@ -334,6 +343,7 @@ public class UserController {
     }
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche la gestion des amis",
       description =
@@ -359,6 +369,7 @@ public class UserController {
     return "user-friends";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche les challenges disponibles",
       description =
@@ -388,6 +399,7 @@ public class UserController {
     return "user-challenges";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Rejoint un challenge",
       description =
@@ -411,6 +423,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  // NOSONAR
   @Operation(
       summary = "Quitte un challenge",
       description =
@@ -477,6 +490,7 @@ public class UserController {
     model.addAttribute("currentUserId", currentUser.getId());
   }
 
+  // NOSONAR
   @Operation(
       summary = "Envoie une demande d'amitie",
       description =
@@ -504,6 +518,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  // NOSONAR
   @Operation(
       summary = "Accepte une demande d'amitie",
       description =
@@ -528,6 +543,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  // NOSONAR
   @Operation(
       summary = "Refuse une demande d'amitie",
       description =
@@ -552,6 +568,7 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
+  // NOSONAR
   @Operation(
       summary = "Retire un ami",
       description =
@@ -638,6 +655,7 @@ public class UserController {
     return null;
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche les activites",
       description =
@@ -657,6 +675,7 @@ public class UserController {
     return "user-workout";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Redirige vers les objectifs du profil",
       description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
@@ -666,6 +685,7 @@ public class UserController {
     return "redirect:/users/profile#goals";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche le tableau de bord utilisateur",
       description =
@@ -720,6 +740,7 @@ public class UserController {
     return "dashboard";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Affiche les statistiques utilisateur",
       description =

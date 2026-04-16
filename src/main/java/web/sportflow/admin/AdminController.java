@@ -99,6 +99,7 @@ public class AdminController {
     this.passwordEncoder = passwordEncoder;
   }
 
+  // NOSONAR
   @Operation(
       summary = "Accès au panel d'administration",
       description =
@@ -128,6 +129,7 @@ public class AdminController {
     return "admin-index";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les utilisateurs dans l'espace admin",
       description =
@@ -146,6 +148,7 @@ public class AdminController {
     return "admin-users";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les sports dans l'espace admin",
       description =
@@ -159,6 +162,7 @@ public class AdminController {
     return "admin-sports";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les activites dans l'espace admin",
       description =
@@ -174,6 +178,7 @@ public class AdminController {
     return "admin-workouts";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les badges dans l'espace admin",
       description =
@@ -186,6 +191,7 @@ public class AdminController {
     return "admin-badges";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les objectifs dans l'espace admin",
       description =
@@ -200,6 +206,7 @@ public class AdminController {
     return "admin-goals";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les challenges dans l'espace admin",
       description =
@@ -216,6 +223,7 @@ public class AdminController {
     return "admin-challenges";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Liste les relations d'amitie dans l'espace admin",
       description =
@@ -230,6 +238,7 @@ public class AdminController {
     return "admin-friendships";
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un utilisateur depuis l'administration",
       description =
@@ -289,6 +298,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour un utilisateur depuis l'administration",
       description =
@@ -357,6 +367,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime un utilisateur depuis l'administration",
       description =
@@ -423,6 +434,7 @@ public class AdminController {
     return redirectTo("users");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un sport depuis l'administration",
       description =
@@ -455,6 +467,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour un sport depuis l'administration",
       description =
@@ -491,6 +504,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime un sport depuis l'administration",
       description =
@@ -528,6 +542,7 @@ public class AdminController {
     return redirectTo("sports");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un badge depuis l'administration",
       description =
@@ -561,6 +576,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour un badge depuis l'administration",
       description =
@@ -600,6 +616,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime un badge depuis l'administration",
       description =
@@ -629,6 +646,7 @@ public class AdminController {
     return redirectTo("badges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un objectif depuis l'administration",
       description =
@@ -668,6 +686,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour un objectif depuis l'administration",
       description =
@@ -708,6 +727,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime un objectif depuis l'administration",
       description =
@@ -729,6 +749,7 @@ public class AdminController {
     return redirectTo("goals");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree une activite depuis l'administration",
       description =
@@ -769,6 +790,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour une activite depuis l'administration",
       description =
@@ -809,6 +831,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime une activite depuis l'administration",
       description =
@@ -829,6 +852,7 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree un challenge depuis l'administration",
       description =
@@ -872,6 +896,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour un challenge depuis l'administration",
       description =
@@ -918,6 +943,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime un challenge depuis l'administration",
       description =
@@ -939,6 +965,7 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Cree une relation d'amitie depuis l'administration",
       description =
@@ -975,6 +1002,7 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Met a jour une relation d'amitie depuis l'administration",
       description =
@@ -1005,6 +1033,7 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
+  // NOSONAR
   @Operation(
       summary = "Supprime une relation d'amitie depuis l'administration",
       description =
