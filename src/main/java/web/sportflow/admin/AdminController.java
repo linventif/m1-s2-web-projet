@@ -99,7 +99,6 @@ public class AdminController {
     this.passwordEncoder = passwordEncoder;
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Accès au panel d'administration",
       description =
@@ -129,7 +128,6 @@ public class AdminController {
     return "admin-index";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les utilisateurs dans l'espace admin",
       description =
@@ -148,7 +146,6 @@ public class AdminController {
     return "admin-users";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les sports dans l'espace admin",
       description =
@@ -162,7 +159,6 @@ public class AdminController {
     return "admin-sports";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les activites dans l'espace admin",
       description =
@@ -178,7 +174,6 @@ public class AdminController {
     return "admin-workouts";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les badges dans l'espace admin",
       description =
@@ -191,7 +186,6 @@ public class AdminController {
     return "admin-badges";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les objectifs dans l'espace admin",
       description =
@@ -206,7 +200,6 @@ public class AdminController {
     return "admin-goals";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les challenges dans l'espace admin",
       description =
@@ -223,7 +216,6 @@ public class AdminController {
     return "admin-challenges";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les relations d'amitie dans l'espace admin",
       description =
@@ -238,7 +230,6 @@ public class AdminController {
     return "admin-friendships";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un utilisateur depuis l'administration",
       description =
@@ -298,7 +289,6 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour un utilisateur depuis l'administration",
       description =
@@ -367,7 +357,6 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un utilisateur depuis l'administration",
       description =
@@ -434,7 +423,6 @@ public class AdminController {
     return redirectTo("users");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un sport depuis l'administration",
       description =
@@ -467,7 +455,6 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour un sport depuis l'administration",
       description =
@@ -504,7 +491,6 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un sport depuis l'administration",
       description =
@@ -542,7 +528,6 @@ public class AdminController {
     return redirectTo("sports");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un badge depuis l'administration",
       description =
@@ -576,7 +561,6 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour un badge depuis l'administration",
       description =
@@ -616,7 +600,6 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un badge depuis l'administration",
       description =
@@ -646,7 +629,6 @@ public class AdminController {
     return redirectTo("badges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un objectif depuis l'administration",
       description =
@@ -686,7 +668,6 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour un objectif depuis l'administration",
       description =
@@ -727,7 +708,6 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un objectif depuis l'administration",
       description =
@@ -749,7 +729,6 @@ public class AdminController {
     return redirectTo("goals");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree une activite depuis l'administration",
       description =
@@ -790,7 +769,6 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour une activite depuis l'administration",
       description =
@@ -831,7 +809,6 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime une activite depuis l'administration",
       description =
@@ -852,7 +829,6 @@ public class AdminController {
     return redirectTo("workouts");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un challenge depuis l'administration",
       description =
@@ -896,7 +872,6 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour un challenge depuis l'administration",
       description =
@@ -943,7 +918,6 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un challenge depuis l'administration",
       description =
@@ -965,7 +939,6 @@ public class AdminController {
     return redirectTo("challenges");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree une relation d'amitie depuis l'administration",
       description =
@@ -1002,7 +975,6 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour une relation d'amitie depuis l'administration",
       description =
@@ -1033,7 +1005,6 @@ public class AdminController {
     return redirectTo("friendships");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime une relation d'amitie depuis l'administration",
       description =

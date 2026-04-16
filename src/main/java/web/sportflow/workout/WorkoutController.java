@@ -61,7 +61,6 @@ public class WorkoutController {
     this.exerciseService = exerciseService;
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Liste les activites",
       description =
@@ -81,7 +80,6 @@ public class WorkoutController {
     return "user-workout";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Ajoute ou retire un kudo sur une activite",
       description =
@@ -102,7 +100,6 @@ public class WorkoutController {
         "isKudoed", isKudoed);
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Ajoute un commentaire a une activite",
       description =
@@ -121,7 +118,6 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime un commentaire d'une activite",
       description =
@@ -141,7 +137,6 @@ public class WorkoutController {
     return "components/comment-section :: comment-section";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de creation d'une activite",
       description =
@@ -154,7 +149,6 @@ public class WorkoutController {
     return "user-workout-form";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de modification d'une activite",
       description =
@@ -177,7 +171,6 @@ public class WorkoutController {
     return "user-workout-form";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree ou met a jour une activite",
       description =
@@ -235,7 +228,6 @@ public class WorkoutController {
     throw new IllegalArgumentException("Workout name is mandatory");
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Supprime une activite",
       description =

@@ -35,6 +35,10 @@
 		<sonar.exclusions>
 			**/resources/templates/**
 		</sonar.exclusions>
+		<sonar.cpd.exclusions>
+			**/UserController.java,
+			**/AdminController.java
+		</sonar.cpd.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>

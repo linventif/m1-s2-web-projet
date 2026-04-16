@@ -88,7 +88,6 @@ public class UserController {
     this.friendshipService = friendshipService;
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le menu utilisateur",
       description = "Retourne la vue HTML du menu principal utilisateur.")
@@ -98,7 +97,6 @@ public class UserController {
     return "user-menu";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire de creation d'utilisateur",
       description = "Retourne la vue HTML du formulaire de creation de compte utilisateur.")
@@ -109,7 +107,6 @@ public class UserController {
     return "user-create";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Cree un utilisateur",
       description =
@@ -145,7 +142,6 @@ public class UserController {
     }
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le profil de l'utilisateur connecte",
       description =
@@ -165,7 +161,6 @@ public class UserController {
     return "user-profile";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le profil public d'un utilisateur",
       description =
@@ -200,7 +195,6 @@ public class UserController {
             });
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le formulaire d'edition du profil",
       description =
@@ -213,7 +207,6 @@ public class UserController {
     return "user-profile-edit";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Met a jour le profil de l'utilisateur connecte",
       description =
@@ -314,7 +307,6 @@ public class UserController {
     }
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Redirige vers la page des amis",
       description = "Redirige les anciennes URLs utilisateurs vers la page de gestion des amis.")
@@ -324,7 +316,6 @@ public class UserController {
     return "redirect:/users/friends";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Enregistre un nouveau compte",
       description =
@@ -343,7 +334,6 @@ public class UserController {
     }
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche la gestion des amis",
       description =
@@ -369,7 +359,6 @@ public class UserController {
     return "user-friends";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les challenges disponibles",
       description =
@@ -399,7 +388,6 @@ public class UserController {
     return "user-challenges";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Rejoint un challenge",
       description =
@@ -423,7 +411,6 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Quitte un challenge",
       description =
@@ -490,7 +477,6 @@ public class UserController {
     model.addAttribute("currentUserId", currentUser.getId());
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Envoie une demande d'amitie",
       description =
@@ -518,7 +504,6 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Accepte une demande d'amitie",
       description =
@@ -543,7 +528,6 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Refuse une demande d'amitie",
       description =
@@ -568,7 +552,6 @@ public class UserController {
     return "redirect:" + resolveReturnTo(returnTo);
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Retire un ami",
       description =
@@ -655,7 +638,6 @@ public class UserController {
     return null;
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les activites",
       description =
@@ -675,7 +657,6 @@ public class UserController {
     return "user-workout";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Redirige vers les objectifs du profil",
       description = "Redirige l'utilisateur vers l'ancre objectifs de sa page de profil.")
@@ -685,7 +666,6 @@ public class UserController {
     return "redirect:/users/profile#goals";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche le tableau de bord utilisateur",
       description =
@@ -740,7 +720,6 @@ public class UserController {
     return "dashboard";
   }
 
-  @SuppressWarnings("CPD-START")
   @Operation(
       summary = "Affiche les statistiques utilisateur",
       description =
