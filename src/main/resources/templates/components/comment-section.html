@@ -68,8 +68,8 @@
                   type="button"
                   th:if="${canDeleteComment}"
                   th:onclick="'deleteCommentAjax(' + ${workout.id} + ',' + ${comment.id} + ')'"
-                  class="btn btn-ghost btn-xs btn-square text-error"
-                  title="Supprimer le commentaire"
+                  class="btn btn-ghost btn-xs btn-square text-error tooltip tooltip-left"
+                  data-tip="Supprimer le commentaire"
                   aria-label="Supprimer le commentaire"
                 >
                   <i class="fa-solid fa-trash-can"></i>

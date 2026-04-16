@@ -274,7 +274,13 @@
                         th:name="${_csrf.parameterName}"
                         th:value="${_csrf.token}"
                       />
-                      <button class="btn btn-success btn-square btn-xs" title="Accepter">✔</button>
+                      <button
+                        class="btn btn-success btn-square btn-xs tooltip tooltip-left"
+                        data-tip="Accepter"
+                        aria-label="Accepter"
+                      >
+                        ✔
+                      </button>
                     </form>
                     <form method="post" th:action="@{/users/friends/refuse}">
                       <input type="hidden" name="friendshipId" th:value="${friendship.id}" />
@@ -284,7 +290,11 @@
                         th:name="${_csrf.parameterName}"
                         th:value="${_csrf.token}"
                       />
-                      <button class="btn btn-ghost btn-square btn-xs text-error" title="Refuser">
+                      <button
+                        class="btn btn-ghost btn-square btn-xs text-error tooltip tooltip-left"
+                        data-tip="Refuser"
+                        aria-label="Refuser"
+                      >
                         ✘
                       </button>
                     </form>
@@ -305,7 +315,7 @@
                   th:each="friendship : ${outgoingRequests}"
                   class="tooltip"
                   th:with="target=${friendship.addressee}"
-                  th:title="${target.firstname + ' ' + target.lastname}"
+                  th:attr="data-tip=${target.firstname + ' ' + target.lastname}"
                 >
                   <div class="avatar">
                     <div class="w-8 rounded-full border-2 border-warning">
