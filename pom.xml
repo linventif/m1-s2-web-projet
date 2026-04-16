@@ -33,7 +33,7 @@
 		<google-java-format.version>1.25.2</google-java-format.version>
 		<jacoco.version>0.8.12</jacoco.version>
 		<sonar.exclusions>**/resources/templates/**</sonar.exclusions>
-    	<sonar.cpd.exclusions>**/UserController.java,**/AdminController.java</sonar.cpd.exclusions>
+    <sonar.cpd.exclusions>**/UserController.java,**/AdminController.java</sonar.cpd.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>

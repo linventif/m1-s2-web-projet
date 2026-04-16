@@ -210,6 +210,7 @@ public class AdminController {
     model.addAttribute("challenges", loadChallenges());
     model.addAttribute("users", loadUsers());
     model.addAttribute("badges", loadBadges());
+    model.addAttribute("sports", loadSports());
     model.addAttribute("challengeTypes", ChallengeType.values());
     model.addAttribute("today", LocalDate.now());
     model.addAttribute("activeAdminPage", "challenges");
@@ -847,6 +848,8 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(defaultValue = "false") boolean official,
+      @RequestParam(name = "sportIds", required = false) List<Long> sportIds,
       @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
@@ -861,8 +864,10 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
-      challenge.setParticipants(resolveUsers(participantIds));
-      challenge.setBadges(resolveBadges(badgeIds));
+      challenge.setOfficial(official);
+      challenge.setSports(resolveSports(sportIds));
+      challenge.setParticipants(official ? new ArrayList<>() : resolveUsers(participantIds));
+      challenge.setBadges(resolveChallengeBadges(official, badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge cree avec succes.");
@@ -891,6 +896,8 @@ public class AdminController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
       @RequestParam Long creatorId,
+      @RequestParam(defaultValue = "false") boolean official,
+      @RequestParam(name = "sportIds", required = false) List<Long> sportIds,
       @RequestParam(name = "participantIds", required = false) List<Long> participantIds,
       @RequestParam(name = "badgeIds", required = false) List<Long> badgeIds,
       RedirectAttributes redirectAttributes) {
@@ -905,10 +912,13 @@ public class AdminController {
       challenge.setStartDate(startDate);
       challenge.setEndDate(endDate);
       challenge.setCreator(requireUser(creatorId));
+      challenge.setOfficial(official);
+      challenge.getSports().clear();
+      challenge.getSports().addAll(resolveSports(sportIds));
       challenge.getParticipants().clear();
-      challenge.getParticipants().addAll(resolveUsers(participantIds));
+      challenge.getParticipants().addAll(official ? List.of() : resolveUsers(participantIds));
       challenge.getBadges().clear();
-      challenge.getBadges().addAll(resolveBadges(badgeIds));
+      challenge.getBadges().addAll(resolveChallengeBadges(official, badgeIds));
 
       challengeRepository.save(challenge);
       redirectAttributes.addFlashAttribute("message", "Challenge mis a jour.");
@@ -1189,6 +1199,13 @@ public class AdminController {
     return badgeRepository.findAllById(badgeIds);
   }
 
+  private List<Badge> resolveChallengeBadges(boolean official, List<Long> badgeIds) {
+    if (!official) {
+      return new ArrayList<>();
+    }
+    return resolveBadges(badgeIds);
+  }
+
   private List<User> resolveUsers(List<Long> userIds) {
     if (userIds == null || userIds.isEmpty()) {
       return new ArrayList<>();
@@ -1301,6 +1318,7 @@ public class AdminController {
     challenges.removeIf(Objects::isNull);
     challenges.forEach(
         challenge -> {
+          challenge.getSports().removeIf(Objects::isNull);
           challenge.getBadges().removeIf(Objects::isNull);
           challenge.getParticipants().removeIf(Objects::isNull);
         });

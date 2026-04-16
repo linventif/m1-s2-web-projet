@@ -37,6 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.sportflow.badge.Badge;
 import web.sportflow.badge.BadgeService;
 import web.sportflow.challenge.Challenge;
+import web.sportflow.challenge.ChallengeProgress;
 import web.sportflow.challenge.ChallengeService;
 import web.sportflow.friendship.Friendship;
 import web.sportflow.friendship.FriendshipService;
@@ -370,18 +371,47 @@ public class UserController {
       @AuthenticationPrincipal User currentUser,
       @RequestParam(value = "q", required = false) String query,
       Model model) {
+    User refreshedCurrentUser =
+        currentUser == null
+            ? null
+            : userService.getUserById(currentUser.getId()).orElse(currentUser);
     List<Challenge> challenges = challengeService.searchChallenges(query);
+    challengeService.syncChallengeBadgesForUser(challenges, refreshedCurrentUser);
+    if (refreshedCurrentUser != null && refreshedCurrentUser.getId() != null) {
+      refreshedCurrentUser =
+          userService.getUserById(refreshedCurrentUser.getId()).orElse(refreshedCurrentUser);
+    }
+    User activeUser = refreshedCurrentUser;
+
+    List<Challenge> officialChallenges = challengeService.getOfficialChallenges(challenges);
+    List<Challenge> communityChallenges = challengeService.getCommunityChallenges(challenges);
+
     Set<Long> joinedChallengeIds =
         challenges.stream()
-            .filter(challenge -> hasParticipant(challenge, currentUser))
+            .filter(challenge -> hasParticipant(challenge, activeUser))
             .map(Challenge::getId)
             .filter(id -> id != null)
             .collect(Collectors.toSet());
+    Map<Long, ChallengeProgress> challengeProgressById =
+        challengeService.buildProgressByChallenge(challenges, activeUser);
+    Set<Long> completedChallengeIds =
+        challengeProgressById.entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue().completed())
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     Map<Long, List<User>> friendParticipantsByChallengeId =
-        buildFriendParticipantsByChallengeId(challenges, currentUser);
+        buildFriendParticipantsByChallengeId(communityChallenges, activeUser);
+    Map<Long, Set<Long>> unlockedChallengeBadgeIdsByChallengeId =
+        buildUnlockedChallengeBadgeIdsByChallengeId(challenges, activeUser);
 
     model.addAttribute("challenges", challenges);
+    model.addAttribute("officialChallenges", officialChallenges);
+    model.addAttribute("communityChallenges", communityChallenges);
     model.addAttribute("joinedChallengeIds", joinedChallengeIds);
+    model.addAttribute("challengeProgressById", challengeProgressById);
+    model.addAttribute("completedChallengeIds", completedChallengeIds);
+    model.addAttribute(
+        "unlockedChallengeBadgeIdsByChallengeId", unlockedChallengeBadgeIdsByChallengeId);
     model.addAttribute("friendParticipantsByChallengeId", friendParticipantsByChallengeId);
     model.addAttribute("query", query);
     model.addAttribute("today", LocalDate.now());
@@ -586,6 +616,9 @@ public class UserController {
     if (challenge == null || currentUser == null || currentUser.getId() == null) {
       return false;
     }
+    if (challenge.isOfficial()) {
+      return true;
+    }
     return challenge.getParticipants().stream()
         .anyMatch(user -> user != null && currentUser.getId().equals(user.getId()));
   }
@@ -607,7 +640,7 @@ public class UserController {
 
     Map<Long, List<User>> friendParticipantsByChallengeId = new LinkedHashMap<>();
     for (Challenge challenge : challenges) {
-      if (challenge.getId() == null) {
+      if (challenge.getId() == null || challenge.isOfficial()) {
         continue;
       }
       List<User> friendParticipants =
@@ -617,6 +650,39 @@ public class UserController {
       friendParticipantsByChallengeId.put(challenge.getId(), friendParticipants);
     }
     return friendParticipantsByChallengeId;
+  }
+
+  private Map<Long, Set<Long>> buildUnlockedChallengeBadgeIdsByChallengeId(
+      List<Challenge> challenges, User currentUser) {
+    if (currentUser == null
+        || currentUser.getBadges() == null
+        || challenges == null
+        || challenges.isEmpty()) {
+      return Map.of();
+    }
+
+    Set<Long> unlockedBadgeIds =
+        currentUser.getBadges().stream()
+            .map(Badge::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toSet());
+    if (unlockedBadgeIds.isEmpty()) {
+      return Map.of();
+    }
+
+    Map<Long, Set<Long>> unlockedByChallengeId = new LinkedHashMap<>();
+    for (Challenge challenge : challenges) {
+      if (challenge == null || challenge.getId() == null || challenge.getBadges() == null) {
+        continue;
+      }
+      Set<Long> unlockedChallengeBadgeIds =
+          challenge.getBadges().stream()
+              .map(Badge::getId)
+              .filter(id -> id != null && unlockedBadgeIds.contains(id))
+              .collect(Collectors.toSet());
+      unlockedByChallengeId.put(challenge.getId(), unlockedChallengeBadgeIds);
+    }
+    return unlockedByChallengeId;
   }
 
   private Long getFriendId(Friendship friendship, Long currentUserId) {
