@@ -171,65 +171,6 @@ final class ReferenceWorkoutCatalog {
                     null,
                     LocalDateTime.of(2026, 4, 1, 10, 0),
                     "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            155.0, null, 900.0, 15, 4, null, null, exerciseBurpees),
-                        createWorkoutExercise(
-                            145.0, null, 600.0, 20, 4, null, null, exercisePompes)),
-                    sportCourse,
-                    userBogo),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 4, 10, 0),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(130.0, null, 720.0, 12, 4, null, null, exerciseSquat),
-                        createWorkoutExercise(
-                            140.0, null, 600.0, 8, 4, null, null, exerciseTractions)),
-                    sportCallisthenie,
-                    userBogo),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 9, 10, 0),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            160.0, 120.0, 900.0, null, null, null, null, exerciseVoieVitesse),
-                        createWorkoutExercise(
-                            145.0, null, 600.0, 8, 3, null, null, exerciseTractions)),
-                    sportEscalade,
-                    userBogo),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 2, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportAlpinisme,
-                    userBellwether),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 7, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportNatation,
-                    userBellwether),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 10, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userBellwether),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 1, 10, 0),
-                    "Toulouse",
                     clearsky,
                     new ArrayList<>(),
                     sportCourse,
@@ -275,170 +216,6 @@ final class ReferenceWorkoutCatalog {
                     sportSautParachute,
                     userAstrid),
                 createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 2, 10, 0),
-                    "Marseille",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            110.0, null, 900.0, 10, 4, 80000.0, null, exerciseDeveloppeCouche),
-                        createWorkoutExercise(
-                            115.0, null, 720.0, 8, 4, 45000.0, null, exerciseDeveloppeMilitaire),
-                        createWorkoutExercise(
-                            125.0, null, 900.0, 12, 4, 90000.0, null, exerciseSquat)),
-                    sportMusculation,
-                    userStoick),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 6, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportPlongee,
-                    userStoick),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 13, 10, 0),
-                    "Strasbourg",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            145.0, 22000.0, 3600.0, null, null, null, null, exercisePedalage)),
-                    sportCyclisme,
-                    userStoick),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 2, 10, 0),
-                    "Perpignan",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            150.0, 2500.0, 1800.0, null, null, null, null, exerciseDribble),
-                        createWorkoutExercise(
-                            165.0, 700.0, 600.0, null, null, null, null, exerciseSprint)),
-                    sportBasketball,
-                    userFishlegs),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 8, 10, 0),
-                    "Marseille",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            145.0, 80.0, 1500.0, null, null, null, null, exerciseEscaladeBloc),
-                        createWorkoutExercise(
-                            135.0, null, 600.0, 6, 4, null, null, exerciseTractions)),
-                    sportEscalade,
-                    userFishlegs),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 14, 10, 0),
-                    "Paris",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userFishlegs),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 3, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportParkour,
-                    userRodney),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 9, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userRodney),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 15, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCyclisme,
-                    userRodney),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 4, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userCappy),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 10, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportNatation,
-                    userCappy),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 16, 10, 0),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            95.0, null, 2400.0, null, null, null, null, exerciseYogaFlow)),
-                    sportYoga,
-                    userCappy),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 5, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userFender),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 11, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportParkour,
-                    userFender),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 17, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportPlongee,
-                    userFender),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 6, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportCourse,
-                    userBigweld),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 12, 10, 0),
-                    "Toulouse",
-                    null,
-                    new ArrayList<>(),
-                    sportEscalade,
-                    userBigweld),
-                createWorkout(
-                    null,
-                    LocalDateTime.of(2026, 4, 18, 10, 0),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            125.0, 12000.0, 5400.0, null, null, null, null, exerciseMarcheSentier)),
-                    sportRandonnee,
-                    userBigweld),
-                createWorkout(
                     "Sortie reprise Alice",
                     LocalDateTime.of(2026, 4, 19, 9, 30),
                     "Toulouse",
@@ -450,54 +227,6 @@ final class ReferenceWorkoutCatalog {
                             150.0, null, 420.0, 12, 3, null, null, exerciseSquat)),
                     sportCourse,
                     userAlice),
-                createWorkout(
-                    "Fractionne de Benoit",
-                    LocalDateTime.of(2026, 4, 19, 18, 0),
-                    "Toulouse",
-                    cloudy,
-                    List.of(
-                        createWorkoutExercise(
-                            168.0, 1800.0, 720.0, null, null, null, null, exerciseSprint),
-                        createWorkoutExercise(
-                            158.0, 2400.0, 1050.0, null, null, null, null, exerciseCourseContinue)),
-                    sportCourse,
-                    userBenoit),
-                createWorkout(
-                    "Pressing du soir",
-                    LocalDateTime.of(2026, 4, 20, 19, 15),
-                    "Bordeaux",
-                    cloudy,
-                    List.of(
-                        createWorkoutExercise(
-                            152.0, 3600.0, 2100.0, null, null, null, null, exerciseDribble),
-                        createWorkoutExercise(
-                            170.0, 900.0, 360.0, null, null, null, null, exerciseSprint)),
-                    sportFootball,
-                    userOwen),
-                createWorkout(
-                    "Validation demo admin",
-                    LocalDateTime.of(2026, 4, 18, 8, 0),
-                    "Toulouse",
-                    clearsky,
-                    List.of(
-                        createWorkoutExercise(
-                            145.0, null, 900.0, 14, 4, null, null, exerciseBurpees),
-                        createWorkoutExercise(
-                            132.0, null, 720.0, 16, 4, null, null, exercisePompes)),
-                    sportCourse,
-                    userAdmin),
-                createWorkout(
-                    "Mobilite douce",
-                    LocalDateTime.of(2026, 4, 18, 11, 0),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            92.0, null, 1800.0, null, null, null, null, exerciseYogaFlow),
-                        createWorkoutExercise(
-                            105.0, null, 480.0, 10, 3, null, null, exerciseSquat)),
-                    sportCourse,
-                    userBellwether),
                 createWorkout(
                     "Endurance mixte Berk",
                     LocalDateTime.of(2026, 4, 18, 16, 0),
@@ -521,106 +250,19 @@ final class ReferenceWorkoutCatalog {
                         createWorkoutExercise(
                             142.0, null, 720.0, 7, 4, null, null, exerciseTractions)),
                     sportEscalade,
-                    userAstrid),
-                createWorkout(
-                    "Trace urbaine Rodney",
-                    LocalDateTime.of(2026, 4, 19, 17, 0),
-                    "Toulouse",
-                    clearsky,
-                    List.of(
-                        createWorkoutExercise(
-                            162.0, 1300.0, 780.0, null, null, null, null, exerciseSprint),
-                        createWorkoutExercise(
-                            150.0, null, 600.0, 9, 4, null, null, exerciseTractions)),
-                    sportParkour,
-                    userRodney),
-                createWorkout(
-                    "Plongee controlee",
-                    LocalDateTime.of(2026, 4, 20, 14, 0),
-                    "Marseille",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            118.0, 900.0, 2100.0, null, null, null, null, exerciseNageLibre),
-                        createWorkoutExercise(
-                            122.0, 700.0, 1500.0, null, null, null, null, exerciseCrawl)),
-                    sportPlongee,
-                    userFender),
-                createWorkout(
-                    "Precision Shifu",
-                    LocalDateTime.of(2026, 4, 18, 7, 30),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            112.0, null, 900.0, 15, 5, null, null, exercisePompes),
-                        createWorkoutExercise(
-                            118.0, null, 900.0, 12, 5, null, null, exerciseSquat)),
-                    sportCourse,
-                    userShifu),
-                createWorkout(
-                    "Sentier tranquille",
-                    LocalDateTime.of(2026, 4, 19, 8, 15),
-                    "Foix",
-                    clearsky,
-                    List.of(
-                        createWorkoutExercise(
-                            98.0, 8200.0, 4200.0, null, null, null, null, exerciseMarcheSentier),
-                        createWorkoutExercise(
-                            88.0, null, 900.0, null, null, null, null, exerciseYogaFlow)),
-                    sportRandonnee,
-                    userOogway),
-                createWorkout(
-                    "Circuit dragon warrior",
-                    LocalDateTime.of(2026, 4, 20, 12, 30),
-                    "Toulouse",
-                    cloudy,
-                    List.of(
-                        createWorkoutExercise(
-                            152.0, null, 840.0, 12, 5, null, null, exerciseBurpees),
-                        createWorkoutExercise(
-                            138.0, null, 780.0, 10, 5, null, null, exercisePompes),
-                        createWorkoutExercise(
-                            145.0, null, 900.0, 14, 4, null, null, exerciseSquat)),
-                    sportCourse,
-                    userPo),
-                createWorkout(
-                    "Force explosive Tai Lung",
-                    LocalDateTime.of(2026, 4, 20, 6, 45),
-                    "Toulouse",
-                    null,
-                    List.of(
-                        createWorkoutExercise(
-                            135.0, null, 900.0, 6, 5, 95000.0, null, exerciseDeveloppeCouche),
-                        createWorkoutExercise(
-                            142.0, null, 780.0, 8, 5, null, null, exerciseTractions),
-                        createWorkoutExercise(
-                            148.0, null, 900.0, 10, 5, 110000.0, null, exerciseSquat)),
-                    sportMusculation,
-                    userTaiLung)));
+                    userAstrid)));
     enrichDemoWorkoutInteractions(
         demoWorkouts,
         List.of(
             userAlice,
             userBenoit,
             userOwen,
-            userAdmin,
             userJudy,
             userNick,
             userBogo,
             userBellwether,
             userHiccup,
-            userAstrid,
-            userStoick,
-            userFishlegs,
-            userRodney,
-            userCappy,
-            userFender,
-            userBigweld,
-            userShifu,
-            userOogway,
-            userPo,
-            userTaiLung));
+            userAstrid));
     workoutRepository.saveAll(demoWorkouts);
 
     List<Workout> coverageWorkouts = createCoverageWorkouts(allSports, userAdmin, cloudy);
