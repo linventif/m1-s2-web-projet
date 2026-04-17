@@ -49,7 +49,7 @@ flowchart TD
   B --> D[CI Sonar<br/>push + pull_request]
   D --> D1[clean verify]
   D1 --> D2[JaCoCo report + upload artifact]
-  D2 --> D3[sonar:sonar (si secrets présents)]
+  D2 --> D3[sonar:sonar]
 
   B --> E[Publish JAR Package<br/>main/master + manual]
   E --> E1[mvn clean deploy -DskipTests]
