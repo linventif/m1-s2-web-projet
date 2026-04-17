@@ -29,6 +29,10 @@
 
 ## Diagrammes
 
-![Diagramme de classes](https://linventif.github.io/m1-s2-web-projet/diagram_class.png)
+![Diagramme de classes](./diagram_class.png)
 
-![Diagramme de Relations](https://linventif.github.io/m1-s2-web-projet/diagram_relations.png)
+Diagramme de classes représentant les différentes classes du projet et leurs relations.
+
+![Diagramme de Relations](./diagram_relations.png)
+
+Diagramme de classes représentant les différentes classes du projet et leurs relations.
