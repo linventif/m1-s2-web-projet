@@ -36,3 +36,38 @@ Diagramme de classes représentant les différentes classes du projet et leurs r
 ![Diagramme de Relations](./diagram_relations.png)
 
 Diagramme de classes représentant les différentes classes du projet et leurs relations.
+
+```mermaid
+flowchart TD
+  A[Code push / PR / tag / manual] --> B{GitHub Actions}
+
+  B --> C[Auto Format<br/>push != main/master]
+  C --> C1[spotless:apply + prettier]
+  C1 --> C2[commit auto du bot]
+  C2 --> C3[clean verify]
+
+  B --> D[CI Sonar<br/>push + pull_request]
+  D --> D1[clean verify]
+  D1 --> D2[JaCoCo report + upload artifact]
+  D2 --> D3[sonar:sonar (si secrets présents)]
+
+  B --> E[Publish JAR Package<br/>main/master + manual]
+  E --> E1[mvn clean deploy -DskipTests]
+  E1 --> E2[GitHub Packages Maven]
+  E1 --> E3[Upload artifact target/*.jar]
+
+  B --> F[Docker Image<br/>main/master, tags v*, PR, manual]
+  F --> F1[buildx + metadata]
+  F1 --> F2[Build image]
+  F2 --> F3{PR ?}
+  F3 -->|Oui| F4[Build only]
+  F3 -->|Non| F5[Push GHCR<br/>ghcr.io/<owner>/sportflow]
+
+  B --> G[Publish Javadoc<br/>main/master + manual]
+  G --> G1[Generate Javadoc]
+  G1 --> G2[Run app + export OpenAPI]
+  G2 --> G3[Build Pages artifact]
+  G3 --> G4[Deploy GitHub Pages]
+```
+
+Diagramme de flux représentant les différentes étapes du pipeline CI/CD mis en place avec GitHub Actions.
