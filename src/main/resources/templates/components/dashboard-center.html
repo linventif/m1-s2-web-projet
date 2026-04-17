@@ -2,6 +2,12 @@
 
 <!-- Center content -->
 <section th:fragment="center-content" class="min-w-0 w-full space-y-6">
+  <style>
+    html[data-theme="dark"] .workout-summary-gradient {
+      background-image: linear-gradient(to right, #c2410c, #ea580c, #d97706);
+    }
+  </style>
+
   <div id="workouts-container" class="space-y-5">
     <div
       class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-base-300 pb-5"
@@ -221,7 +227,7 @@
         </div>
 
         <div
-          class="overflow-hidden rounded-[1.75rem] border border-base-300 bg-gradient-to-r from-orange-500 via-orange-400 to-amber-300 p-5 text-white"
+          class="workout-summary-gradient overflow-hidden rounded-[1.75rem] border border-base-300 bg-gradient-to-r from-orange-500 via-orange-400 to-amber-300 p-5 text-white"
         >
           <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -254,7 +260,9 @@
         <details class="collapse rounded-2xl border border-base-300 bg-base-200/60 text-sm">
           <summary class="collapse-title flex flex-wrap items-center justify-between gap-3 p-4">
             <span class="flex flex-wrap items-center gap-2">
-              <span class="badge rounded-full border-none bg-white">Séance</span>
+              <span class="badge rounded-full border border-base-300 bg-base-100 text-base-content"
+                >Séance</span
+              >
               <span>
                 <strong th:text="${workout.sport.displayName}">Course</strong>
                 le <span th:text="${workout.date}">2026-04-08</span>

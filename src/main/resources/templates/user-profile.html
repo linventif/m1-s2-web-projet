@@ -5,6 +5,18 @@
   </head>
 
   <body class="min-h-screen bg-base-200 text-base-content">
+    <style>
+      html[data-theme="dark"] .profile-recommendation {
+        background-color: rgba(245, 158, 11, 0.14);
+        border-color: rgba(245, 158, 11, 0.38);
+      }
+
+      html[data-theme="dark"] .profile-badge-unlocked {
+        background-color: rgba(245, 158, 11, 0.18);
+        border-color: rgba(245, 158, 11, 0.45);
+      }
+    </style>
+
     <div th:insert="~{components/layout::header}"></div>
     <main
       class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 pb-6 pt-24 sm:px-6 lg:px-8"
@@ -193,9 +205,9 @@
               <p class="mt-1 font-medium"><span th:text="${user.weight}">0</span> kg</p>
             </div>
           </div>
-          <div class="mt-5 rounded-2xl border border-orange-300/70 bg-orange-50 p-4">
-            <p class="text-xs uppercase tracking-wide text-orange-700">Recommandation</p>
-            <p class="mt-2 font-medium text-slate-800" th:text="${recommendation}">
+          <div class="profile-recommendation mt-5 rounded-2xl border border-warning/50 bg-warning/10 p-4">
+            <p class="text-xs uppercase tracking-wide text-warning">Recommandation</p>
+            <p class="mt-2 font-medium text-base-content" th:text="${recommendation}">
               Aucune recommandation
             </p>
           </div>
@@ -270,7 +282,7 @@
           <div
             class="rounded-2xl border p-3 transition hover:-translate-y-0.5 hover:shadow-md"
             th:each="badge : ${allBadges}"
-            th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? ' border-orange-300 bg-orange-50/60' : ' border-base-300 bg-base-200/60'"
+            th:classappend="${#sets.contains(unlockedBadgeIds, badge.id)} ? ' profile-badge-unlocked border-warning/50 bg-warning/10' : ' border-base-300 bg-base-200/60'"
           >
             <div class="flex items-center gap-3">
               <img

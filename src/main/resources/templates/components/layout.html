@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <script>
+      (() => {
+        const storageKey = "sportflow-theme";
+        const applyTheme = (theme) => document.documentElement.setAttribute("data-theme", theme);
+        const storedTheme = localStorage.getItem(storageKey);
+        const resolvedTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        applyTheme(resolvedTheme);
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const themeToggle = document.getElementById("theme-switcher");
+          if (!themeToggle) {
+            return;
+          }
+
+          themeToggle.checked = document.documentElement.getAttribute("data-theme") === "dark";
+          themeToggle.addEventListener("change", () => {
+            const nextTheme = themeToggle.checked ? "dark" : "light";
+            applyTheme(nextTheme);
+            localStorage.setItem(storageKey, nextTheme);
+          });
+        });
+      })();
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link
       rel="stylesheet"
@@ -70,6 +93,32 @@
       </div>
 
       <div class="flex flex-none items-center gap-2 sm:gap-3">
+        <label
+          class="swap swap-rotate btn btn-circle btn-ghost"
+          for="theme-switcher"
+          title="Basculer le thème"
+        >
+          <input id="theme-switcher" type="checkbox" aria-label="Basculer le thème clair/sombre" />
+          <svg
+            class="swap-off h-5 w-5 fill-current"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5.64 17l-.71.71a1 1 0 101.41 1.41l.71-.71A1 1 0 005.64 17zM5 12a1 1 0 00-1-1H3a1 1 0 100 2h1a1 1 0 001-1zm7-7a1 1 0 001-1V3a1 1 0 10-2 0v1a1 1 0 001 1zm6.36 2.05a1 1 0 00.71-.29l.71-.71a1 1 0 10-1.41-1.41l-.71.71a1 1 0 00.7 1.7zM21 11h-1a1 1 0 100 2h1a1 1 0 100-2zm-9 8a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1zm6.36-2a1 1 0 00-1.41 0 1 1 0 000 1.41l.71.71a1 1 0 001.41-1.41zM12 6a6 6 0 100 12 6 6 0 000-12zM6.34 6.34a1 1 0 00-1.41 0l-.71.71a1 1 0 101.41 1.41l.71-.71a1 1 0 000-1.41z"
+            />
+          </svg>
+          <svg
+            class="swap-on h-5 w-5 fill-current"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M21.64 13.06A1 1 0 0020 12.3a8 8 0 11-8.3-8.3 1 1 0 00.76-1.64A10 10 0 1022 14a1 1 0 00-.36-.94z"
+            />
+          </svg>
+        </label>
+
         <div class="dropdown dropdown-end" th:with="unreadCount=${headerUnreadNotificationsCount}">
           <div tabindex="0" role="button" class="btn btn-circle btn-ghost relative">
             <svg
