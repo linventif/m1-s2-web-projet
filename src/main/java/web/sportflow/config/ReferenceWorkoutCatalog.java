@@ -264,12 +264,6 @@ final class ReferenceWorkoutCatalog {
             userHiccup,
             userAstrid));
     workoutRepository.saveAll(demoWorkouts);
-
-    List<Workout> coverageWorkouts = createCoverageWorkouts(allSports, userAdmin, cloudy);
-    enrichDemoWorkoutInteractions(
-        coverageWorkouts,
-        List.of(userAlice, userBenoit, userOwen, userJudy, userNick, userAstrid, userRodney));
-    workoutRepository.saveAll(coverageWorkouts);
   }
 
   private static Workout createWorkout(
