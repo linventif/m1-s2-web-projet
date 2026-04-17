@@ -14,6 +14,8 @@ import web.sportflow.user.UserRepository;
 
 final class ReferenceUserCatalog {
 
+  // Intentional default credential used only for local/demo reference data seeding.
+  @SuppressWarnings("java:S2068")
   private static final String DEMO_PASSWORD = "demo123";
 
   private static final List<UserDto> USERS =
