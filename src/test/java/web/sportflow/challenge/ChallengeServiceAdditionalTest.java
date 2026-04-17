@@ -265,6 +265,110 @@ class ChallengeServiceAdditionalTest {
     assertTrue(visible.contains(friendChallenge));
   }
 
+  @Test
+  void buildProgressByChallenge_coversTypeSwitchAndWindowFilteringBranches() {
+    User current = user(10L);
+    User creator = user(1L);
+    Sport running = new Sport("Course", 10.0);
+    running.setId(100L);
+
+    Workout workout = new Workout();
+    workout.setDate(LocalDateTime.now());
+    workout.setSport(running);
+    workout.setUser(current);
+    workout.setDurationSec(1800.0);
+    WorkoutExercise exercise = new WorkoutExercise();
+    exercise.setDistanceM(2000.0);
+    exercise.setReps(12);
+    exercise.setSets(3);
+    workout.setWorkoutExercises(List.of(exercise));
+
+    Workout noRepetitionWorkout = new Workout();
+    noRepetitionWorkout.setDate(LocalDateTime.now());
+    noRepetitionWorkout.setSport(running);
+    noRepetitionWorkout.setUser(current);
+    noRepetitionWorkout.setWorkoutExercises(List.of(new WorkoutExercise()));
+
+    Challenge distance =
+        challenge(
+            101L,
+            "Distance",
+            ChallengeType.DISTANCE,
+            true,
+            creator,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1));
+    distance.setSports(List.of(running));
+
+    Challenge duration =
+        challenge(
+            102L,
+            "Duration",
+            ChallengeType.DUREE,
+            true,
+            creator,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1));
+
+    Challenge calorie =
+        challenge(
+            103L,
+            "Calorie",
+            ChallengeType.CALORIE,
+            true,
+            creator,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1));
+
+    Challenge repetition =
+        challenge(
+            104L,
+            "Repetition",
+            ChallengeType.REPETITION,
+            true,
+            creator,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1));
+
+    Challenge endurance =
+        challenge(
+            105L,
+            "Endurance",
+            ChallengeType.ENDURENCE,
+            true,
+            creator,
+            LocalDate.now().minusDays(1),
+            LocalDate.now().plusDays(1));
+
+    Challenge reversedWindow =
+        challenge(
+            106L,
+            "Reversed",
+            ChallengeType.DISTANCE,
+            true,
+            creator,
+            LocalDate.now().plusDays(2),
+            LocalDate.now().minusDays(2));
+
+    when(userRepository.findById(10L)).thenReturn(Optional.of(current));
+    when(workoutRepository.findByUserAndDateBetween(any(), any(), any()))
+        .thenReturn(List.of(workout, noRepetitionWorkout));
+
+    Map<Long, ChallengeDto> progress =
+        challengeService.buildProgressByChallenge(
+            List.of(distance, duration, calorie, repetition, endurance, reversedWindow), current);
+
+    assertEquals("km", progress.get(101L).unitLabel());
+    assertEquals("min", progress.get(102L).unitLabel());
+    assertEquals("kcal", progress.get(103L).unitLabel());
+    assertEquals("reps", progress.get(104L).unitLabel());
+    assertEquals("min", progress.get(105L).unitLabel());
+    assertEquals(0.0, progress.get(106L).currentValue());
+
+    assertTrue(progress.get(101L).currentValue() > 0.0);
+    assertTrue(progress.get(104L).currentValue() > 0.0);
+  }
+
   private Challenge challenge(
       Long id,
       String title,
