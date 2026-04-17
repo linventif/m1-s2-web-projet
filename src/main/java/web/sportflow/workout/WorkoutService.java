@@ -535,9 +535,9 @@ public class WorkoutService {
           if (workout == null) {
             return;
           }
-          workout.getWorkoutExercises().size();
+          Hibernate.initialize(workout.getWorkoutExercises());
           if (workout.getUser() != null) {
-            workout.getUser().getBadges().size();
+            Hibernate.initialize(workout.getUser().getBadges());
           }
         });
     return workouts;

@@ -1,9 +1,11 @@
 package web.sportflow.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import web.sportflow.exercise.Exercise;
 import web.sportflow.exercise.ExerciseRepository;
 import web.sportflow.sport.Sport;
@@ -313,5 +315,31 @@ final class ReferenceSportExerciseCatalog {
 
   private record ExerciseDto(String name, double caloriesPerSecond) {}
 
-  private record ExerciseLinkDto(String sportName, String... exerciseNames) {}
+  private record ExerciseLinkDto(String sportName, String... exerciseNames) {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ExerciseLinkDto that)) {
+        return false;
+      }
+      return Objects.equals(sportName, that.sportName)
+          && Arrays.equals(exerciseNames, that.exerciseNames);
+    }
+
+    @Override
+    public int hashCode() {
+      return 31 * Objects.hash(sportName) + Arrays.hashCode(exerciseNames);
+    }
+
+    @Override
+    public String toString() {
+      return "ExerciseLinkDto[sportName="
+          + sportName
+          + ", exerciseNames="
+          + Arrays.toString(exerciseNames)
+          + "]";
+    }
+  }
 }
